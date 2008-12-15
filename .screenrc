@@ -22,3 +22,6 @@ escape ``
 
 # status line stolen from Red Hat:
 hardstatus string "[screen %n%?: %t%?] %h"
+
+# Lots of scrollback
+defscrollback 1000
