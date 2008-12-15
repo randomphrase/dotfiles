@@ -44,27 +44,32 @@ alias lsd='ls -ld *(-/DN)'
 # List only file beginning with "."
 alias lsa='ls -ld .*'
 
+# Lists one argument per line:
+alias showargs="print -l"
+
+# Edit environment variables with one line per item, w00t!
+alias lvared="IFS=\$'\n' vared"
+
 # Shell functions
 #setenv() { typeset -x "${1}${1:+=}${(@)argv[2,$#]}" }  # csh compatibility
 #freload() { while (( $# )); do; unfunction $1; autoload -U $1; shift; done }
 
-# Where to look for autoloaded function definitions
-#fpath=($fpath ~/.zfunc)
+# Look here for autoloaded function definitions
+fpath+=~/.zfunc
 
-# Autoload all shell functions from all directories in $fpath (following
-# symlinks) that have the executable bit on (the executable bit is not
-# necessary, but gives you an easy way to stop the autoloading of a
-# particular shell function). $fpath should not be empty for this to work.
-#for func in $^fpath/*(N-.x:t); autoload $func
+# Autoload shell functions in .zfunc. Ignores files beginning with an
+# underscore, because compinit will autoload them. This glob also
+# strips the directory part, because that's all we need.
+autoload -- ~/.zfunc/[^_]*(:t)
 
 # automatically remove duplicates from these arrays
-typeset -U path cdpath fpath manpath
+declare -U path cdpath fpath manpath
 
 # Global aliases -- These do not have to be
 # at the beginning of the command line.
-alias -g M='|more'
-alias -g H='|head'
-alias -g T='|tail'
+#alias -g M='|more'
+#alias -g H='|head'
+#alias -g T='|tail'
 
 #manpath=($X11HOME/man /usr/man /usr/lang/man /usr/local/man)
 #export MANPATH
@@ -81,15 +86,19 @@ autoload -U promptinit
 promptinit
 prompt oliver bold normal
 
-# Update the title bar when the wd changes (out of the FAQ:)
-chpwd() {
-  [[ -t 1 ]] || return
+# Set the window title bar
+header() {
   case $TERM in
-    *xterm*|rxvt|(dt|k|E)term|cygwin) print -Pn "\e]2;%n@%m : %~\a"
+    *xterm*|rxvt|(dt|k|E)term|cygwin) print -Pn "\e]2;$*\a"
     ;;
-    screen) print -Pn "\e_%n@%m : %~\e\\"
+    screen) print -Pn "\e_$*\e\\"
     ;;
   esac
+}
+  
+# Update the title bar when the wd changes
+chpwd() {
+  [[ -t 1 ]] && header "%n@%m : %~"
 }
 # set the initial title bar on load...
 chpwd 
