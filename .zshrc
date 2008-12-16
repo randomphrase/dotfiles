@@ -54,32 +54,33 @@ alias lvared="IFS=\$'\n' vared"
 #setenv() { typeset -x "${1}${1:+=}${(@)argv[2,$#]}" }  # csh compatibility
 #freload() { while (( $# )); do; unfunction $1; autoload -U $1; shift; done }
 
-# Look here for autoloaded function definitions
-fpath+=~/.zfunc
+if [[ -d ~/.zfunc ]]; then
+    # Where to look for autoloaded function definitions
+    fpath+=~/.zfunc
 
-# Autoload shell functions in .zfunc. Ignores files beginning with an
-# underscore, because compinit will autoload them. This glob also
-# strips the directory part, because that's all we need.
-autoload -- ~/.zfunc/[^_]*(:t)
+    # Autoload shell functions in .zfunc. Ignores files beginning with an
+    # underscore, because compinit will autoload them. This glob also
+    # strips the directory part, because that's all we need.
+    autoload -- ~/.zfunc/[^_]*(:t)
+fi
 
 # automatically remove duplicates from these arrays
 declare -U path cdpath fpath manpath
 
 # Global aliases -- These do not have to be
 # at the beginning of the command line.
-#alias -g M='|more'
-#alias -g H='|head'
-#alias -g T='|tail'
+alias -g M='|more'
+alias -g H='|head'
+alias -g T='|tail'
+
+# Mac-specific stuff:
+alias plcat="plutil -convert xml1 -o - "
 
 #manpath=($X11HOME/man /usr/man /usr/lang/man /usr/local/man)
 #export MANPATH
 
 # Hosts to use for completion (see later zstyle)
 #hosts=(`hostname` ftp.math.gatech.edu prep.ai.mit.edu wuarchive.wustl.edu)
-
-# Set prompts
-#PROMPT='%m%# '    # default prompt
-#RPROMPT=' %~'     # prompt for right side of screen
 
 # Set up prompt using a theme (I like oliver's theme)
 autoload -U promptinit
@@ -88,20 +89,19 @@ prompt oliver bold normal
 
 # Set the window title bar
 header() {
-  case $TERM in
-    *xterm*|rxvt|(dt|k|E)term|cygwin) print -Pn "\e]2;$*\a"
-    ;;
-    screen) print -Pn "\e_$*\e\\"
-    ;;
-  esac
+    [[ -t 1 ]] || return
+    case $TERM in
+        *xterm*|rxvt|(dt|k|E)term|cygwin) print -Pn "\e]2;$*\a"
+        ;;
+        screen) print -Pn "\e_$*\e\\"
+        ;;
+    esac
 }
-  
+
 # Update the title bar when the wd changes
 chpwd() {
-  [[ -t 1 ]] && header "%n@%m : %~"
+    [[ -t 1 ]] && header "%n@%m : %~"
 }
-# set the initial title bar on load...
-chpwd 
 
 # Some environment variables
 #export MAIL=/var/spool/mail/$USERNAME
@@ -127,10 +127,12 @@ alias em='emacsclient -n'
 #WATCHFMT='%n %a %l from %m at %t.'
 
 # Set/unset  shell options
-setopt autocd
-setopt extended_glob
+setopt auto_cd                  # type directory name, cd's to that directory
+setopt extended_glob            # more filename globbing options
 setopt list_ambiguous
-setopt no_flow_control          # Give me my ^s and ^q keys back!
+setopt noclobber                # output redirections don't overwrite existing files
+setopt hist_allow_clobber       # ... but override if we're executing from history
+setopt no_flow_control
 #setopt   notify globdots correct pushdtohome cdablevars autolist
 #setopt   correctall autocd recexact longlistjobs
 #setopt   autoresume histignoredups pushdsilent noclobber
@@ -150,8 +152,6 @@ setopt no_flow_control          # Give me my ^s and ^q keys back!
 #bindkey '^Z' accept-and-hold
 #bindkey -s '\M-/' \\\\
 #bindkey -s '\M-=' \|
-
-# bindkey -v               # vi key bindings
 
 bindkey -e                 # emacs key bindings
 bindkey ' ' magic-space    # also do history expansion on space
@@ -221,9 +221,6 @@ zstyle ':completion:*:default' menu 'select=0'
 
 # Use this key to accept the selection and start another
 bindkey -M menuselect '\C-o' accept-and-menu-complete
-
-# Mac-specific stuff:
-alias plcat="plutil -convert xml1 -o - "
 
 # Local Variables:
 # mode: shell-script

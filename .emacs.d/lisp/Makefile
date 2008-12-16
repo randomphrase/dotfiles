@@ -1,8 +1,8 @@
 # compile these directories ourselves
-dirs=. session/lisp mailcrypt/lisp ruby-mode rdebug
+dirs=. session/lisp
 
 # these dirs come with makefiles
-makedirs=elib nxml jde/lisp cedet xslide color-theme
+makedirs=elib nxml cedet color-theme
 
 EMACS=emacs
 src=$(foreach d,$(dirs),$(wildcard $(d)/*.el))
