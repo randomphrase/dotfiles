@@ -34,7 +34,8 @@
 ;; And Info paths
 (let ((my-info-paths '("~/.emacs.d/info"
                        "/usr/share/info"
-                       "/opt/local/share/info")))
+                       "/opt/local/share/info"
+                       "c:/cygwin/usr/share/info")))
   (dolist (my-info-path
            (remove-if-not 'file-directory-p
                           (mapcar 'expand-file-name my-info-paths)))
@@ -42,23 +43,35 @@
     (add-to-list 'Info-default-directory-list my-info-path t)))
 
 
-;; Windows stuff:
-(if (eq system-type 'windows-nt)
-    (progn 
-      (require 'w32shell)
-      (require 'cygwin-mount)
-      (cygwin-mount-activate)
-      ))
+;; Backups go here:
+(if (file-directory-p "~/.emacs.d/backups")
+    (add-to-list 'backup-directory-alist '("." . "~/.emacs.d/backups")))
+
+
+;; Windows/cygwin stuff:
+(when (eq window-system 'w32)
+  (require 'w32shell)
+  ;; (require 'cygwin-mount)
+  ;; (cygwin-mount-activate)
+)
 
 ;; Start the emacs server mode
 (server-start)
 
-;; Visual effects first
+;;
+;; Visual effects
+;;
+
 ;(require 'zenburn)
 ;(zenburn)
 (require 'color-theme)
 (color-theme-initialize)
+;(color-theme-scintilla)
 (color-theme-gtk-ide)
+
+;;
+;; Editing/movement commands - bound to keys a bit later on
+;;
 
 ;; from http://www.emacswiki.org/cgi-bin/wiki/BackToIndentationOrBeginning
 (defun back-to-indentation-or-beginning ()
@@ -80,9 +93,7 @@ With argument, do this that many times."
   "Delete characters backward until encountering the end of a word.
 With argument, do this that many times."
   (interactive "p")
-  (delete-region (point)
-                 (progn (forward-word (- arg))
-                        (point))))
+  (delete-word (- arg)))
 
 ;; Recognise these are movement functions so that shift-<key> works properly
 (dolist (cmd
@@ -102,6 +113,13 @@ With argument, do this that many times."
 ;; Tab setup
 (setq-default tab-width 4)          ; Set tab width to 4
 (setq-default indent-tabs-mode nil)	; Use spaces for indenting - NOT TABs
+(setq-default fill-column 100)    ; Screens are wide enough these days
+
+;; Enable narrow-to-region
+(put 'narrow-to-region 'disabled nil)
+
+;; abbrevs are here
+(setq abbrev-file-name "~/.emacs.d/abbrevs")
 
 ;; Start session mode
 (require 'session)
@@ -114,24 +132,42 @@ With argument, do this that many times."
 ;; Markdown mode for text editing
 (autoload 'markdown-mode "markdown-mode.el"
   "Major mode for editing Markdown files" t)
+;;     (setq auto-mode-alist
+;;        (cons '("\\.text" . markdown-mode) auto-mode-alist))
 
-;; load makefile-mode for *.mak files
-(setq auto-mode-alist
-      (append (list (cons "\\.mak\\'" 'makefile-mode))
-	      auto-mode-alist))
+;; Wikipedia mode for wiki editing
+;; (autoload 'wikipedia-mode
+;;   "wikipedia-mode.el"
+;;   "Major mode for editing documents in Wikipedia markup." t)
+;; ; Fix up some poor keybinding choices:
+;; (add-hook 'wikipedia-mode-hook 
+;;           (lambda ()
+;;             (define-key wikipedia-mode-map [(control right)] nil)
+;;             (define-key wikipedia-mode-map [(control left)] nil)
+;;             (define-key wikipedia-mode-map [(meta right)] nil)
+;;             (define-key wikipedia-mode-map [(meta left)] nil)
+;;             ))
+;; (add-to-list 'auto-mode-alist
+;;              '("\\(.*\\.wikipedia.org\\)\\|\\(wiki\\.*.\\.\\(org\\|net\\|com\\)\\(\\.au\\)?\\).*\\.txt\\'"
+;;                . wikipedia-mode))
+
+;; load makefile-mode for *.mak files and Doxyfile files
+(add-to-list 'auto-mode-alist '("\\.mak$" . makefile-mode))
+(add-to-list 'auto-mode-alist '("Doxyfile" . makefile-mode))
 
 ;; CMake mode for CMake*.txt files
 (require 'cmake-mode)
 (setq cmake-tab-width 4)
-(setq auto-mode-alist
-      (append '(("CMake[A-Za-z0-9-]*\\.txt\\'" . cmake-mode)
-                ("\\.cmake\\'" . cmake-mode))
-              auto-mode-alist))
+(add-to-list 'auto-mode-alist '("CMake[A-Za-z0-9-]*\\.txt\\'" . cmake-mode))
+(add-to-list 'auto-mode-alist '("\\.cmake\\'" . cmake-mode))
 
 ;; Apache mode
 (autoload 'apache-mode "apache-mode" "autoloaded" t)
 (add-to-list 'auto-mode-alist '("\\.htaccess$"   . apache-mode))
 (add-to-list 'auto-mode-alist '("httpd\\.conf$"  . apache-mode))
+
+;; Graphviz mode
+(load-library "graphviz-dot-mode")
 
 ;; ;;
 ;; ;; Python mode
@@ -150,27 +186,98 @@ With argument, do this that many times."
 ;;
 (load "cedet")
 (semantic-load-enable-gaudy-code-helpers)
+(global-ede-mode t)
 
+;; MacPorts installs headers here, make sure semantic knows about them:
 (let ((dir "/opt/local/include/"))
   (and (file-directory-p dir)
        (semantic-add-system-include dir)))
 
-(add-hook 'speedbar-load-hook (lambda () (require 'semantic-sb)))
-
-;; TODO: don't load semantic for a tramp-sourced file
 ;; (add-hook 'semantic-init-hooks (lambda ()
 ;;                                  (imenu-add-to-menubar "Tokens")))
 
-;; (add-hook 'semantic--before-fetch-tags-hook
-;;  	  (lambda () (if (string-match "^/opt/local/include/boost-1_35/boost/preprocessor/\\(repetition\\|seq\\)"
-;;  	                               (buffer-file-name))
-;;                      nil
-;;                    t)))
+;; Adds semantic analyze display for speedbar
+(add-hook 'speedbar-load-hook (lambda () (require 'semantic-sb)))
+
+(defun my-locate-pch-header (name dir)
+  (cond
+   ((string= "globalPch.hpp" name)
+    (concat dir "pchWin32/globalPch.hpp"))
+   ((string-match "^\\([a-zA-Z]+\\)Pch.hpp$" name)
+    (concat dir (match-string 1 name) "/pchWin32/" name))
+   ))
+
+(defun my-locate-project (&optional dir)
+  "Return a full file name to the project file stored in dir, or nil"
+  (let ((cmakepath (expand-file-name "CMakeLists.txt" dir)))
+    (if (file-exists-p cmakepath)
+        cmakepath
+      nil)))
+
+(defun my-load-project (dir)
+  "Load a project of type `cpp-root' for the directory DIR.
+     Return nil if there isn't one."
+  (ede-cpp-root-project (file-name-nondirectory dir)
+                        :locate-fcn 'my-locate-pch-header
+                        :file (expand-file-name "CMakeLists.txt" dir)
+                        :include-path '( "/" )
+                        :system-include-path '( "c:/Program Files/boost/boost_1_37_0/" )
+;;;                       :spp-table '( ( "_MSC_VER" . "1400" ) )
+                        ))
+
+(add-to-list 'ede-project-class-files
+     	     (ede-project-autoload "cpp-root"
+                                   :name "Repo Projects"
+                                   :file 'ede-cpp-root
+                                   :proj-file 'my-locate-project
+                                   :proj-root 'ede-cpp-root-project-root
+                                   :load-type 'my-load-project
+                                   :class-sym 'ede-cpp-root)
+     	     t)
+
+
+;; don't use semantic on remote files:
+(add-to-list 'semantic-inhibit-functions
+             (lambda () (and buffer-file-name (file-remote-p buffer-file-name))))
+
+;; Don't parse these files...
+(add-hook 'semantic--before-fetch-tags-hook
+          (lambda () (if (string-match
+                          "^c:/program files/boost/boost_\[0-9_\]+/boost/preprocessor/\\(repetition\\|seq\\)/"
+                          (buffer-file-name))
+                         nil
+                       t)))
 
 ;;
 ;; c/c++ stuff
 ;;
 (require 'eassist)
+(add-to-list 'eassist-header-switches '("cxx" . ("hxx" "hpp" "h")))
+(add-to-list 'eassist-header-switches '("hxx" . ("cxx" "cpp")))
+(add-to-list 'eassist-header-switches '("ipp" . ("hxx" "hpp" "h")))
+(add-to-list 'eassist-header-switches '("hpp" . ("cxx" "cpp" "ipp")))
+
+(add-to-list 'auto-mode-alist '("\\.ipp$" . c++-mode))
+
+(defun file-in-directory-list-p (file dirlist)
+  "Returns true if the file specified is contained within one of
+the directories in the list. The directories must also exist."
+  (let ((dirs (mapcar 'expand-file-name dirlist))
+        (filedir (expand-file-name (file-name-directory file))))
+    (and
+     (file-directory-p filedir)
+     (member-if (lambda (x) ; Check directory prefix matches
+                  (string-match (substring x 0 (min(length filedir) (length x))) filedir))
+                dirs))))
+
+(defun buffer-standard-include-p ()
+  "Returns true if the current buffer is contained within one of
+the directories in the INCLUDE environment variable."
+  (and (getenv "INCLUDE")
+       (file-in-directory-list-p buffer-file-name (split-string (getenv "INCLUDE") path-separator))))
+
+(add-to-list 'magic-fallback-mode-alist '(buffer-standard-include-p . c++-mode))
+
 ;(require 'gtags)
 
 (defun my-c-initialization-hook ()
@@ -189,6 +296,7 @@ With argument, do this that many times."
                 (statement-block-intro . +)
                 (substatement-open . 0)
                 (substatement-label . 0)
+                (inher-intro . 0)
                 (label . 0)
                 (statement-cont . +)
                 (innamespace . -)
@@ -202,53 +310,137 @@ With argument, do this that many times."
                 )))
 (setq c-default-style "tibra")
 
-(defun tibra-header-guard (filename)
-  "Calculates the header guard #define for a given file"
-  (let ((dir (upcase (file-name-nondirectory (directory-file-name (file-name-directory filename)))))
-        (base (upcase (file-name-sans-extension (file-name-nondirectory filename))))
-        (ext (upcase (file-name-extension filename))))
-    (concat dir "_" base "_" ext)
-  ))
+(defun add-underscores-to-camel-case (str &optional dontSplitInitialCapital)
+  "Adds underscores to camelCaseStrings to make them
+camel_Case_Strings. Also split an INitialCapital to make
+I_Nitial_Captial, unless dontSplitInitialCapital is set"
+  (let ((case-fold-search nil))
+    (if (or (and (not dontSplitInitialCapital) ;; Apologies for the double-negative
+                 (string-match "^\\([A-Z]\\)\\([A-Za-z]\\)" str))
+            (string-match "\\([a-z]\\)\\([A-Z]\\)" str))
+        (concat (substring str 0 (match-beginning 0))
+                (match-string 1 str)
+                "_"
+                (match-string 2 str)
+                (add-underscores-to-camel-case (substring str (match-end 0)) t))
+      str)
+    ))
+
+(defun tibra-header-guard-define (&optional filename)
+  "Calculates the header guard #define for a given file (or the
+current buffer file if not specified)"
+  (let ((fn (or filename buffer-file-name)))
+    (concat (upcase (add-underscores-to-camel-case
+                     (file-name-nondirectory (directory-file-name (file-name-directory fn)))))
+            "_" (upcase (add-underscores-to-camel-case
+                         (file-name-sans-extension (file-name-nondirectory fn))))
+            "_" (upcase (or (file-name-extension fn) "")))
+    ))
 
 (defun tibra-namespaces (filename)
-  "Returns the namespace for a given file as a list of strings, eg (\"Tibra\", \"Libname\")"
+  "Returns the namespace for a given file as a list of strings,
+eg (\"Tibra\", \"Libname\")"
   (list "Tibra" (upcase-initials (file-name-nondirectory (directory-file-name (file-name-directory filename))))
         ))
 
-(defun tibra-namespace-declare-open (components)
-  "Creates a c++ declaration for opening the specified namespaces"
-  (mapconcat (lambda (x) (concat "namespace " x " { ")) components ""))
+(defun tibra-namespace-declare-open (&optional components)
+  "Creates a c++ declaration for opening the specified
+namespaces. If not specified, namespaces default to calling
+tibra-namespaces on the current buffer file."
+  (mapconcat (lambda (x) (format "namespace %s { " x))
+             (or components (tibra-namespaces buffer-file-name))
+             ""))
 
-(defun tibra-namespace-declare-close (components)
-  "Creates a c++ declaration for closing the specified namespaces"
-  (mapconcat (lambda (x) "} ") components ""))
+(defun tibra-namespace-declare-close (&optional components)
+  "Creates a c++ declaration for closing the specified
+namespaces. If not specified, namespaces default to calling
+tibra-namespaces on the current buffer file."
+  (let ((c (or components (tibra-namespaces buffer-file-name))))
+    (concat (mapconcat (lambda (x) "} ") c "")
+            " // " (tibra-namespace-declare-open c))
+    ))
+
+(defun file-name-and-parent-directory (file)
+  "Returns the filename and its immediate parent directory only"
+    (concat (file-name-nondirectory (directory-file-name (file-name-directory file)))
+            "/" (file-name-nondirectory file)))
+
+(defun tibra-corresponding-file (&optional filename)
+  "Returns the corresponding source/header for the specified
+file (or the current buffer file), or nil if it can't be
+determined."
+  (let* ((file (or filename buffer-file-name))
+         (ext (assoc-default (file-name-extension file)
+                             '(("cpp" . "hpp")
+                               ("cxx" . "hxx")
+                               ("hpp" . "cpp")
+                               ("hxx" . "cxx")
+                               ))))
+    (if ext (concat (file-name-sans-extension file) "." ext)
+      nil)))
+
+(defun tibra-include (&optional filename)
+  "Returns an #include declaration for the specified filename, or
+an empty string if no filename specified."
+  (if filename (concat
+                "#include \"" (file-name-and-parent-directory filename) "\"")
+    ""))
 
 (define-skeleton tibra-header-file
-  "A Tibra header file"
+  "A skeleton for a Tibra c++ header file"
   nil
-  "#ifndef " (tibra-header-guard buffer-file-name) \n
-  "#define " (tibra-header-guard buffer-file-name) \n
+  "#ifndef " (tibra-header-guard-define) \n
+  "#define " (tibra-header-guard-define) \n
   \n
-  (tibra-namespace-declare-open (tibra-namespaces buffer-file-name))
+  (tibra-namespace-declare-open)
   \n
   \n
   _
   \n
   \n
-  (tibra-namespace-declare-close (tibra-namespaces buffer-file-name))
-  " // " (tibra-namespace-declare-open (tibra-namespaces buffer-file-name))
+  (tibra-namespace-declare-close) \n
+  \n
+  "#endif // " (tibra-header-guard-define) \n
   )
 
+(define-skeleton tibra-source-file
+  "A skeleton for a Tibra c++ source file"
+  nil
+  "#include \"globalPch.hpp\"" \n
+  \n
+  (tibra-include (tibra-corresponding-file)) \n
+  \n
+  (tibra-namespace-declare-open) \n
+  \n
+  _
+  \n
+  \n
+  (tibra-namespace-declare-close) \n
+  )
 
 ;; Customizations for all modes in CC Mode.
 (defun my-c-mode-common-hook ()
   (c-subword-mode 1)
-;  (c-toggle-auto-newline 1)
+  ;(c-toggle-auto-newline 1)
   ;(gtags-mode 1)
   ;(semantic-tag-folding-mode 1)
   ;(setq show-trailing-whitespace t)
 )
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
+
+
+;;
+;; Doxymacs for doxygen comments:
+;;
+(require 'doxymacs)
+; Use doxymacs in all c-modes:
+(add-hook 'c-mode-common-hook 'doxymacs-mode)
+; Use font-lock mode in c and c++ mode:
+(defun my-doxymacs-font-lock-hook ()
+  (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
+      (doxymacs-font-lock)))
+(add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
+(setq doxymacs-doxygen-style "C++")
 
 ;;
 ;; JDE Mode for Java stuff
@@ -268,6 +460,8 @@ With argument, do this that many times."
 ;; (defun my-jde-mode-hook ()
 ;;   (setq c-basic-offset 2))
 ;; (add-hook 'jde-mode-hook 'my-jde-mode-hook)
+
+
 
 
 ;;
@@ -329,43 +523,11 @@ With argument, do this that many times."
     (load "xmlunicode"))
 
 
-;;
-;; Ruby and Rails stuff
-;;
-
-;; Firstly ruby mode:
-(autoload 'ruby-mode "ruby-mode"
-  "Mode for editing ruby source files" t)
-(setq auto-mode-alist
-      (append '(("\\.rb$" . ruby-mode)) auto-mode-alist))
-(setq interpreter-mode-alist (append '(("ruby" . ruby-mode))
-                                     interpreter-mode-alist))
-;; inf-ruby mode
-(autoload 'run-ruby "inf-ruby"
-  "Run an inferior Ruby process")
-(autoload 'inf-ruby-keys "inf-ruby"
-  "Set local key defs for inf-ruby in ruby-mode")
-(add-hook 'ruby-mode-hook
-          '(lambda ()
-             (inf-ruby-keys)
-             ))
-
-;; You must add path installed yaml-mode.el to load-path.
-(autoload 'yaml-mode "yaml-mode" "YAML" t)
-(setq auto-mode-alist
-      (append '(("\\.yml$" . yaml-mode)) auto-mode-alist))
-
-;; RoR Emacs Mode
-;(require 'rinari)
-
-
-;; Subversion mode
-;;(require 'psvn)
 
 ;; Bazaar mode
 ;(require 'bazaar)
 ;(add-hook 'find-file-hooks 'bzr-maybe-activate)
-
+(require 'vc-bzr)
 
 ;;
 ;; mailcrypt - used for file mode especially!
@@ -373,7 +535,7 @@ With argument, do this that many times."
 ;; (require 'mailcrypt)
 ;; (mc-setversion "gpg")
 ;; (require 'mc-gpg-file-mode)
-(require 'epa-setup)
+;(require 'epa-setup)
 ;;(epa-file-enable)
 
 ;;
@@ -387,26 +549,32 @@ With argument, do this that many times."
                    '("pscpx"
                      (tramp-login-program "plink")
                      (tramp-login-args
-                      (("-load") ("%h") ("-t")
+                      (("-load")
+                       ("%h")
+                       ("-t")
                        ("env 'TERM=dumb' 'PROMPT_COMMAND=' 'PS1=$ '")
                        ("/bin/sh")))
                      (tramp-remote-sh "/bin/sh")
                      (tramp-copy-program "pscp")
                      (tramp-copy-args
-                      (("-P" "%p") ("-scp") ("-p" "%k")))
+                      (("-P" "%p")
+                       ("-scp")
+                       ("-p" "%k")))
                      (tramp-copy-keep-date t)))
-      (setq tramp-default-method "pscpx")
       ))
+;(setq tramp-default-method "pscpx")
+;; bjdev02 has an ancient /bin/sh which means it won't work with tramp. Fortunately the standard
+;; bash seems to work, sheesh.
+;(add-to-list 'tramp-default-method-alist '("bjdev02" "" "pscp"))
 
 ;;
 ;; My favorite key bindings
 ;;
+
 (global-set-key [f4] 'next-error)
 (global-set-key [f7] 'compile)
 (global-set-key [(shift f7)] 'recompile)
 (global-set-key [(shift f4)] 'previous-error)
-
-(global-set-key [f9] 'call-last-kbd-macro)
 
 (global-set-key [(home)] 'back-to-indentation-or-beginning)
 (global-set-key [(meta backspace)] 'backward-delete-word)
@@ -415,14 +583,17 @@ With argument, do this that many times."
 
 (global-set-key [(control tab)] 'other-window)
 
-;; Use option as meta
-;(setq mac-option-modifier 'meta)       
-;(setq mac-pass-option-to-system nil)    
+;; I *hate* getting overwrite mode by accident...
+(global-unset-key [(insert)])
 
-;(global-set-key [(control x) (control r)] 'find-file-read-only)
+;; Use option as meta
+;(setq mac-option-modifier 'meta)
+;(setq mac-pass-option-to-system nil)
 
 ;;
-;; Customisation is done here:
+;; All custom variables live in here
+;;
+;; Put this last so that we can customise variables defined by modes loaded above
 ;;
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file t)
