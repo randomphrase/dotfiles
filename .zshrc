@@ -54,16 +54,19 @@ alias lvared="IFS=\$'\n' vared"
 #setenv() { typeset -x "${1}${1:+=}${(@)argv[2,$#]}" }  # csh compatibility
 #freload() { while (( $# )); do; unfunction $1; autoload -U $1; shift; done }
 
+# Where to look for autoloaded function definitions
+#fpath=($fpath ~/.zfunc)
+
 if [[ -d ~/.zfunc ]]; then
     # Where to look for autoloaded function definitions
     fpath+=~/.zfunc
-
+    
     # Autoload shell functions in .zfunc. Ignores files beginning with an
     # underscore, because compinit will autoload them. This glob also
     # strips the directory part, because that's all we need.
     autoload -- ~/.zfunc/[^_]*(:t)
 fi
-
+  
 # automatically remove duplicates from these arrays
 declare -U path cdpath fpath manpath
 
@@ -76,11 +79,16 @@ alias -g T='|tail'
 # Mac-specific stuff:
 alias plcat="plutil -convert xml1 -o - "
 
+
 #manpath=($X11HOME/man /usr/man /usr/lang/man /usr/local/man)
 #export MANPATH
 
 # Hosts to use for completion (see later zstyle)
 #hosts=(`hostname` ftp.math.gatech.edu prep.ai.mit.edu wuarchive.wustl.edu)
+
+# Set prompts
+#PROMPT='%m%# '    # default prompt
+#RPROMPT=' %~'     # prompt for right side of screen
 
 # Set up prompt using a theme (I like oliver's theme)
 autoload -U promptinit
@@ -102,6 +110,9 @@ header() {
 chpwd() {
     [[ -t 1 ]] && header "%n@%m : %~"
 }
+
+# set the initial title bar on load...
+chpwd 
 
 # Some environment variables
 #export MAIL=/var/spool/mail/$USERNAME
@@ -128,11 +139,11 @@ alias em='emacsclient -n'
 
 # Set/unset  shell options
 setopt auto_cd                  # type directory name, cd's to that directory
-setopt extended_glob            # more filename globbing options
-setopt list_ambiguous
 setopt noclobber                # output redirections don't overwrite existing files
 setopt hist_allow_clobber       # ... but override if we're executing from history
-setopt no_flow_control
+setopt extended_glob            # more filename globbing options
+setopt list_ambiguous
+setopt no_flow_control          # Give me my ^s and ^q keys back!
 #setopt   notify globdots correct pushdtohome cdablevars autolist
 #setopt   correctall autocd recexact longlistjobs
 #setopt   autoresume histignoredups pushdsilent noclobber
@@ -152,6 +163,8 @@ setopt no_flow_control
 #bindkey '^Z' accept-and-hold
 #bindkey -s '\M-/' \\\\
 #bindkey -s '\M-=' \|
+
+# bindkey -v               # vi key bindings
 
 bindkey -e                 # emacs key bindings
 bindkey ' ' magic-space    # also do history expansion on space
