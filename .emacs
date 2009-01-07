@@ -419,7 +419,7 @@ an empty string if no filename specified."
 (defun my-c-mode-common-hook ()
   (c-subword-mode 1)
   ;(c-toggle-auto-newline 1)
-  ;(gtags-mode 1)
+  (gtags-mode 1)
   ;(semantic-tag-folding-mode 1)
   ;(setq show-trailing-whitespace t)
 )
@@ -438,27 +438,6 @@ an empty string if no filename specified."
       (doxymacs-font-lock)))
 (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
 (setq doxymacs-doxygen-style "C++")
-
-;;
-;; JDE Mode for Java stuff
-;;
-;; (setq defer-loading-jde t)
-;; (if defer-loading-jde
-;;     (progn
-;;       (autoload 'jde-mode "jde" "JDE mode." t)
-;;       (setq auto-mode-alist
-;;             (append
-;;              '(("\\.java\\'" . jde-mode))
-;;              auto-mode-alist)))
-;;   (require 'jde))
-
-;; ;; Sets the basic indentation for Java source files
-;; ;; to two spaces.
-;; (defun my-jde-mode-hook ()
-;;   (setq c-basic-offset 2))
-;; (add-hook 'jde-mode-hook 'my-jde-mode-hook)
-
-
 
 
 ;;
