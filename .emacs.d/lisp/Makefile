@@ -1,24 +1,27 @@
 # compile these directories ourselves
-dirs=. session/lisp
+dirs=. session/lisp doxymacs
 
 # these dirs come with makefiles
 makedirs=elib nxml cedet color-theme
 
+# these dirs have installable info files
+infodirs=cedet/semantic/doc cedet/cogre cedet/common cedet/eieio cedet/srecode cedet/ede
+
 EMACS=emacs
 src=$(foreach d,$(dirs),$(wildcard $(d)/*.el))
 obj=$(patsubst %.el,%.elc,$(src))
+info=$(foreach d,$(infodirs),$(wildcard $(d)/*.info))
 
-# only compile these files inside python-mode
-#src+=python-mode/python-mode.el
+infodir=../info
 
 .PHONY:all
-all: obj submakes
+all: obj submakes install-info
 
 .PHONY:obj
 obj: $(obj)
 
 .PHONY:submakes
-submakes: color-theme-autoloads
+submakes: color-theme-autoloads cedet-makefiles
 	for p in $(makedirs); do \
 		$(MAKE) -C $$p ; \
 	done
@@ -27,10 +30,21 @@ submakes: color-theme-autoloads
 color-theme-autoloads:
 	$(MAKE) -C color-theme autoloads
 
-# obsolete, where did this come from?
-#.el.elc:
-#	$(EMACS) -batch $(EMACSFLAGS) -l $(srcdir)/load-path.hack \
-#	  -f batch-byte-compile $<
+.PHONY:cedet-makefiles
+cedet-makefiles:
+	find cedet -name Makefile -exec touch \;
+
+.PHONY:install-info
+install-info: $(infodir)
+# Do submake to force $(info) to be re-evaluated
+	$(MAKE) $(infodir)/dir
+
+$(infodir):
+	mkdir -p $(infodir)
+
+$(infodir)/dir: $(info)
+	cp $? $(infodir)
+	$(foreach i,$(notdir $?),install-info --info-dir=$(infodir) --info-file=$(infodir)/$(i) ;)
 
 %.elc : %.el
 	$(EMACS) -batch --no-site-file $(foreach hack,$(wildcard $(dir $?)*.hack),-l $(hack)) \
