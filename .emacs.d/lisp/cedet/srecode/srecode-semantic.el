@@ -1,9 +1,9 @@
 ;;; srecode-semantic.el --- Semantic specific extensions to SRecode.
 
-;; Copyright (C) 2007, 2008 Eric M. Ludlam
+;; Copyright (C) 2007, 2008, 2009 Eric M. Ludlam
 
 ;; Author: Eric M. Ludlam <eric@siege-engine.com>
-;; X-RCS: $Id: srecode-semantic.el,v 1.8 2008/03/05 04:20:36 zappo Exp $
+;; X-RCS: $Id: srecode-semantic.el,v 1.10 2009/01/04 14:24:30 zappo Exp $
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -120,6 +120,11 @@ Assumes the cursor is in a tag of class type.  If not, throw an error."
 
 ;;; TAG in a DICTIONARY
 ;;
+(defvar srecode-semantic-apply-tag-augment-hook nil
+  "A function called for each tag added to a dictionary.
+The hook is called with two arguments, the TAG and DICT
+to be augmented.")
+
 ;;;###autoload
 (define-overload srecode-semantic-apply-tag-to-dict (tagobj dict)
   "Insert fewatures of TAGOBJ into the dictionary DICT.
@@ -143,11 +148,14 @@ variable default values, and other things."
     (srecode-dictionary-set-value dict "NAME" (semantic-tag-name tag))
     (srecode-dictionary-set-value dict "TYPE" (semantic-format-tag-type tag nil))
   
+    (run-hook-with-args 'srecode-semantic-apply-tag-augment-hook tag dict)
+
     (cond
      ;;
      ;; FUNCTION
      ;;
      ((eq (semantic-tag-class tag) 'function)
+      ;; FCN ARGS
       (let ((args (semantic-tag-function-arguments tag)))
 	(while args
 	  (let ((larg (car args))
@@ -165,10 +173,20 @@ variable default values, and other things."
 	    )
 	  ;; Next!
 	  (setq args (cdr args))))
+      ;; PARENTS
       (let ((p (semantic-tag-function-parent tag)))
 	(when p
 	  (srecode-dictionary-set-value dict "PARENT" p)
 	  ))
+      ;; EXCEPTIONS (java/c++)
+      (let ((exceptions (semantic-tag-get-attribute tag :throws)))
+	(while exceptions
+	  (let ((subdict (srecode-dictionary-add-section-dictionary
+			  dict "THROWS")))
+	    (srecode-dictionary-set-value subdict "NAME" (car exceptions))
+	    )	   
+	  (setq exceptions (cdr exceptions)))
+	)
       )
      ;;
      ;; VARIABLE

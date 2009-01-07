@@ -3,7 +3,7 @@
 ;; Copyright (C) 2008 Eric M. Ludlam
 
 ;; Author: Eric M. Ludlam <eric@siege-engine.com>
-;; X-RCS: $Id: cedet-global.el,v 1.3 2008/12/09 19:36:23 zappo Exp $
+;; X-RCS: $Id: cedet-global.el,v 1.5 2008/12/17 03:14:16 zappo Exp $
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -82,6 +82,32 @@ SCOPE is the scope of the search, such as 'project or 'subdirs."
     b))
 
 ;;;###autoload
+(defun cedet-gnu-global-expand-filename (filename)
+  "Expand the FILENAME with GNU Global.
+Return a fully qualified filename."
+  (interactive "sFile: ")
+  (let ((ans (save-excursion
+	       (set-buffer (cedet-gnu-global-call (list "-Pa" filename)))
+	       (goto-char (point-min))
+	       (if (looking-at "global: ")
+		   (error "GNU Global not available")
+		 (split-string (buffer-string) "\n" t)))))
+    (when (interactive-p)
+      (if ans
+	  (if (= (length ans) 1)
+	      (message "%s" (car ans))
+	    (message "%s + %d others" (car ans)
+		     (length (cdr ans))))
+	(error "No file found")))
+    ans))
+
+;;;###autoload
+(defun cedet-gnu-global-show-root ()
+  "Show the root of a GNU Global area under the current buffer."
+  (interactive)
+  (message "%s" (cedet-gnu-global-root)))
+
+;;;###autoload
 (defun cedet-gnu-global-root (&optional dir)
   "Return the root of any GNU Global scanned project.
 If a default starting DIR is not specified, the current buffer's
@@ -109,6 +135,8 @@ If a default starting DIR is not specified, the current buffer's
       (when (inversion-check-version rev nil cedet-global-min-version)
 	(error "Version of GNU Global is %s.  Need at least %s"
 	       rev cedet-global-min-version))
+      (when (interactive-p)
+	(message "GNU Global %s  - Good enough for CEDET." rev))
       )))
 
 (defun cedet-gnu-global-scan-hits (buffer)

@@ -1,9 +1,9 @@
 ;;; srecode-insert --- Insert srecode templates to an output stream.
 
-;;; Copyright (C) 2005, 2007, 2008 Eric M. Ludlam
+;;; Copyright (C) 2005, 2007, 2008, 2009 Eric M. Ludlam
 
 ;; Author: Eric M. Ludlam <zappo@gnu.org>
-;; X-RCS: $Id: srecode-insert.el,v 1.20 2008/06/19 02:21:12 zappo Exp $
+;; X-RCS: $Id: srecode-insert.el,v 1.23 2009/01/04 14:23:58 zappo Exp $
 
 ;; This file is not part of GNU Emacs.
 
@@ -85,7 +85,32 @@ DICT-ENTRIES are additional dictionary values to add."
     ;; Resolve the arguments
     (srecode-resolve-arguments template dictionary)
     ;; Insert
-    (srecode-insert-method template dictionary)
+    (if (bufferp standard-output)
+	;; If there is a buffer, turn off various hooks.  This will cause
+	;; the mod hooks to be buffered up during the insert, but
+	;; prevent tools like font-lock from fontifying mid-template.
+	;; Especialy important during insertion of complex comments that
+	;; cause the new font-lock to comment-color stuff after the inserted
+	;; comment.
+	;;
+	;; I'm not sure about the motion hooks.  It seems like a good
+	;; idea though.
+	;;
+	;; Borrowed these concepts out of font-lock.
+	;;
+	;; I tried `combine-after-change-calls', but it did not have
+	;; the effect I wanted.
+	(let ((start (point)))
+	  (let ((inhibit-point-motion-hooks t)
+		(inhibit-modification-hooks t)
+		)
+	    (srecode-insert-method template dictionary)
+	    )
+	  ;; Now call those after change functions.
+	  (run-hook-with-args 'after-change-functions
+			      start (point) 0)
+	  )
+      (srecode-insert-method template dictionary))
     ;; Handle specialization of the POINT inserter.
     (when (and (bufferp standard-output)
 	       (slot-boundp 'srecode-template-inserter-point 'point)
@@ -108,6 +133,7 @@ Apply anything learned to the dictionary DICT."
 
 (defun srecode-resolve-argument-list (args dict &optional temp)
   "Resolve arguments in the argument list ARGS.
+ARGS is a list of symbols, such as :blank, or :file.
 Apply values to DICT.
 Optional argument TEMP is the template that is getting it's arguments resolved."
   (let ((fcn nil))
@@ -117,11 +143,11 @@ Optional argument TEMP is the template that is getting it's arguments resolved."
       (if (not fcn)
 	  (error "Error resolving template argument %S" (car args)))
       (if temp
-	  (condition-case nil
+	  (condition-case err
 	      ;; Allow some to accept a 2nd argument optionally.
 	      ;; They throw an error if not available, so try again.
 	      (funcall fcn dict temp)
-	    (error (funcall fcn dict)))
+	    (wrong-number-of-arguments (funcall fcn dict)))
 	(funcall fcn dict))
       (setq args (cdr args)))
     ))
@@ -188,7 +214,9 @@ Use DICTIONARY to resolve any macros."
 Optional newlines don't insert themselves if they are on a blank line
 by themselves.")
    )
-  "Insert a newline, and possibly do indenting.")
+  "Insert a newline, and possibly do indenting.
+Specify the :indent argument to enable automatic indentation when newlines
+occur in your template.")
 
 (defmethod srecode-insert-method ((sti srecode-template-inserter-newline)
 				  dictionary)
@@ -251,7 +279,8 @@ When set to 'end it will insert a CR if we are not at 'eol'")
     ;; @TODO - Add slot and control for the number of blank
     ;;         lines before and after point.
    )
-   "Insert a newline before and after a template, and possibly do indenting.")
+   "Insert a newline before and after a template, and possibly do indenting.
+Specify the :blank argument to enable this inserter.")
 
 (defmethod srecode-insert-method ((sti srecode-template-inserter-blank)
 				  dictionary)
@@ -269,8 +298,12 @@ When set to 'end it will insert a CR if we are not at 'eol'")
       
       (cond ((and (eq (oref sti where) 'begin) (not (bolp)))
 	     (princ "\n"))
-	    ((and (eq (oref sti where) 'end) (not (eolp)))
-	     (princ "\n"))
+	    ((eq (oref sti where) 'end)
+	     ;; If there is whitespace after pnt, then clear it out.
+	     (when (looking-at "\\s-*$")
+	       (delete-region (point) (point-at-eol)))
+	     (when (not (eolp))
+	       (princ "\n")))
 	    )
       (setq pm (point-marker))
       (when (and (eq i t) inbuff (not (eq (oref sti where) 'end)))
@@ -284,8 +317,18 @@ When set to 'end it will insert a CR if we are not at 'eol'")
 	:documentation
 	"The character code used to identify inserters of this style.")
    )
-  "Allow comments within template coding.
-This inserts nothing.")
+  "Allow comments within template coding.  This inserts nothing.")
+
+(defmethod srecode-inserter-prin-example :STATIC ((ins srecode-template-inserter-comment)
+						  escape-start escape-end)
+  "Insert an example using inserter INS.
+Arguments ESCAPE-START and ESCAPE-END are the current escape sequences in use."
+  (princ "   ")
+  (princ escape-start)
+  (princ "! Miscellaneous text commenting in your template. ")
+  (princ escape-end)
+  (terpri)
+  )
 
 (defmethod srecode-insert-method ((sti srecode-template-inserter-comment)
 				  dictionary)
@@ -298,7 +341,8 @@ This inserts nothing.")
 	:allocation :class
 	:documentation
 	"The character code used to identify inserters of this style."))
-  "Insert the value of some variable with :object-name.")
+  "Insert the value of a dictionary entry
+If there is no entry, insert nothing.")
 
 (defvar srecode-inserter-variable-current-dictionary nil
   "The active dictionary when calling a variable filter.")
@@ -360,8 +404,10 @@ This inserts nothing.")
 	     :documentation
 	     "The function used to read in the text for this prompt.")
    )
-  "Insert the value of some variable with :object-name.
-If this object isn't in the dictionary, ask the user what it should be.")
+  "Insert the value of a dictionary entry
+If there is no entry, prompt the user for the value to use.
+The prompt text used is derived from the previous PROMPT command in the
+template file.")
 
 (defmethod srecode-inserter-apply-state ((ins srecode-template-inserter-ask) STATE)
   "For the template inserter INS, apply information from STATE.
@@ -460,7 +506,21 @@ Loop over the prompts to see if we have a match."
 	  "Record the value of (point) in this class slot.
 It is the responsibility of the inserter algorithm to clear this
 after a successful insertion."))
-  "Record the value of (point) when inserted.")
+  "Record the value of (point) when inserted.
+The cursor is placed at the ^ macro after insertion.
+Some inserter macros, such as `srecode-template-inserter-include-wrap'
+will place text at the ^ macro from the included macro.")
+
+(defmethod srecode-inserter-prin-example :STATIC ((ins srecode-template-inserter-point)
+						  escape-start escape-end)
+  "Insert an example using inserter INS.
+Arguments ESCAPE-START and ESCAPE-END are the current escape sequences in use."
+  (princ "   ")
+  (princ escape-start)
+  (princ "^")
+  (princ escape-end)
+  (terpri)
+  )
 
 (defmethod srecode-insert-method ((sti srecode-template-inserter-point)
 				  dictionary)
@@ -480,9 +540,22 @@ as an example."
 
 (defclass srecode-template-inserter-subtemplate (srecode-template-inserter)
   ()
-  "All template segments between the secion-start and section-end
-are treated specially."
+  "Wrap a section of a template under the control of a macro."
   :abstract t)
+
+(defmethod srecode-inserter-prin-example :STATIC ((ins srecode-template-inserter-subtemplate)
+						  escape-start escape-end)
+  "Insert an example using inserter INS.
+Arguments ESCAPE-START and ESCAPE-END are the current escape sequences in use."
+  (call-next-method)
+  (princ "     Template Text to control")
+  (terpri)
+  (princ "   ")
+  (princ escape-start)
+  (princ "/VARNAME")
+  (princ escape-end)
+  (terpri)
+  )
 
 (defmethod srecode-insert-subtemplate ((sti srecode-template-inserter-subtemplate)
 				       dict slot)
@@ -524,8 +597,10 @@ Calls back to `srecode-insert-method-helper' for this class."
 	     :documentation
 	     "A Template used to frame the codes from this inserter.")
    )
-  "All template segments between the secion-start and section-end
-are treated specially.")
+  "Apply values from a sub-dictionary to a template section.
+The dictionary saved at the named dictionary entry will be
+applied to the text between the section start and the
+`srecode-template-inserter-section-end' macro.")
 
 (defmethod srecode-parse-input ((ins srecode-template-inserter-section-start)
 				tag input STATE)
@@ -579,7 +654,20 @@ are treated specially.")
     :initarg :includedtemplate
     :documentation
     "The template included for this inserter."))
-  "This macro will bring in an exapansion of a different template.")
+   "Include a different template into this one.
+The included template will have additional dictionary entries from the subdictionary 
+stored specified by this macro.")
+
+(defmethod srecode-inserter-prin-example :STATIC ((ins srecode-template-inserter-include)
+						  escape-start escape-end)
+  "Insert an example using inserter INS.
+Arguments ESCAPE-START and ESCAPE-END are the current escape sequences in use."
+  (princ "   ")
+  (princ escape-start)
+  (princ ">DICTNAME:contextname:templatename")
+  (princ escape-end)
+  (terpri)
+  )
 
 (defmethod srecode-insert-include-lookup ((sti srecode-template-inserter-include)
 					  dictionary)
@@ -661,7 +749,29 @@ with the dictionaries found in the dictinary."
 	 :documentation
 	 "The character code used to identify inserters of this style.")
     )
-   "Class srecode-template-inserter-include-wrap ")
+   "Include a different template into this one, and add text at the ^ macro.
+The included template will have additional dictionary entries from the subdictionary 
+stored specified by this macro.  If the included macro includes a ^ macro,
+then the text between this macro and the end macro will be inserted at
+the ^ macro.")
+
+(defmethod srecode-inserter-prin-example :STATIC ((ins srecode-template-inserter-include-wrap)
+						  escape-start escape-end)
+  "Insert an example using inserter INS.
+Arguments ESCAPE-START and ESCAPE-END are the current escape sequences in use."
+  (princ "   ")
+  (princ escape-start)
+  (princ "<DICTNAME:contextname:templatename")
+  (princ escape-end)
+  (terpri)
+  (princ "     Template Text to insert at ^ macro")
+  (terpri)
+  (princ "   ")
+  (princ escape-start)
+  (princ "/DICTNAME")
+  (princ escape-end)
+  (terpri)
+  )
 
 (defmethod srecode-insert-method ((sti srecode-template-inserter-include-wrap)
 				  dictionary)
