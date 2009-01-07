@@ -2,10 +2,10 @@
 ;;               or maybe Eric's Implementation of Emacs Intrepreted Objects
 
 ;;;
-;; Copyright (C) 95,96,98,99,2000,01,02,03,04,05,06,07,08 Eric M. Ludlam
+;; Copyright (C) 95,96,98,99,2000,01,02,03,04,05,06,07,08,09 Eric M. Ludlam
 ;;
 ;; Author: <zappo@gnu.org>
-;; RCS: $Id: eieio.el,v 1.175 2008/12/15 17:19:18 zappo Exp $
+;; RCS: $Id: eieio.el,v 1.179 2009/01/04 13:41:19 zappo Exp $
 ;; Keywords: OO, lisp
 
 (defvar eieio-version "1.1"
@@ -434,7 +434,7 @@ It creates an autoload function for CNAME's constructor."
 	;; Create an autoload on top of our constructor function.
 	(autoload cname filename doc nil nil)
 	(autoload (intern (concat (symbol-name cname) "-p")) filename "" nil nil)
-	(autoload (intern (concat (symbol-name cname) "child-p")) filename "" nil nil)
+	(autoload (intern (concat (symbol-name cname) "-child-p")) filename "" nil nil)
 
 	))))
 
@@ -511,8 +511,8 @@ OPTIONS-AND-DOC as the toplevel documentation for this class."
 		    (aset (class-v (car pname)) class-children
 			  (cons cname (aref (class-v (car pname)) class-children))))
 		  ;; Get custom groups, and store them into our local copy.
-		  (mapcar (lambda (g) (add-to-list 'groups g))
-			  (class-option (car pname) :custom-groups))
+		  (mapc (lambda (g) (add-to-list 'groups g))
+			(class-option (car pname) :custom-groups))
 		  ;; save parent in child
 		  (aset newc class-parent (cons (car pname) (aref newc class-parent))))
 	      (error "Invalid parent class %s" pname))
@@ -663,9 +663,9 @@ OPTIONS-AND-DOC as the toplevel documentation for this class."
 	      ((not (listp customg))
 	       (setq customg (list customg))))
 	;; The customgroup better be a symbol, or list of symbols.
-	(mapcar (lambda (cg)
-		  (if (not (symbolp cg))
-		      (signal 'invalid-slot-type (list ':group cg))))
+	(mapc (lambda (cg)
+		(if (not (symbolp cg))
+		    (signal 'invalid-slot-type (list ':group cg))))
 		customg)
 
 	;; First up, add this slot into our new class.
@@ -673,7 +673,7 @@ OPTIONS-AND-DOC as the toplevel documentation for this class."
 			     prot initarg alloc 'defaultoverride skip-nil)
 
 	;; We need to id the group, and store them in a group list attribute.
-	(mapcar (lambda (cg) (add-to-list 'groups cg)) customg)
+	(mapc (lambda (cg) (add-to-list 'groups cg)) customg)
 
 	;; anyone can have an accessor function.  This creates a function
 	;; of the specified name, and also performs a `defsetf' if applicable
@@ -795,7 +795,7 @@ OPTIONS-AND-DOC as the toplevel documentation for this class."
 
     ;; We have a list of custom groups.  Store them into the options.
     (let ((g (class-option-assoc options :custom-groups)))
-      (mapcar (lambda (cg) (add-to-list 'g cg)) groups)
+      (mapc (lambda (cg) (add-to-list 'g cg)) groups)
       (if (memq :custom-groups options)
 	  (setcar (cdr (memq :custom-groups options)) g)
 	(setq options (cons :custom-groups (cons g options)))))
@@ -1216,7 +1216,8 @@ IMPL is the symbol holding the method implementation."
 	  ;; We do have an object.  Make sure it is the right type.
 	  (if ,(if (eq class eieio-default-superclass)
 		   nil ; default superclass means just an obj.  Already asked.
-		 `(not (child-of-class-p (aref (car local-args) object-class) ,class))
+		 `(not (child-of-class-p (aref (car local-args) object-class)
+					 ,(list 'quote class)))
 		 )
 	      
 	      ;; If not the right kind of object, call no applicable
@@ -1225,7 +1226,7 @@ IMPL is the symbol holding the method implementation."
 
 	    ;; It is ok, do the call.
 	    ;; Fill in inter-call variables then evaluate the method.
-	    (let ((scoped-class ,class)
+	    (let ((scoped-class ,(list 'quote class))
 		  (eieio-generic-call-next-method-list nil)
 		  (eieio-generic-call-key method-primary)
 		  (eieio-generic-call-methodname ,(list 'quote method))
@@ -1234,8 +1235,8 @@ IMPL is the symbol holding the method implementation."
 	      (apply ,(list 'quote impl) local-args)
 	      ;(,impl local-args)
 	      ))))
-     ))
-  )
+     )
+  ))
 
 (defsubst eieio-defgeneric-reset-generic-form-primary-only-one (method)
   "Setup METHOD to call the generic form."
@@ -2083,6 +2084,10 @@ for this common case to improve performance."
     ;; Determine the class to use.
     (cond ((eieio-object-p firstarg)
 	   (setq mclass (object-class-fast firstarg)))
+	  ((not firstarg)
+	   (error "Method %s called on nil" method))
+	  ((not (eieio-object-p firstarg))
+	   (error "Primary-only method %s called on something not an object" method))
 	  (t
 	   (error "EIEIO Error: Improperly classified method %s as primary only"
 		  method)
@@ -2829,6 +2834,7 @@ Optional argument NOESCAPE is passed to `prin1-to-string' when appropriate."
 (autoload 'eieio-help-mode-augmentation-maybee "eieio-opt" "For buffers thrown into help mode, augment for eieio.")
 (autoload 'eieio-browse "eieio-opt" "Create an object browser window" t)
 (autoload 'eieio-describe-class "eieio-opt" "Describe CLASS defined by a string or symbol" t)
+(autoload 'eieio-describe-constructor "eieio-opt" "Describe the constructor function FCN." t)
 (autoload 'describe-class "eieio-opt" "Describe CLASS defined by a string or symbol" t)
 (autoload 'eieio-describe-generic "eieio-opt" "Describe GENERIC defined by a string or symbol" t)
 (autoload 'describe-generic "eieio-opt" "Describe GENERIC defined by a string or symbol" t)
@@ -2851,7 +2857,9 @@ Returns the documentation as a string, also."
 Returns the documentation as a string, also."
   (if (generic-p (ad-get-arg 0))
       (eieio-describe-generic (ad-get-arg 0))
-    ad-do-it))
+    (if (class-p (ad-get-arg 0))
+	(eieio-describe-constructor (ad-get-arg 0))
+      ad-do-it)))
 
 (provide 'eieio)
 ;;; eieio ends here
