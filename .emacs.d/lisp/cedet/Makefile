@@ -39,7 +39,7 @@ cogre \
 contrib
 
 ## Path to your Emacs
-EMACS=emacs
+EMACS?=emacs
 
 ## Your shell (On Windows/Cygwin I recommend to use bash)
 #SHELL=bash
