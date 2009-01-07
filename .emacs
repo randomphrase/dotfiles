@@ -33,15 +33,12 @@
 
 ;; And Info paths
 (let ((my-info-paths '("~/.emacs.d/info"
-                       "/usr/share/info"
-                       "/opt/local/share/info"
                        "c:/cygwin/usr/share/info")))
   (dolist (my-info-path
            (remove-if-not 'file-directory-p
                           (mapcar 'expand-file-name my-info-paths)))
     ;; Append it so that the emacs stuff appears first (a bit neater :)
     (add-to-list 'Info-default-directory-list my-info-path t)))
-
 
 ;; Backups go here:
 (if (file-directory-p "~/.emacs.d/backups")
@@ -522,8 +519,6 @@ an empty string if no filename specified."
 (if unicode-character-list-file
     (load "xmlunicode"))
 
-
-
 ;; Bazaar mode
 ;(require 'bazaar)
 ;(add-hook 'find-file-hooks 'bzr-maybe-activate)
@@ -538,31 +533,26 @@ an empty string if no filename specified."
 ;(require 'epa-setup)
 ;;(epa-file-enable)
 
-;;
 ;; TRAMP
-;; Here is my favourite tramp method for windows...
-;;
-(if (eq system-type 'windows-nt)
-    (progn
-      (require 'tramp)
-      (add-to-list 'tramp-methods
-                   '("pscpx"
-                     (tramp-login-program "plink")
-                     (tramp-login-args
-                      (("-load")
-                       ("%h")
-                       ("-t")
-                       ("env 'TERM=dumb' 'PROMPT_COMMAND=' 'PS1=$ '")
-                       ("/bin/sh")))
-                     (tramp-remote-sh "/bin/sh")
-                     (tramp-copy-program "pscp")
-                     (tramp-copy-args
-                      (("-P" "%p")
-                       ("-scp")
-                       ("-p" "%k")))
-                     (tramp-copy-keep-date t)))
-      ))
-;(setq tramp-default-method "pscpx")
+(when (eq window-system 'w32)
+  ;; Here is my favourite tramp method for windows...
+  (require 'tramp)
+  (add-to-list 'tramp-methods
+               '("pscpx"
+                 (tramp-login-program "plink")
+                 (tramp-login-args
+                  (("-load")
+                   ("%h")
+                   ("-t")
+                   ("env 'TERM=dumb' 'PROMPT_COMMAND=' 'PS1=$ '")
+                   ("/bin/sh")))
+                 (tramp-remote-sh "/bin/sh")
+                 (tramp-copy-program "pscp")
+                 (tramp-copy-args
+                  (("-P" "%p")
+                   ("-scp")
+                   ("-p" "%k")))
+                 (tramp-copy-keep-date t))))
 ;; bjdev02 has an ancient /bin/sh which means it won't work with tramp. Fortunately the standard
 ;; bash seems to work, sheesh.
 ;(add-to-list 'tramp-default-method-alist '("bjdev02" "" "pscp"))
@@ -575,6 +565,8 @@ an empty string if no filename specified."
 (global-set-key [f7] 'compile)
 (global-set-key [(shift f7)] 'recompile)
 (global-set-key [(shift f4)] 'previous-error)
+
+;(global-set-key [f9] 'call-last-kbd-macro)
 
 (global-set-key [(home)] 'back-to-indentation-or-beginning)
 (global-set-key [(meta backspace)] 'backward-delete-word)
