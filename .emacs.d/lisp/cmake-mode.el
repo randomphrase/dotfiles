@@ -3,7 +3,7 @@
 ;  Program:   CMake - Cross-Platform Makefile Generator
 ;  Module:    $RCSfile: cmake-mode.el,v $
 ;
-;  Copyright (c) 2000-$Date: 2006/09/23 20:32:34 $ Kitware, Inc., Insight Consortium.  All rights reserved.
+;  Copyright (c) 2000-$Date: 2006/10/13 14:52:01 $ Kitware, Inc., Insight Consortium.  All rights reserved.
 ;  See Copyright.txt or http://www.cmake.org/HTML/Copyright.html for details.
 ;
 ;     This software is distributed WITHOUT ANY WARRANTY; without even
@@ -37,8 +37,7 @@
 ;; Regular expressions used by line indentation function.
 ;;
 (defconst cmake-regex-blank "^[ \t]*$")
-(defconst cmake-regex-comment "#.*$")
-(defconst cmake-regex-blank-comment "#^[ \t]*$")
+(defconst cmake-regex-comment "#.*")
 (defconst cmake-regex-paren-left "(")
 (defconst cmake-regex-paren-right ")")
 (defconst cmake-regex-argument-quoted
@@ -154,152 +153,6 @@
 ;------------------------------------------------------------------------------
 
 ;;
-;; Fill comment paragraph functions.
-;;
-(defconst cmake-fill-comment-prefix "# ")
-
-(defun cmake-fill-comment-paragraph-justify ()
-  "Fills the current comment paragraph with justified margins."
-  (interactive)
-  (cmake-fill-comment-paragraph 1)
-  )
-
-(defun cmake-fill-comment-paragraph (&optional justify)
-  "Fills the current comment paragraph."
-  (interactive "P")
-  (let ((opos (point-marker))
-        (begin nil)
-        (end nil)
-        (indent nil)
-        )
-
-    ; Check if we are inside a comment.
-    (if (not (progn
-               (back-to-indentation)
-               (looking-at cmake-regex-comment)))
-        (error "not inside a comment paragraph ..."))
-    ; *** are right-side comments valid; how do we treat them here??? ***
-
-    (message "filling comment paragraph ...")
-
-    ;;
-    ;; Find limits of paragraph.
-    ;;
-    ; Find end of paragraph.
-    (save-excursion
-      (while (and
-              ; we are in a comment
-              (progn
-                (back-to-indentation)
-                (and (looking-at cmake-regex-comment)
-                     (not (looking-at cmake-regex-blank-comment))))
-              ; and not at the end of the buffer
-              (progn
-                (end-of-line)
-                (not (= (point) (point-max))))
-              )
-        (forward-line 1)
-        )
-      (if (progn
-            (back-to-indentation)
-            (not (and (looking-at cmake-regex-comment)
-                      (not (looking-at cmake-regex-blank-comment)))))
-          (forward-line -1))
-      (end-of-line)
-      (setq end (point-marker))
-      )
-    ; Find beginning of paragraph.
-    (save-excursion
-      (while (and
-              ; we are in a comment
-              (progn
-                (back-to-indentation)
-                (and (looking-at cmake-regex-comment)
-                     (not (looking-at cmake-regex-blank-comment))))
-              ; and not at the beginning of the buffer
-              (progn
-                (beginning-of-line)
-                (not (= (point) (point-min))))
-              )
-        (forward-line -1)
-        )
-      (if (progn
-            (back-to-indentation)
-            (not (and (looking-at cmake-regex-comment)
-                      (not (looking-at cmake-regex-blank-comment))))
-            )
-          (forward-line 1))
-      (back-to-indentation)
-      (setq begin (point-marker))
-      (setq indent(current-column))
-      )
-
-    ;;
-    ;; Delete leading whitespace and uncomment.
-    ;;
-    (save-excursion
-      (goto-char begin)
-      (beginning-of-line)
-      (while (re-search-forward
-              (concat "^[ \t]*\\("
-                      cmake-fill-comment-prefix
-                      "\\|#\\)[ \t]*"
-                      )
-              end t)
-        (replace-match "")
-        )
-      )
-
-    ;;
-    ;; Fill paragraph
-    ;;
-    ; Calculate fill width minus indent minus prefix.
-    (setq fill-column (- fill-column
-                         indent
-                         (length cmake-fill-comment-prefix)
-                         ))
-    ; Fill paragraph.
-    (fill-region begin end justify)
-    ; Restore fill width.
-    (setq fill-column (+ fill-column
-                         indent
-                         (length cmake-fill-comment-prefix)
-                         ))
-
-    ;;
-    ;; Re-comment and re-indent region.
-    ;;
-    (save-excursion
-      (goto-char begin)
-      (setq count (point-marker))
-      (while (< count end)
-        (beginning-of-line)
-        (indent-to indent)
-        (insert cmake-fill-comment-prefix)
-        (forward-line 1)
-        (setq count (point-marker))
-        )
-      )
-
-    ;;
-    ;; Delete the extra line that gets inserted somehow in XEmacs???
-    ;;
-    (if version-xemacs
-      (save-excursion
-        (goto-char end)
-        (end-of-line)
-        (delete-char 1)
-        )
-      )
-
-    (message "filling comment paragraph ... done")
-    (goto-char opos)
-    )
-  )
-
-;------------------------------------------------------------------------------
-
-;;
 ;; Keyword highlighting regex-to-face map.
 ;;
 (defconst cmake-font-lock-keywords
@@ -359,10 +212,6 @@
   (make-local-variable 'comment-start)
   (setq comment-start "#")
 
-  ; Some local overrides of functions
-  (make-local-variable 'fill-paragraph-function)
-  (setq fill-paragraph-function 'cmake-fill-comment-paragraph)
-  
   ; Run user hooks.
   (run-hooks 'cmake-mode-hook))
 
