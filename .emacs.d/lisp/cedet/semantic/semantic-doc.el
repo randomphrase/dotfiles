@@ -1,10 +1,10 @@
 ;;; semantic-doc.el --- Routines for documentation strings
 
-;;; Copyright (C) 1999, 2000, 2001, 2002, 2003, 2005, 2008 Eric M. Ludlam
+;;; Copyright (C) 1999, 2000, 2001, 2002, 2003, 2005, 2008, 2009 Eric M. Ludlam
 
 ;; Author: Eric M. Ludlam <zappo@gnu.org>
 ;; Keywords: syntax
-;; X-RCS: $Id: semantic-doc.el,v 1.11 2008/12/30 22:40:36 zappo Exp $
+;; X-RCS: $Id: semantic-doc.el,v 1.13 2009/01/10 18:43:31 zappo Exp $
 
 ;; This file is not part of GNU Emacs.
 
@@ -57,7 +57,8 @@ If nosnarf if 'lex, then only return the lex token."
 	  ;; Is there doc in the tag???
 	  doctmp
 	  ;; Check just before the definition.
-	  (semantic-documentation-comment-preceeding-tag tag nosnarf)
+	  (when (semantic-tag-with-position-p tag)
+	    (semantic-documentation-comment-preceeding-tag tag nosnarf))
 	  ;;  Lets look for comments either after the definition, but before code:
 	  ;; Not sure yet.  Fill in something clever later....
 	  nil))))))
@@ -73,8 +74,7 @@ just the lexical token and not the string."
   (save-excursion
     ;; Find this tag.
     (semantic-go-to-tag tag)
-    (let* ((end (point))
-	   (starttag (semantic-find-tag-by-overlay-prev
+    (let* ((starttag (semantic-find-tag-by-overlay-prev
 		      (semantic-tag-start tag)))
 	   (start (if starttag
 		      (semantic-tag-end starttag)
