@@ -44,7 +44,7 @@ $(infodir):
 
 $(infodir)/dir: $(info)
 	cp $? $(infodir)
-	$(foreach i,$(notdir $?),install-info --info-dir=$(infodir) --info-file=$(infodir)/$(i) ;)
+	$(foreach i,$(notdir $?),install-info --info-dir=$(infodir) --dir-file=$@ $(infodir)/$(i) ;)
 
 %.elc : %.el
 	$(EMACS) -batch --no-site-file $(foreach hack,$(wildcard $(dir $?)*.hack),-l $(hack)) \

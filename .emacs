@@ -282,6 +282,10 @@ the directories in the INCLUDE environment variable."
   (define-key c-mode-base-map (kbd "M-m") 'eassist-list-methods)
   (define-key c-mode-base-map (kbd "M-<up>") 'senator-previous-tag)
   (define-key c-mode-base-map (kbd "M-<down>") 'senator-next-tag)
+
+  ;; Debug keys
+  ;(define-key c-mode-base-map (kbd "f10") 'gud-next)
+  ;(define-key c-mode-base-map (kbd "f11") 'gud-step)
   )
 (add-hook 'c-initialization-hook 'my-c-initialization-hook)
 
