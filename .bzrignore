@@ -41,3 +41,8 @@ Templates
 CVS
 *-compile-script
 *.info
+*-loaddefs.el
+grammar-make-script
+*-wy.el
+*-by.el
+color-theme-autoloads.el
