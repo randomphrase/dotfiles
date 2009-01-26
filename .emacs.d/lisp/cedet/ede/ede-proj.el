@@ -1,10 +1,10 @@
 ;;; ede-proj.el --- EDE Generic Project file driver
 
-;;;  Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2007, 2008  Eric M. Ludlam
+;;;  Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2007, 2008, 2009  Eric M. Ludlam
 
 ;; Author: Eric M. Ludlam <zappo@gnu.org>
 ;; Keywords: project, make
-;; RCS: $Id: ede-proj.el,v 1.56 2008/12/28 22:13:40 zappo Exp $
+;; RCS: $Id: ede-proj.el,v 1.58 2009/01/20 02:39:53 zappo Exp $
 
 ;; This software is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -358,8 +358,14 @@ Argument TARGET is the project we are completing customization on."
 		       (if (and autoadd (stringp autoadd))
 			   (string= autoadd "y")
 			 (y-or-n-p (format "Add %s to %s? " (buffer-name) name))))
-		  (buffer-file-name))))
-    (setq ot (funcall (cdr (assoc type ede-proj-target-alist)) name :name name
+		  (buffer-file-name)))
+	 (fcn (cdr (assoc type ede-proj-target-alist)))
+	 )
+
+    (when (not fcn)
+      (error "Unknown target type %s for EDE Project." type))
+
+    (setq ot (funcall fcn name :name name
 		      :path (ede-convert-path this default-directory)
 		      :source (if src
 				  (list (file-name-nondirectory src))
@@ -412,8 +418,7 @@ Argument TARGET is the project we are completing customization on."
 (defmethod project-add-file ((this ede-proj-target) file)
   "Add to target THIS the current buffer represented as FILE."
   (let ((file (ede-convert-path this file))
-	(src (ede-target-sourcecode this))
-	(aux nil))
+	(src (ede-target-sourcecode this)))
     (while (and src (not (ede-want-file-p (car src) file)))
       (setq src (cdr src)))
     (when src

@@ -3,7 +3,7 @@
 ;; Copyright (C) 2008, 2009 Eric M. Ludlam
 
 ;; Author: Eric M. Ludlam <eric@siege-engine.com>
-;; X-RCS: $Id: srecode-document.el,v 1.6 2009/01/05 23:49:51 zappo Exp $
+;; X-RCS: $Id: srecode-document.el,v 1.9 2009/01/20 03:46:31 zappo Exp $
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -289,8 +289,7 @@ It is assumed that the comment occurs just after VAR-IN."
 	 (temp (srecode-template-get-table (srecode-table)
 					   "variable-same-line-comment"
 					   "declaration"
-					   'document))
-	 (extract dict))
+					   'document)))
     (if (not temp)
 	(error "No templates for inserting variable comments"))
 
@@ -322,7 +321,7 @@ It is assumed that the comment occurs just after VAR-IN."
 	    (error "Quit"))
 
 	  ;; Extract text from the existing comment.
-	  (setq extract (srecode-extract temp s e))
+	  (srecode-extract temp s e)
 
 	  (delete-region s e)
 	  (goto-char s) ;; To avoid adding a CR.
@@ -566,63 +565,64 @@ Works with the following rules:
   
   This function is designed for variables, not functions.  This does
 not account for verb parts."
-  (let ((ind 0)				;index in string
-	(llow nil)			;lower/upper case flag
-	(wlist nil)			;list of words after breaking
-	(newstr nil)			;new string being generated
-	(al nil))			;autocomment list
-    ;;
-    ;; 1) Convert underscores
-    ;;
-    (while (< ind (length programmer))
-      (setq newstr (concat newstr
-			   (if (= (aref programmer ind) ?_)
-			       " " (char-to-string (aref programmer ind)))))
-      (setq ind (1+ ind)))
-    (setq programmer newstr
-	  newstr nil
-	  ind 0)
-    ;;
-    ;; 2) Find word brakes between case changes
-    ;;
-    (while (< ind (length programmer))
-      (setq newstr
-	    (concat newstr
-		    (let ((tc (aref programmer ind)))
-		      (if (and (>= tc ?a) (<= tc ?z))
-			  (progn
-			    (setq llow t)
-			    (char-to-string tc))
-			(if llow
+  (if (string= "" programmer)
+      ""
+    (let ((ind 0) 			;index in string
+	  (llow nil)			;lower/upper case flag
+	  (newstr nil)			;new string being generated
+	  (al nil))			;autocomment list
+      ;;
+      ;; 1) Convert underscores
+      ;;
+      (while (< ind (length programmer))
+	(setq newstr (concat newstr
+			     (if (= (aref programmer ind) ?_)
+				 " " (char-to-string (aref programmer ind)))))
+	(setq ind (1+ ind)))
+      (setq programmer newstr
+	    newstr nil
+	    ind 0)
+      ;;
+      ;; 2) Find word breaks between case changes
+      ;;
+      (while (< ind (length programmer))
+	(setq newstr
+	      (concat newstr
+		      (let ((tc (aref programmer ind)))
+			(if (and (>= tc ?a) (<= tc ?z))
 			    (progn
-			      (setq llow nil)
-			      (concat " " (char-to-string tc)))
-			  (char-to-string tc))))))
-      (setq ind (1+ ind)))
-    ;;
-    ;; 3) Expand the words if possible
-    ;;
-    (setq llow nil
-	  ind 0
-	  programmer newstr
-	  newstr nil)
-    (while (string-match (concat "^\\s-*\\([^ \t\n]+\\)") programmer)
-      (let ((ts (substring programmer (match-beginning 1) (match-end 1)))
-	    (end (match-end 1)))
-	(setq al srecode-document-autocomment-common-nouns-abbrevs)
-	(setq llow nil)
-	(while al
-	  (if (string-match (car (car al)) (downcase ts))
-	      (progn
-		(setq newstr (concat newstr (cdr (car al))))
-		;; don't terminate because we may actuall have 2 words
-		;; next to eachother we didn't identify before
-		(setq llow t)))
-	  (setq al (cdr al)))
-	(if (not llow) (setq newstr (concat newstr ts)))
-	(setq newstr (concat newstr " "))
-	(setq programmer (substring programmer end))))
-    newstr))
+			      (setq llow t)
+			      (char-to-string tc))
+			  (if llow
+			      (progn
+				(setq llow nil)
+				(concat " " (char-to-string tc)))
+			    (char-to-string tc))))))
+	(setq ind (1+ ind)))
+      ;;
+      ;; 3) Expand the words if possible
+      ;;
+      (setq llow nil
+	    ind 0
+	    programmer newstr
+	    newstr nil)
+      (while (string-match (concat "^\\s-*\\([^ \t\n]+\\)") programmer)
+	(let ((ts (substring programmer (match-beginning 1) (match-end 1)))
+	      (end (match-end 1)))
+	  (setq al srecode-document-autocomment-common-nouns-abbrevs)
+	  (setq llow nil)
+	  (while al
+	    (if (string-match (car (car al)) (downcase ts))
+		(progn
+		  (setq newstr (concat newstr (cdr (car al))))
+		  ;; don't terminate because we may actuall have 2 words
+		  ;; next to eachother we didn't identify before
+		  (setq llow t)))
+	    (setq al (cdr al)))
+	  (if (not llow) (setq newstr (concat newstr ts)))
+	  (setq newstr (concat newstr " "))
+	  (setq programmer (substring programmer end))))
+      newstr)))
 
 ;;; UTILS
 ;;
@@ -648,8 +648,7 @@ Dump out the extracted dictionary."
   (if (not (srecode-table))
       (error "No template table found for mode %s" major-mode))
   
-  (let* ((dict (srecode-create-dictionary))
-	 (temp (srecode-template-get-table (srecode-table)
+  (let* ((temp (srecode-template-get-table (srecode-table)
 					   "function-comment"
 					   "declaration"
 					   'document))
