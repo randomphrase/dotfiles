@@ -53,3 +53,4 @@ $(infodir)/dir: $(info)
 ifeq ($(OSTYPE),cygwin)
 	chmod -x $@
 endif
+
