@@ -1,10 +1,10 @@
 ;;; semanticdb-file.el --- Save a semanticdb to a cache file.
 
-;;; Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2007, 2008 Eric M. Ludlam
+;;; Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2007, 2008, 2009 Eric M. Ludlam
 
 ;; Author: Eric M. Ludlam <zappo@gnu.org>
 ;; Keywords: tags
-;; X-RCS: $Id: semanticdb-file.el,v 1.39 2008/12/10 22:11:10 zappo Exp $
+;; X-RCS: $Id: semanticdb-file.el,v 1.41 2009/02/05 01:26:27 zappo Exp $
 
 ;; This file is not part of GNU Emacs.
 
@@ -381,70 +381,51 @@ name in a secondary directory."
   "Fetch the full filename that OBJ refers to."
   (oref obj file))
 
-;;; Compatibility
+;;; FLUSH OLD FILES
 ;;
-;; replace-regexp-in-string is in subr.el in Emacs 21.  Provide
-;; here for compatibility.
+(defun semanticdb-cleanup-cache-files (&optional noerror)
+  "Cleanup any cache files associated with directories that no longer exist.
+Optional NOERROR prevents errors from being displayed."
+  (interactive)
+  (when (and (not semanticdb-default-save-directory)
+	     (not noerror))
+    (error "No default save directory for semantic-save files"))
 
-(if (not (fboundp 'replace-regexp-in-string))
+  (when semanticdb-default-save-directory
 
-(defun replace-regexp-in-string (regexp rep string &optional
-					fixedcase literal subexp start)
-  "Replace all matches for REGEXP with REP in STRING.
-
-Return a new string containing the replacements.
-
-Optional arguments FIXEDCASE, LITERAL and SUBEXP are like the
-arguments with the same names of function `replace-match'.  If START
-is non-nil, start replacements at that index in STRING.
-
-REP is either a string used as the NEWTEXT arg of `replace-match' or a
-function.  If it is a function it is applied to each match to generate
-the replacement passed to `replace-match'; the match-data at this
-point are such that match 0 is the function's argument.
-
-To replace only the first match (if any), make REGEXP match up to \\'
-and replace a sub-expression, e.g.
-  (replace-regexp-in-string \"\\(foo\\).*\\'\" \"bar\" \" foo foo\" nil nil 1)
-    => \" bar foo\""
-
-  ;; To avoid excessive consing from multiple matches in long strings,
-  ;; don't just call `replace-match' continually.  Walk down the
-  ;; string looking for matches of REGEXP and building up a (reversed)
-  ;; list MATCHES.  This comprises segments of STRING which weren't
-  ;; matched interspersed with replacements for segments that were.
-  ;; [For a `large' number of replacements it's more efficient to
-  ;; operate in a temporary buffer; we can't tell from the function's
-  ;; args whether to choose the buffer-based implementation, though it
-  ;; might be reasonable to do so for long enough STRING.]
-  (let ((l (length string))
-	(start (or start 0))
-	matches str mb me)
-    (save-match-data
-      (while (and (< start l) (string-match regexp string start))
-	(setq mb (match-beginning 0)
-	      me (match-end 0))
-	;; If we matched the empty string, make sure we advance by one char
-	(when (= me mb) (setq me (min l (1+ mb))))
-	;; Generate a replacement for the matched substring.
-	;; Operate only on the substring to minimize string consing.
-	;; Set up match data for the substring for replacement;
-	;; presumably this is likely to be faster than munging the
-	;; match data directly in Lisp.
-	(string-match regexp (setq str (substring string mb me)))
-	(setq matches
-	      (cons (replace-match (if (stringp rep)
-				       rep
-				     (funcall rep (match-string 0 str)))
-				   fixedcase literal str subexp)
-		    (cons (substring string start mb) ; unmatched prefix
-			  matches)))
-	(setq start me))
-      ;; Reconstruct a string from the pieces.
-      (setq matches (cons (substring string start l) matches)) ; leftover
-      (apply #'concat (nreverse matches)))))
-
-)
+    ;; Calculate all the cache files we have.
+    (let* ((regexp (regexp-quote semanticdb-default-file-name))
+	   (files (directory-files semanticdb-default-save-directory
+				   t regexp))
+	   (orig nil)
+	   (to-delete nil))
+      (dolist (F files)
+	(setq orig (cedet-file-name-to-directory-name
+		    (file-name-nondirectory F)))
+	(when (not (file-exists-p (file-name-directory orig)))
+	  (setq to-delete (cons F to-delete))
+	  ))
+      (if to-delete
+	(save-window-excursion
+	  (let ((buff (get-buffer-create "*Semanticdb Delete*")))
+	    (with-current-buffer buff
+	      (erase-buffer)
+	      (insert "The following Cache files appear to be obsolete.\n\n")
+	      (dolist (F to-delete)
+		(insert F "\n")))
+	    (pop-to-buffer buff t t)
+	    (fit-window-to-buffer (get-buffer-window buff) nil 1)
+	    (when (y-or-n-p "Delete Old Cache Files? ")
+	      (mapc (lambda (F)
+		      (message "Deleting to %s..." F)
+		      (delete-file F))
+		    to-delete)
+	      (message "done."))
+	    ))
+	;; No files to delete
+	(when (not noerror)
+	  (message "No obsolete semanticdb.cache files."))
+	))))
 
 (provide 'semanticdb-file)
 
