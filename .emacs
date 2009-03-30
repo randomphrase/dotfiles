@@ -179,16 +179,21 @@ With argument, do this that many times."
 
 
 ;;
-;; cedet
+;; CEDET Stuff
 ;;
 (load "cedet")
 (semantic-load-enable-gaudy-code-helpers)
-(global-ede-mode t)
+(require 'semantic-ia)
 
 ;; MacPorts installs headers here, make sure semantic knows about them:
 (let ((dir "/opt/local/include/"))
-  (and (file-directory-p dir)
+  (if (file-directory-p dir)
        (semantic-add-system-include dir)))
+
+;; Ensure semantic can get info from gnu global
+(require 'semanticdb-global)
+(semanticdb-enable-gnu-global-databases 'c-mode)
+(semanticdb-enable-gnu-global-databases 'c++-mode)
 
 ;; (add-hook 'semantic-init-hooks (lambda ()
 ;;                                  (imenu-add-to-menubar "Tokens")))
@@ -196,18 +201,56 @@ With argument, do this that many times."
 ;; Adds semantic analyze display for speedbar
 (add-hook 'speedbar-load-hook (lambda () (require 'semantic-sb)))
 
+;; don't use semantic on remote files:
+(add-to-list 'semantic-inhibit-functions
+             (lambda () (and buffer-file-name (file-remote-p buffer-file-name))))
+
+(defun my-cedet-hook ()
+  (local-set-key [(control c) (tab)] 'semantic-ia-complete-symbol-menu)
+  (local-set-key [(control c) (\?)] 'semantic-ia-complete-symbol)
+  ;;
+  (local-set-key [(control c) (\>)] 'semantic-complete-analyze-inline)
+  (local-set-key [(control c) (=)] 'semantic-decoration-include-visit)
+
+  (local-set-key [(control c) (j)] 'semantic-ia-fast-jump)
+  (local-set-key [(control c) (q)] 'semantic-ia-show-doc)
+  (local-set-key [(control c) (s)] 'semantic-ia-show-summary)
+  (local-set-key [(control c) (p)] 'semantic-analyze-proto-impl-toggle)
+  )
+;;(add-hook 'semantic-init-hooks 'my-cedet-hook)
+(add-hook 'lisp-mode-hook 'my-cedet-hook)
+(add-hook 'emacs-lisp-mode-hook 'my-cedet-hook)
+;; (add-hook 'erlang-mode-hook 'my-cedet-hook)
+
+;; Don't parse these files...
+;; (add-hook 'semantic--before-fetch-tags-hook
+;;           (lambda () (if (string-match
+;;                           "^c:/program files/boost/boost_\[0-9_\]+/boost/preprocessor/\\(repetition\\|seq\\)/"
+;;                           (buffer-file-name))
+;;                          nil
+;;                        t)))
+
+
+
+;;
+;; EDE
+;;
+
+(global-ede-mode t)
+
 (defun my-locate-pch-header (name dir)
   (cond
    ((string= "globalPch.hpp" name)
-    (concat dir "pchWin32/globalPch.hpp"))
+    (concat dir "pchNone/globalPch.hpp"))
    ((string-match "^\\([a-zA-Z]+\\)Pch.hpp$" name)
-    (concat dir (match-string 1 name) "/pchWin32/" name))
+    (concat dir (match-string 1 name) "/pchNone/" name))
    ))
 
 (defun my-locate-project (&optional dir)
   "Return a full file name to the project file stored in dir, or nil"
   (let ((cmakepath (expand-file-name "CMakeLists.txt" dir)))
-    (if (file-exists-p cmakepath)
+    (if (and (not (file-remote-p cmakepath))
+             (file-exists-p cmakepath))
         cmakepath
       nil)))
 
@@ -218,7 +261,8 @@ With argument, do this that many times."
                         :locate-fcn 'my-locate-pch-header
                         :file (expand-file-name "CMakeLists.txt" dir)
                         :include-path '( "/" )
-                        :system-include-path '( "c:/Program Files/boost/boost_1_37_0/" )
+                        :system-include-path '( "c:/Program Files/boost/boost_1_37_0/"
+                                                "~/hack/build/boost_1_37_0/" )
 ;;;                       :spp-table '( ( "_MSC_VER" . "1400" ) )
                         ))
 
@@ -233,61 +277,70 @@ With argument, do this that many times."
      	     t)
 
 
-;; don't use semantic on remote files:
-(add-to-list 'semantic-inhibit-functions
-             (lambda () (and buffer-file-name (file-remote-p buffer-file-name))))
 
-;; Don't parse these files...
-(add-hook 'semantic--before-fetch-tags-hook
-          (lambda () (if (string-match
-                          "^c:/program files/boost/boost_\[0-9_\]+/boost/preprocessor/\\(repetition\\|seq\\)/"
-                          (buffer-file-name))
-                         nil
-                       t)))
 
 ;;
 ;; c/c++ stuff
 ;;
+(require 'gtags)
+
 (require 'eassist)
 (add-to-list 'eassist-header-switches '("cxx" . ("hxx" "hpp" "h")))
 (add-to-list 'eassist-header-switches '("hxx" . ("cxx" "cpp")))
 (add-to-list 'eassist-header-switches '("ipp" . ("hxx" "hpp" "h")))
 (add-to-list 'eassist-header-switches '("hpp" . ("cxx" "cpp" "ipp")))
 
-(add-to-list 'auto-mode-alist '("\\.ipp$" . c++-mode))
+(add-to-list 'auto-mode-alist '("\\.[it]pp$" . c++-mode))
+(add-to-list 'auto-mode-alist '("\\.[it]xx$" . c++-mode))
 
-(defun file-in-directory-list-p (file dirlist)
-  "Returns true if the file specified is contained within one of
-the directories in the list. The directories must also exist."
-  (let ((dirs (mapcar 'expand-file-name dirlist))
-        (filedir (expand-file-name (file-name-directory file))))
-    (and
-     (file-directory-p filedir)
-     (member-if (lambda (x) ; Check directory prefix matches
-                  (string-match (substring x 0 (min(length filedir) (length x))) filedir))
-                dirs))))
+;; Don't seem to need this stuff any more - the standard c++ headers have their own mode detection strings
+;; 
+;; (defun file-in-directory-list-p (file dirlist)
+;;   "Returns true if the file specified is contained within one of
+;; the directories in the list. The directories must also exist."
+;;   (let ((dirs (mapcar 'expand-file-name dirlist))
+;;         (filedir (expand-file-name (file-name-directory file))))
+;;     (and
+;;      (file-directory-p filedir)
+;;      (member-if (lambda (x) ; Check directory prefix matches
+;;                   (string-match (substring x 0 (min(length filedir) (length x))) filedir))
+;;                 dirs))))
 
-(defun buffer-standard-include-p ()
-  "Returns true if the current buffer is contained within one of
-the directories in the INCLUDE environment variable."
-  (and (getenv "INCLUDE")
-       (file-in-directory-list-p buffer-file-name (split-string (getenv "INCLUDE") path-separator))))
+;; (defun buffer-standard-include-p ()
+;;   "Returns true if the current buffer is contained within one of
+;; the directories in the INCLUDE environment variable."
+;;   (and (getenv "INCLUDE")
+;;        (file-in-directory-list-p buffer-file-name (split-string (getenv "INCLUDE") path-separator))))
 
-(add-to-list 'magic-fallback-mode-alist '(buffer-standard-include-p . c++-mode))
-
-;(require 'gtags)
+;; (add-to-list 'magic-fallback-mode-alist '(buffer-standard-include-p . c++-mode))
 
 (defun my-c-initialization-hook ()
   (define-key c-mode-base-map (kbd "M-o") 'eassist-switch-h-cpp)
   (define-key c-mode-base-map (kbd "M-m") 'eassist-list-methods)
-  (define-key c-mode-base-map (kbd "M-<up>") 'senator-previous-tag)
-  (define-key c-mode-base-map (kbd "M-<down>") 'senator-next-tag)
+;;;   (define-key c-mode-base-map (kbd "M-<up>") 'senator-previous-tag)
+;;;   (define-key c-mode-base-map (kbd "M-<down>") 'senator-next-tag)
 
   ;; Debug keys
-  ;(define-key c-mode-base-map (kbd "f10") 'gud-next)
-  ;(define-key c-mode-base-map (kbd "f11") 'gud-step)
-  )
+  (define-key c-mode-base-map [(f10)] 'gud-next)
+  (define-key c-mode-base-map [(f11)] 'gud-step)
+
+  ;; semantic
+  ;;(define-key c-mode-base-map (kbd ".") 'semantic-complete-self-insert)
+  ;;(define-key c-mode-base-map (kbd ">") 'semantic-complete-self-insert)
+  (define-key c-mode-base-map (kbd "\C-c\C-r") 'semantic-symref)
+)
 (add-hook 'c-initialization-hook 'my-c-initialization-hook)
+
+(defun my-c-mode-common-hook ()
+  (c-subword-mode 1)
+  ;(c-toggle-auto-newline 1)
+  (gtags-mode 1)
+  ;(semantic-tag-folding-mode 1)
+  ;(setq show-trailing-whitespace t)
+  )
+(add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
+(add-hook 'c-mode-common-hook 'my-cedet-hook)
+
 
 ;; Indentation style popular around here
 (c-add-style "tibra" 
@@ -419,15 +472,6 @@ an empty string if no filename specified."
   (tibra-namespace-declare-close) \n
   )
 
-;; Customizations for all modes in CC Mode.
-(defun my-c-mode-common-hook ()
-  (c-subword-mode 1)
-  ;(c-toggle-auto-newline 1)
-  (gtags-mode 1)
-  ;(semantic-tag-folding-mode 1)
-  ;(setq show-trailing-whitespace t)
-)
-(add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 
 
 ;;
@@ -549,7 +593,10 @@ an empty string if no filename specified."
 (global-set-key [(shift f7)] 'recompile)
 (global-set-key [(shift f4)] 'previous-error)
 
-;(global-set-key [f9] 'call-last-kbd-macro)
+(global-set-key [f9]    'gdb-toggle-breakpoint)
+(global-set-key [f10]   'gud-next)
+(global-set-key [f11]   'gud-step)
+(global-set-key [(shift f11)]   'gud-finish)
 
 (global-set-key [(home)] 'back-to-indentation-or-beginning)
 (global-set-key [(meta backspace)] 'backward-delete-word)
