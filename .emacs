@@ -183,6 +183,7 @@ With argument, do this that many times."
 ;;
 (load "cedet")
 (semantic-load-enable-gaudy-code-helpers)
+(global-semantic-idle-tag-highlight-mode)
 (require 'semantic-ia)
 
 ;; MacPorts installs headers here, make sure semantic knows about them:
@@ -261,8 +262,7 @@ With argument, do this that many times."
                         :locate-fcn 'my-locate-pch-header
                         :file (expand-file-name "CMakeLists.txt" dir)
                         :include-path '( "/" )
-                        :system-include-path '( "c:/Program Files/boost/boost_1_37_0/"
-                                                "~/hack/build/boost_1_37_0/" )
+                        :system-include-path (list (expand-file-name "external" dir) )
 ;;;                       :spp-table '( ( "_MSC_VER" . "1400" ) )
                         ))
 
@@ -510,6 +510,7 @@ an empty string if no filename specified."
 ;; associate with file extensions:
 (add-to-list 'auto-mode-alist '("\\.plist$" . nxml-mode))
 (add-to-list 'auto-mode-alist '("\\.xml$"   . nxml-mode))
+(add-to-list 'auto-mode-alist '("\\.xsl$"   . nxml-mode))
 ;(add-to-list 'auto-mode-alist '("\\.php[34]?$"   . nxml-mode))
 
 ;; update date comment between "<!-- ts start -->" and
