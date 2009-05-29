@@ -37,6 +37,9 @@ alias grep=egrep
 alias ll='ls -l'
 alias la='ls -a'
 
+alias bd='cd repo build'
+alias rd='cd build repo'
+
 # List only directories and symbolic
 # links that point to directories
 alias lsd='ls -ld *(-/DN)'
