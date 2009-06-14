@@ -511,22 +511,8 @@ an empty string if no filename specified."
 (add-to-list 'auto-mode-alist '("\\.plist$" . nxml-mode))
 (add-to-list 'auto-mode-alist '("\\.xml$"   . nxml-mode))
 (add-to-list 'auto-mode-alist '("\\.xsl$"   . nxml-mode))
+(add-to-list 'auto-mode-alist '("\\.xsd$"   . nxml-mode))
 ;(add-to-list 'auto-mode-alist '("\\.php[34]?$"   . nxml-mode))
-
-;; update date comment between "<!-- ts start -->" and
-;; "<!-- ts end -->" if file is written
-(add-hook 'nxml-mode-hook
-          '(lambda ()
-             (add-hook
-              'local-write-file-hooks
-              '(lambda ()
-                 (save-excursion
-                   (beginning-of-buffer)
-                   (if (re-search-forward
-                        "<!-- ts start -->\\(.*\\)<!-- ts end -->" nil t)
-                       (replace-match
-                        (format-time-string "%Y-%m-%d")
-                        nil nil nil 1)))))))
 
 ;; load Relax NG compact mode
 (autoload 'rnc-mode "rnc-mode")
@@ -588,6 +574,9 @@ an empty string if no filename specified."
 ;;
 ;; My favorite key bindings
 ;;
+
+(global-set-key [f5] 'kmacro-start-macro-or-insert-counter)
+(global-set-key [f6] 'kmacro-end-or-call-macro)
 
 (global-set-key [f4] 'next-error)
 (global-set-key [f7] 'compile)
