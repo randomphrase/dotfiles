@@ -32,13 +32,13 @@
     (add-to-list 'exec-path my-exec-path)))
 
 ;; And Info paths
-(let ((my-info-paths '("~/.emacs.d/info"
-                       "c:/cygwin/usr/share/info")))
-  (dolist (my-info-path
-           (remove-if-not 'file-directory-p
-                          (mapcar 'expand-file-name my-info-paths)))
-    ;; Append it so that the emacs stuff appears first (a bit neater :)
-    (add-to-list 'Info-default-directory-list my-info-path t)))
+;; (let ((my-info-paths '("~/.emacs.d/info"
+;;                        "c:/cygwin/usr/share/info")))
+;;   (dolist (my-info-path
+;;            (remove-if-not 'file-directory-p
+;;                           (mapcar 'expand-file-name my-info-paths)))
+;;     ;; Append it so that the emacs stuff appears first (a bit neater :)
+;;     (add-to-list 'Info-default-directory-list my-info-path)))
 
 ;; Backups go here:
 (if (file-directory-p "~/.emacs.d/backups")
@@ -188,7 +188,12 @@ With argument, do this that many times."
 ;; MacPorts installs headers here, make sure semantic knows about them:
 (let ((dir "/opt/local/include/"))
   (if (file-directory-p dir)
-       (semantic-add-system-include dir)))
+      (progn
+        (semantic-reset-system-include 'c-mode)
+        (semantic-add-system-include dir 'c-mode)
+        (semantic-reset-system-include 'c++-mode)
+        (semantic-add-system-include dir 'c++-mode)
+        )))
 
 ;; Ensure semantic can get info from gnu global
 (require 'semanticdb-global)
@@ -557,8 +562,8 @@ an empty string if no filename specified."
 ;; (require 'mailcrypt)
 ;; (mc-setversion "gpg")
 ;; (require 'mc-gpg-file-mode)
-;(require 'epa-setup)
-;;(epa-file-enable)
+(require 'epa-setup)
+(epa-file-enable)
 
 ;; TRAMP
 (when (eq window-system 'w32)
