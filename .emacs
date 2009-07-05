@@ -479,6 +479,19 @@ an empty string if no filename specified."
   )
 
 
+;; Handy skeleton for simple unit tests
+(define-skeleton boost-unit-test-module
+  "A skeleton for Boost UTF modules"
+  nil
+  "#define BOOST_TEST_MODULE " (file-name-sans-extension (file-name-nondirectory (buffer-file-name))) \n
+  "#include <boost/test/unit_test.hpp>" \n
+  \n
+  "BOOST_AUTO_TEST_CASE(" (file-name-sans-extension (file-name-nondirectory (buffer-file-name))) ")" \n
+  "{" \n
+  _ \n
+  "}" \n
+)
+
 
 ;;
 ;; Doxymacs for doxygen comments:
