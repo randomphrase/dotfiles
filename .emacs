@@ -354,6 +354,7 @@ With argument, do this that many times."
                (c-offsets-alist
                 (statement-block-intro . +)
                 (substatement-open . 0)
+                (inline-open . 0)
                 (substatement-label . 0)
                 (inher-intro . 0)
                 (label . 0)
