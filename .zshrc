@@ -140,6 +140,9 @@ HISTFILE=~/.history
 EDITOR=emacsclient
 alias em='emacsclient -n'
 
+# Use colour ls if at all possible
+CLICOLOR=1
+
 # Watch for my friends
 #watch=( $(<~/.friends) )       # watch for people in .friends file
 #watch=(notme)                   # watch for everybody but me

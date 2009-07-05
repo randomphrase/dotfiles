@@ -32,13 +32,13 @@
     (add-to-list 'exec-path my-exec-path)))
 
 ;; And Info paths
-(let ((my-info-paths '("~/.emacs.d/info"
-                       "c:/cygwin/usr/share/info")))
-  (dolist (my-info-path
-           (remove-if-not 'file-directory-p
-                          (mapcar 'expand-file-name my-info-paths)))
-    ;; Append it so that the emacs stuff appears first (a bit neater :)
-    (add-to-list 'Info-default-directory-list my-info-path t)))
+;; (let ((my-info-paths '("~/.emacs.d/info"
+;;                        "c:/cygwin/usr/share/info")))
+;;   (dolist (my-info-path
+;;            (remove-if-not 'file-directory-p
+;;                           (mapcar 'expand-file-name my-info-paths)))
+;;     ;; Append it so that the emacs stuff appears first (a bit neater :)
+;;     (add-to-list 'Info-default-directory-list my-info-path)))
 
 ;; Backups go here:
 (if (file-directory-p "~/.emacs.d/backups")
@@ -192,7 +192,12 @@ With argument, do this that many times."
 ;; MacPorts installs headers here, make sure semantic knows about them:
 (let ((dir "/opt/local/include/"))
   (if (file-directory-p dir)
-       (semantic-add-system-include dir)))
+      (progn
+        (semantic-reset-system-include 'c-mode)
+        (semantic-add-system-include dir 'c-mode)
+        (semantic-reset-system-include 'c++-mode)
+        (semantic-add-system-include dir 'c++-mode)
+        )))
 
 ;; Ensure semantic can get info from gnu global
 (require 'semanticdb-global)
@@ -355,6 +360,7 @@ With argument, do this that many times."
                (c-offsets-alist
                 (statement-block-intro . +)
                 (substatement-open . 0)
+                (inline-open . 0)
                 (substatement-label . 0)
                 (inher-intro . 0)
                 (label . 0)
@@ -479,6 +485,19 @@ an empty string if no filename specified."
   )
 
 
+;; Handy skeleton for simple unit tests
+(define-skeleton boost-unit-test-module
+  "A skeleton for Boost UTF modules"
+  nil
+  "#define BOOST_TEST_MODULE " (file-name-sans-extension (file-name-nondirectory (buffer-file-name))) \n
+  "#include <boost/test/unit_test.hpp>" \n
+  \n
+  "BOOST_AUTO_TEST_CASE(" (file-name-sans-extension (file-name-nondirectory (buffer-file-name))) ")" \n
+  "{" \n
+  _ \n
+  "}" \n
+)
+
 
 ;;
 ;; Doxymacs for doxygen comments:
@@ -550,8 +569,8 @@ an empty string if no filename specified."
 ;; (require 'mailcrypt)
 ;; (mc-setversion "gpg")
 ;; (require 'mc-gpg-file-mode)
-;(require 'epa-setup)
-;;(epa-file-enable)
+(require 'epa-setup)
+(epa-file-enable)
 
 ;; TRAMP
 (when (eq window-system 'w32)
@@ -576,6 +595,14 @@ an empty string if no filename specified."
 ;; bjdev02 has an ancient /bin/sh which means it won't work with tramp. Fortunately the standard
 ;; bash seems to work, sheesh.
 ;(add-to-list 'tramp-default-method-alist '("bjdev02" "" "pscp"))
+
+(defadvice vc-bzr-registered (around my-vc-bzr-registered-tramp activate)
+  "Don't try to use BZR on files accessed via TRAMP."
+  (if (and (fboundp 'tramp-tramp-file-p)
+           (tramp-tramp-file-p (ad-get-arg 0)))
+      nil
+    ad-do-it))
+
 
 ;;
 ;; My favorite key bindings
