@@ -83,6 +83,12 @@ alias -g T='|tail'
 alias plcat="plutil -convert xml1 -o - "
 
 
+# Use ccache if it's available
+if [[ -x $(which ccache) ]]; then
+    export CC="ccache ${CC-gcc}"
+    export CXX="ccache ${CXX-g++}"
+fi
+
 #manpath=($X11HOME/man /usr/man /usr/lang/man /usr/local/man)
 #export MANPATH
 
