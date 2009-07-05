@@ -576,6 +576,14 @@ an empty string if no filename specified."
 ;; bash seems to work, sheesh.
 ;(add-to-list 'tramp-default-method-alist '("bjdev02" "" "pscp"))
 
+(defadvice vc-bzr-registered (around my-vc-bzr-registered-tramp activate)
+  "Don't try to use BZR on files accessed via TRAMP."
+  (if (and (fboundp 'tramp-tramp-file-p)
+           (tramp-tramp-file-p (ad-get-arg 0)))
+      nil
+    ad-do-it))
+
+
 ;;
 ;; My favorite key bindings
 ;;
