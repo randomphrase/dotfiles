@@ -354,6 +354,7 @@ With argument, do this that many times."
                (c-offsets-alist
                 (statement-block-intro . +)
                 (substatement-open . 0)
+                (inline-open . 0)
                 (substatement-label . 0)
                 (inher-intro . 0)
                 (label . 0)
@@ -477,6 +478,19 @@ an empty string if no filename specified."
   (tibra-namespace-declare-close) \n
   )
 
+
+;; Handy skeleton for simple unit tests
+(define-skeleton boost-unit-test-module
+  "A skeleton for Boost UTF modules"
+  nil
+  "#define BOOST_TEST_MODULE " (file-name-sans-extension (file-name-nondirectory (buffer-file-name))) \n
+  "#include <boost/test/unit_test.hpp>" \n
+  \n
+  "BOOST_AUTO_TEST_CASE(" (file-name-sans-extension (file-name-nondirectory (buffer-file-name))) ")" \n
+  "{" \n
+  _ \n
+  "}" \n
+)
 
 
 ;;
