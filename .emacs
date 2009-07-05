@@ -166,6 +166,9 @@ With argument, do this that many times."
 ;; Graphviz mode
 (load-library "graphviz-dot-mode")
 
+;; Show whitespace mode
+(require 'show-wspace)
+
 ;; ;;
 ;; ;; Python mode
 ;; ;;
@@ -328,6 +331,9 @@ With argument, do this that many times."
   ;;(define-key c-mode-base-map (kbd ".") 'semantic-complete-self-insert)
   ;;(define-key c-mode-base-map (kbd ">") 'semantic-complete-self-insert)
   (define-key c-mode-base-map (kbd "\C-c\C-r") 'semantic-symref)
+
+  ;; Show hard tabs
+  (show-ws-highlight-tabs)
 )
 (add-hook 'c-initialization-hook 'my-c-initialization-hook)
 
