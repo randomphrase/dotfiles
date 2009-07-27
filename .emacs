@@ -353,6 +353,14 @@ With argument, do this that many times."
 (add-hook 'c-mode-common-hook 'my-cedet-hook)
 
 
+(defun tibra-lineup-init-intro (langelem)
+  "Line up member initializer lists so that when you have a hanging
+colon, subsequent lines are indented."
+  (save-excursion
+    (back-to-indentation)
+    (if (looking-at ":")
+        nil c-basic-offset)))
+
 ;; Indentation style popular around here
 (c-add-style "tibra" 
              '((c-basic-offset . 4)
@@ -363,6 +371,7 @@ With argument, do this that many times."
                 (inline-open . 0)
                 (substatement-label . 0)
                 (inher-intro . 0)
+                (member-init-intro . tibra-lineup-init-intro)
                 (label . 0)
                 (statement-cont . +)
                 (innamespace . -)
