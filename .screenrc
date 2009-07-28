@@ -24,4 +24,4 @@ escape ``
 hardstatus string "[screen %n%?: %t%?] %h"
 
 # Lots of scrollback
-defscrollback 1000
+defscrollback 5000
