@@ -67,7 +67,7 @@ if [[ -d ~/.zfunc ]]; then
     # Autoload shell functions in .zfunc. Ignores files beginning with an
     # underscore, because compinit will autoload them. This glob also
     # strips the directory part, because that's all we need.
-    autoload -- ~/.zfunc/[^_]*(:t)
+    [[ -f ~/.zfunc/[^_]*(:t) ]] && autoload -- ~/.zfunc/[^_]*(:t)
 fi
   
 # automatically remove duplicates from these arrays
