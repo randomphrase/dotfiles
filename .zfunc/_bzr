@@ -65,7 +65,7 @@ case $cmd in
 	)
     ;;
 
-(annotate|blame|praise)
+(annotate|qannotate|blame|qblame|praise|qpraise)
     args+=(
 	'--all[show annotations on all lines]'
 	'--long[show date in annotations]'
