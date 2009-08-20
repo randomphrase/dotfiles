@@ -67,6 +67,10 @@
 (color-theme-gtk-ide)
 
 ;;
+;; Set the frame format to show the visited file, often handy
+(setq frame-title-format '("" "Emacs - %f [%b]"))
+
+;;
 ;; Editing/movement commands - bound to keys a bit later on
 ;;
 
@@ -352,14 +356,21 @@ With argument, do this that many times."
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 (add-hook 'c-mode-common-hook 'my-cedet-hook)
 
-
 (defun tibra-lineup-init-intro (langelem)
   "Line up member initializer lists so that when you have a hanging
 colon, subsequent lines are indented."
   (save-excursion
     (back-to-indentation)
     (if (looking-at ":")
-        nil c-basic-offset)))
+        0 c-basic-offset)))
+
+(defun tibra-lineup-init-cont (langelem)
+  "Line up member initializer lists so that when you have a hanging
+colon, subsequent lines are indented."
+  (save-excursion
+    (back-to-indentation)
+    (if (looking-at ":")
+        (- c-basic-offset) 0)))
 
 ;; Indentation style popular around here
 (c-add-style "tibra" 
@@ -372,9 +383,11 @@ colon, subsequent lines are indented."
                 (substatement-label . 0)
                 (inher-intro . 0)
                 (member-init-intro . tibra-lineup-init-intro)
+                (member-init-cont . tibra-lineup-init-cont)
                 (label . 0)
                 (statement-cont . +)
                 (innamespace . -)
+                (case-label . +)
                 )
                (c-hanging-braces-alist
                 (brace-list-open)
