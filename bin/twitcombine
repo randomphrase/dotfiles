@@ -1,0 +1,55 @@
+#!/bin/zsh
+
+# Combine all of the twitter user_timeline.xml files specified on the command line into a single output 
+
+# build up an input XML document with an embedded stylesheet:
+
+input_args=()
+for f in $*; do
+    [[ -f $f ]] || exit "Not a file: $f"
+    input_args+="<input>${f//&/&amp;}</input>"
+done
+
+xsltproc - <<EOF
+<?xml version="1.0"?>
+<!DOCTYPE inputs [
+  <!ATTLIST xsl:stylesheet id ID #REQUIRED>
+]>
+<?xml-stylesheet type="text/xml" href="#style1"?>
+<inputs>
+  ${input_args}
+
+  <xsl:stylesheet id="style1" version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+    <xsl:output type="xml" indent="yes"/>
+    <xsl:strip-space elements="inputs"/>
+
+    <xsl:template match="*">
+      <xsl:copy>
+        <xsl:copy-of select="@*"/>
+        <xsl:apply-templates/>
+      </xsl:copy>
+    </xsl:template>
+    
+    <xsl:template match="statuses">
+      <xsl:apply-templates/>
+    </xsl:template>
+
+    <xsl:template match="user"/>
+
+    <xsl:template match="xsl:stylesheet"/>
+    
+    <xsl:template match="input">
+      <xsl:apply-templates select="document(text())"/>
+    </xsl:template>
+ 
+    <xsl:template match="inputs">
+      <statuses type="array">
+        <xsl:apply-templates/>
+      </statuses>
+    </xsl:template>
+
+  </xsl:stylesheet>
+</inputs>
+EOF
