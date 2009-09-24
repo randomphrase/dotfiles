@@ -3,7 +3,13 @@
 ;; We use remove-if-not, part of cl
 (require 'cl)
 
-;; Twiddle load paths to find my stuff:
+;; Load stuff from elpa first:
+(when
+    (load
+     (expand-file-name "~/.emacs.d/elpa/package.el"))
+  (package-initialize))
+
+;; Twiddle load paths to find the rest of my stuff:
 (setq my-load-paths '("~/.emacs.d/lisp"
                       "/Library/Application Support/Emacs/site-lisp"))
 (dolist (my-path 
@@ -583,7 +589,7 @@ an empty string if no filename specified."
 ;; Bazaar mode
 ;(require 'bazaar)
 ;(add-hook 'find-file-hooks 'bzr-maybe-activate)
-(require 'vc-bzr)
+;(require 'vc-bzr)
 
 ;;
 ;; mailcrypt - used for file mode especially!
@@ -644,6 +650,7 @@ an empty string if no filename specified."
 (global-set-key [(shift f11)]   'gud-finish)
 
 (global-set-key [(home)] 'back-to-indentation-or-beginning)
+(global-set-key [(end)] 'move-end-of-line)
 (global-set-key [(meta backspace)] 'backward-delete-word)
 
 (global-set-key [(control \')] 'goto-last-change)
