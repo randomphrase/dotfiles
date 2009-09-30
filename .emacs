@@ -65,12 +65,13 @@
 ;; Visual effects
 ;;
 
-;(require 'zenburn)
-;(zenburn)
-(require 'color-theme)
-(color-theme-initialize)
-;(color-theme-scintilla)
-(color-theme-gtk-ide)
+(when window-system
+ ;(require 'zenburn)
+ ;(zenburn)
+  (require 'color-theme)
+  (color-theme-initialize)
+  ;(color-theme-scintilla)
+  (color-theme-gtk-ide))
 
 ;;
 ;; Set the frame format to show the visited file, often handy
