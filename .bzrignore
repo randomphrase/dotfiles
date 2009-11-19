@@ -46,3 +46,4 @@ grammar-make-script
 *-wy.el
 *-by.el
 color-theme-autoloads.el
+CMakeFiles
