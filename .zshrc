@@ -13,6 +13,14 @@
 [[ -d /opt/local/bin ]] && path=( /opt/local/bin $path ) \
     && manpath=( /opt/local/share/man /usr/share/man /usr/X11/man )
 
+# Use Emacs.app emacsclient in preference to built-in emacsclient if found:
+for eapp in /Applications/Emacs.app /Applications/MacPorts/Emacs.app; do
+    if [[ -d $eapp/Contents/MacOS/bin ]]; then
+        path=( $eapp/Contents/MacOS/bin $path )
+        break
+    fi
+done
+
 # Search path for the cd command
 cdpath=(.. ~)
 
@@ -56,6 +64,12 @@ alias lvared="IFS=\$'\n' vared"
 # Shell functions
 #setenv() { typeset -x "${1}${1:+=}${(@)argv[2,$#]}" }  # csh compatibility
 #freload() { while (( $# )); do; unfunction $1; autoload -U $1; shift; done }
+
+# mkdir, cd into it
+mkcd () {
+    mkdir -p "$*"
+    cd "$*"
+}
 
 # Where to look for autoloaded function definitions
 #fpath=($fpath ~/.zfunc)
@@ -110,7 +124,7 @@ header() {
     case $TERM in
         *xterm*|rxvt|(dt|k|E)term|cygwin) print -Pn "\e]2;$*\a"
         ;;
-        screen) print -Pn "\e_$*\e\\"
+        screen|dumb) print -Pn "\e_$*\e\\"
         ;;
     esac
 }
