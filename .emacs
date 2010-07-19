@@ -9,6 +9,16 @@
      (expand-file-name "~/.emacs.d/elpa/package.el"))
   (package-initialize))
 
+(defun my-directory-subdirs (parent)
+  "Returns the subdirectories of parent"
+  (let ((contents (directory-files parent))
+        (default-directory parent))
+    (while (or (string= (car contents) ".")
+               (string= (car contents) ".."))
+      (setq contents (cdr contents)))
+    (remove-if-not 'file-directory-p contents)
+))
+
 ;; Twiddle load paths to find the rest of my stuff:
 (setq my-load-paths '("~/.emacs.d/lisp"
                       "/Library/Application Support/Emacs/site-lisp"))
@@ -19,23 +29,25 @@
     (progn
       (add-to-list 'load-path my-path)
       ;; Now add the subdirectories
-      (dolist (subdir (remove-if-not 'file-directory-p (directory-files my-path)))
-        (progn
-          (add-to-list 'load-path (expand-file-name subdir))
+      (dolist (subdir (my-directory-subdirs my-path))
+        (let ((lispdir (expand-file-name (concat subdir "/lisp"))))
+          (add-to-list 'load-path (if (file-directory-p lispdir) lispdir (expand-file-name subdir)))
           ;; Special case to ensure we can load cedet
           (if (and (string= subdir "cedet") (file-directory-p "cedet/common"))
               (add-to-list 'load-path (expand-file-name "cedet/common")))
           ))
       )))
 
-;; Twiddle exec paths for similar reasons
+;; Twiddle exec paths and PATH for similar reasons
 (let ((my-exec-paths '("/opt/local/bin"
                        "c:/cygwin/bin"
                        "c:/cygwin/usr/local/bin")))
   (dolist (my-exec-path 
            (remove-if-not 'file-directory-p
                           (mapcar 'expand-file-name my-exec-paths)))
-    (add-to-list 'exec-path my-exec-path)))
+    (add-to-list 'exec-path my-exec-path)
+    (setenv "PATH" (concat (getenv "PATH") ":" my-exec-path))
+    ))
 
 ;; And Info paths
 ;; (let ((my-info-paths '("~/.emacs.d/info"
@@ -64,14 +76,6 @@
 ;;
 ;; Visual effects
 ;;
-
-(when window-system
- ;(require 'zenburn)
- ;(zenburn)
-  (require 'color-theme)
-  (color-theme-initialize)
-  ;(color-theme-scintilla)
-  (color-theme-gtk-ide))
 
 ;;
 ;; Set the frame format to show the visited file, often handy
@@ -119,7 +123,7 @@ With argument, do this that many times."
 ;;
 
 ;; Tab setup
-(setq-default tab-width 4)          ; Set tab width to 4
+(setq-default tab-width 8)          ; Set tab width to 4
 (setq-default indent-tabs-mode nil)	; Use spaces for indenting - NOT TABs
 (setq-default fill-column 100)    ; Screens are wide enough these days
 
@@ -133,6 +137,10 @@ With argument, do this that many times."
 (require 'session)
 (add-hook 'after-init-hook 'session-initialize)
 
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+
+
 ;;
 ;; Major modes / Language setup
 ;;
@@ -142,6 +150,16 @@ With argument, do this that many times."
   "Major mode for editing Markdown files" t)
 ;;     (setq auto-mode-alist
 ;;        (cons '("\\.text" . markdown-mode) auto-mode-alist))
+
+;;
+;; Org Mode
+;;
+(require 'org-install)
+(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
+(setq org-log-done t)
+
 
 ;; Wikipedia mode for wiki editing
 ;; (autoload 'wikipedia-mode
@@ -180,6 +198,11 @@ With argument, do this that many times."
 ;; Show whitespace mode
 (require 'show-wspace)
 
+;; WindMove mode - use mod-arrow keys to move focus to the frame in that direction
+(when (fboundp 'windmove-default-keybindings)
+  (windmove-default-keybindings 'meta))
+
+
 ;; ;;
 ;; ;; Python mode
 ;; ;;
@@ -197,7 +220,7 @@ With argument, do this that many times."
 ;;
 (load "cedet")
 (semantic-load-enable-gaudy-code-helpers)
-(global-semantic-idle-tag-highlight-mode)
+;;(global-semantic-idle-tag-highlight-mode)
 (require 'semantic-ia)
 
 ;; MacPorts installs headers here, make sure semantic knows about them:
@@ -354,7 +377,7 @@ With argument, do this that many times."
 (add-hook 'c-initialization-hook 'my-c-initialization-hook)
 
 (defun my-c-mode-common-hook ()
-  (c-subword-mode 1)
+  (subword-mode 1)
   ;(c-toggle-auto-newline 1)
   (gtags-mode 1)
   ;(semantic-tag-folding-mode 1)
@@ -593,12 +616,17 @@ an empty string if no filename specified."
 ;(require 'vc-bzr)
 
 ;;
+;; DVC - wrapper for distributed version control
+;;
+(require 'dvc-autoloads)
+
+;;
 ;; mailcrypt - used for file mode especially!
 ;;
 ;; (require 'mailcrypt)
 ;; (mc-setversion "gpg")
 ;; (require 'mc-gpg-file-mode)
-(require 'epa-setup)
+(require 'epa-file)
 (epa-file-enable)
 
 ;; TRAMP
@@ -631,6 +659,11 @@ an empty string if no filename specified."
            (tramp-tramp-file-p (ad-get-arg 0)))
       nil
     ad-do-it))
+
+
+;; Javascript mode
+(autoload 'js2-mode "js2" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
 
 ;;
