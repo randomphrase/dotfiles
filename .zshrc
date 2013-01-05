@@ -10,7 +10,7 @@
 [[ -d ~/bin ]] && path=( ~/bin $path )
 
 # MacPorts lives here:
-[[ -d /opt/local/bin ]] && path=( /opt/local/bin $path ) \
+[[ -d /opt/local/bin ]] && path=( /opt/local/bin /opt/local/sbin $path ) \
     && manpath=( /opt/local/share/man /usr/share/man /usr/X11/man )
 
 # Use Emacs.app emacsclient in preference to built-in emacsclient if found:
