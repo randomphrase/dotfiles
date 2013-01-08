@@ -36,6 +36,13 @@
 /.viminfo
 /.zcompdump
 
+# TODO: move transient data into a var directory or something
+/.emacs.d/.*
+/.emacs.d/bookmarks
+/.emacs.d/abbrevs
+/.emacs.d/tramp
+/.emacs.d/semanticdb
+
 *.log
 *~
 *.elc
