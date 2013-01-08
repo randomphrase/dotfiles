@@ -79,7 +79,9 @@
 
 ;; Add parts of each file's directory to the buffer name if not unique
 (require 'uniquify)
-(setq uniquify-buffer-name-style 'forward)
+(setq 
+  uniquify-buffer-name-style 'post-forward
+  uniquify-separator ":")
 
 ;; Run at full power please
 (put 'downcase-region 'disabled nil)

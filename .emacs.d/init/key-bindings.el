@@ -25,10 +25,26 @@
   "Set point to the position of the last change." t)
 (global-set-key [(control \')] 'goto-last-change)
 
-(global-set-key [(control tab)] 'other-window)
+(global-set-key [(control tab)] 'next-multiframe-window)
 
 ;; I *hate* getting overwrite mode by accident...
 (global-unset-key [(insert)])
+
+;; PuTTY sends this instead of end:
+(global-set-key [select] 'end-of-line)
+
+(autoload 'copy-from-above-command "misc")
+(global-set-key [(meta p)] 'copy-from-above-command)
+
+(define-key ctl-x-4-map (kbd "t") 'transpose-windows)
+
+;; smerge has horrible key bindings by default, add some nicer ones
+(defun my-smerge-hook ()
+  (define-key smerge-mode-map (kbd "C-M-n") 'smerge-next)
+  (define-key smerge-mode-map (kbd "C-M-a") 'smerge-keep-all)
+  (define-key smerge-mode-map (kbd "C-M-m") 'smerge-keep-mine)
+  (define-key smerge-mode-map (kbd "C-M-o") 'smerge-keep-other))
+(add-hook 'smerge-mode-hook 'my-smerge-hook)
 
 ;; Use option as meta
 ;(setq mac-option-modifier 'meta)

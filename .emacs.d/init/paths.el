@@ -50,6 +50,7 @@
 ;; And Info paths
 (let ((my-info-paths (list (expand-file-name "info" user-emacs-directory)
 			   (expand-file-name "cedet/doc/info" extern-lisp-dir)
+			   "/usr/local/gcc-4.6.0/share/info"
 			   "c:/cygwin/usr/share/info")))
   (dolist (my-info-path
            (remove-if-not 'file-directory-p
@@ -61,5 +62,9 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (setq recentf-save-file (expand-file-name ".recentf" user-emacs-directory))
 (setq ido-save-directory-list-file (expand-file-name ".ido.last" user-emacs-directory))
+
+
+;; TODO: w32/cygwin stuff, see http://www.emacswiki.org/emacs/NTEmacsWithCygwin
+
 
 (provide 'init/paths)

@@ -2,19 +2,29 @@
 (add-to-list 'auto-mode-alist '("\\.mak$" . makefile-mode))
 (add-to-list 'auto-mode-alist '("Doxyfile" . makefile-mode))
 
+;; C++ Files
+(add-to-list 'auto-mode-alist '("\\.[it]pp$" . c++-mode))
+(add-to-list 'auto-mode-alist '("\\.[it]xx$" . c++-mode))
+
+;; Org-mode files
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 
+;; CMake files
 (add-to-list 'auto-mode-alist '("CMake[A-Za-z0-9-]*\\.txt\\'" . cmake-mode))
 (add-to-list 'auto-mode-alist '("\\.cmake\\'" . cmake-mode))
 
-;; associate with file extensions:
+;; XML files
 (add-to-list 'auto-mode-alist '("\\.plist$" . nxml-mode))
 (add-to-list 'auto-mode-alist '("\\.xml$"   . nxml-mode))
 (add-to-list 'auto-mode-alist '("\\.xsl$"   . nxml-mode))
 (add-to-list 'auto-mode-alist '("\\.xsd$"   . nxml-mode))
 ;(add-to-list 'auto-mode-alist '("\\.php[34]?$"   . nxml-mode))
 
-;; load Relax NG compact mode
+;; (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
+;; (setq auto-mode-alist
+;;       (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
+
+;; Relax NG Compact
 (autoload 'rnc-mode "rnc-mode")
 (setq auto-mode-alist       
       (cons '("\\.rnc\\'" . rnc-mode) auto-mode-alist))

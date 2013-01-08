@@ -7,9 +7,19 @@
 
 (when window-system
 
-  ;; Set the frame format to show the visited file, often handy
-  (setq frame-title-format '("" "Emacs - %f [%b]"))
+  ;; Frame title format swiped from here: http://emacs-fu.blogspot.com/2011/01/setting-frame-title.html
+  (setq frame-title-format
+        '("emacs%@" (:eval (system-name)) ": " (:eval (if (buffer-file-name)
+                                                          (abbreviate-file-name (buffer-file-name))
+                                                        "%b")) " [%*]"))
   )
+
+;; Add watchwords when coding
+(defun add-watchwords ()
+  (font-lock-add-keywords
+   nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\):"
+          1 font-lock-warning-face t))))
+(add-hook 'coding-hook 'add-watchwords)
 
 ;; Make zooming affect frame instead of buffers
 ;; (require 'zoom-frm)

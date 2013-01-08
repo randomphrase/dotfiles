@@ -47,6 +47,10 @@
 (require 'session)
 (add-hook 'after-init-hook 'session-initialize)
 
+;; require-soft macro stolen from http://www.emacswiki.org/emacs/LocateLibrary
+(defmacro require-soft (feature &optional file)
+  "*Try to require FEATURE, but don't signal an error if `require' fails."
+  `(require ,feature ,file 'noerror))
 
 ; Favourite modes
 (eval-after-load 'org '(require 'init/org))
@@ -62,10 +66,10 @@
 ;; Map files to modes
 (require 'init/mode-mappings)
 
-;; Emacs server
-(require 'server)
-(unless (server-running-p)
-  (server-start))
+;; Load local stuff here
+(let ((f (expand-file-name "local.el" user-emacs-directory)))
+  (if (file-readable-p f)
+      (load f)))
 
 ;;
 ;; All custom variables live in here
@@ -73,3 +77,8 @@
 ;; Put this last so that we can customise variables defined by modes loaded above
 ;;
 (load custom-file t)
+
+;; Emacs server
+(require 'server)
+(unless (server-running-p)
+  (server-start))
