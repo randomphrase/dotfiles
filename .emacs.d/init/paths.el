@@ -48,13 +48,14 @@
     ))
 
 ;; And Info paths
-;; (let ((my-info-paths '("~/.emacs.d/info"
-;;                        "c:/cygwin/usr/share/info")))
-;;   (dolist (my-info-path
-;;            (remove-if-not 'file-directory-p
-;;                           (mapcar 'expand-file-name my-info-paths)))
-;;     ;; Append it so that the emacs stuff appears first (a bit neater :)
-;;     (add-to-list 'Info-default-directory-list my-info-path)))
+(let ((my-info-paths (list (expand-file-name "info" user-emacs-directory)
+			   (expand-file-name "cedet/doc/info" extern-lisp-dir)
+			   "c:/cygwin/usr/share/info")))
+  (dolist (my-info-path
+           (remove-if-not 'file-directory-p
+                          (mapcar 'expand-file-name my-info-paths)))
+    ;; Append it so that the emacs stuff appears first (a bit neater :)
+    (add-to-list 'Info-default-directory-list my-info-path)))
 
 ; Move some stuff out of the home directory
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
