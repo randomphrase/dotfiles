@@ -107,6 +107,13 @@
           (add-to-list 'semantic-lex-c-preprocessor-symbol-file file)))))
 )
 
+(defvar parallel-make-count 4)
+
+(defvar my-project-build-directories
+  '(("None" . "~/build")
+    ("Debug" . "~/build.dbg.64")
+    ("Release" . "~/build.rel.64")
+    ("RelWithDebInfo" . "~/build.r+d.64")))
 
 ;;
 ;; EDE
@@ -125,12 +132,6 @@
           (if (file-exists-p path) path)
     ))))
 
-  (defvar my-project-build-directories
-    '(("None" . "~/build")
-      ("Debug" . "~/build.dbg.64")
-      ("Release" . "~/build.rel.64")
-      ("RelWithDebInfo" . "~/build.r+d.64")))
-
   (defun my-project-root-build-locator (config root-dir)
     "Locates a build directory for a project."
     (let ((build-base (assoc config my-project-build-directories)))
@@ -147,7 +148,7 @@
      :directory dir
      :locate-fcn 'my-locate-header
      :locate-build-directory 'my-project-root-build-locator
-     :build-tool (cmake-ninja-build-tool "Make" :additional-parameters "-j24")
+     :build-tool (cmake-ninja-build-tool "Make" :additional-parameters (concat "-j" parallel-make-count))
      :include-path '( "/" "/pchNone" "/external/orc/9" )
      :spp-table '( ("override" . "") )
      ))
