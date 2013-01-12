@@ -10,6 +10,7 @@
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 
 ;; CMake files
+(require 'cmake-mode)
 (add-to-list 'auto-mode-alist '("CMake[A-Za-z0-9-]*\\.txt\\'" . cmake-mode))
 (add-to-list 'auto-mode-alist '("\\.cmake\\'" . cmake-mode))
 
