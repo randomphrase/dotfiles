@@ -38,6 +38,17 @@
 
 (define-key ctl-x-4-map (kbd "t") 'transpose-windows)
 
+;; Magit
+(global-set-key (kbd "C-x m") 'magit-status)
+(autoload 'magit-status "magit")
+
+
+;; On mac, use C-s-up/down to toggle fullscreen, similar bindings to ubuntu defaults
+(when (fboundp 'ns-toggle-fullscreen)
+  (global-set-key [(control super up)] 'ns-toggle-fullscreen)
+  (global-set-key [(control super down)] 'ns-toggle-fullscreen)
+  )
+
 ;; smerge has horrible key bindings by default, add some nicer ones
 (defun my-smerge-hook ()
   (define-key smerge-mode-map (kbd "C-M-n") 'smerge-next)

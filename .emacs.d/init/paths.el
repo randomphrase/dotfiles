@@ -62,7 +62,7 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (setq recentf-save-file (expand-file-name ".recentf" user-emacs-directory))
 (setq ido-save-directory-list-file (expand-file-name ".ido.last" user-emacs-directory))
-
+(setq eshell-directory-name (expand-file-name "eshell" user-emacs-directory))
 
 ;; TODO: w32/cygwin stuff, see http://www.emacswiki.org/emacs/NTEmacsWithCygwin
 

@@ -1,0 +1,2 @@
+alias d dired $1
+alias em find-file $1

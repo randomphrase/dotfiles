@@ -15,8 +15,8 @@
 /.Trash/
 /.Xauthority
 /.bash_history
-/.bazaar
-/.bzr
+/.bazaar/
+/.bzr/
 /.cups
 /.dropbox
 /.dvdcss
@@ -27,6 +27,7 @@
 /.ido.last
 /.irb_history
 /.lesshst
+/.local/
 /.macports
 /.mysql_history
 /.pearrc
@@ -38,10 +39,19 @@
 
 # TODO: move transient data into a var directory or something
 /.emacs.d/.*
-/.emacs.d/bookmarks
 /.emacs.d/abbrevs
-/.emacs.d/tramp
+/.emacs.d/bookmarks
+/.emacs.d/custom.el
+/.emacs.d/elpa/
+/.emacs.d/eshell/history
+/.emacs.d/eshell/lastdir
+/.emacs.d/info/
 /.emacs.d/semanticdb
+/.emacs.d/tramp
+
+# TODO: Turn these into submodules
+/.emacs.d/extern/cedet/
+/.emacs.d/extern/ede-cmake/
 
 *.log
 *~
