@@ -18,6 +18,7 @@
   (packages-install
    ;; (cons 'exec-path-from-shell melpa)
    (cons 'magit melpa)
+   (cons 'session melpa)
    ;; (cons 'paredit melpa)
    ;; (cons 'move-text melpa)
    ;; (cons 'gist melpa)
