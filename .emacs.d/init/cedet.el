@@ -148,7 +148,7 @@
      :directory dir
      :locate-fcn 'my-locate-header
      :locate-build-directory 'my-project-root-build-locator
-     :build-tool (cmake-ninja-build-tool "Make" :additional-parameters (concat "-j" parallel-make-count))
+     :build-tool (cmake-ninja-build-tool "Make" :additional-parameters (format "-j %d" parallel-make-count))
      :include-path '( "/" "/pchNone" "/external/orc/9" )
      :spp-table '( ("override" . "") )
      ))
