@@ -59,7 +59,6 @@
 (require 'init/cedet)
 (require 'init/c++)
 
-
 ;; Setup key bindings
 (require 'init/key-bindings)
 
