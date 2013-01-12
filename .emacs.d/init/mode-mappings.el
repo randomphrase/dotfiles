@@ -31,17 +31,13 @@
       (cons '("\\.rnc\\'" . rnc-mode) auto-mode-alist))
 
 ;; CSS mode
-(autoload 'css-mode "css-mode")
-(setq auto-mode-alist       
-      (cons '("\\.css\\'" . css-mode) auto-mode-alist))
-
-;;(autoload 'apache-mode "apache-mode" "autoloaded" t)
-(add-to-list 'auto-mode-alist '("\\.htaccess$"   . apache-mode))
-(add-to-list 'auto-mode-alist '("httpd\\.conf$"  . apache-mode))
+;; (autoload 'css-mode "css-mode")
+;; (setq auto-mode-alist       
+;;       (cons '("\\.css\\'" . css-mode) auto-mode-alist))
 
 ;; Javascript mode for .js files
-(autoload 'js2-mode "js2" nil t)
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+;; (autoload 'js2-mode "js2" nil t)
+;; (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
 ;; Transparently open .gpg encrypted files
 (require 'epa-file)
