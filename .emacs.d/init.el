@@ -19,6 +19,7 @@
    (cons 'magit melpa)
    (cons 'session melpa)
    (cons 'cmake-mode marmalade)
+   (cons 'gtags marmalade)
    ;; (cons 'exec-path-from-shell melpa)
    ;; (cons 'paredit melpa)
    ;; (cons 'move-text melpa)
