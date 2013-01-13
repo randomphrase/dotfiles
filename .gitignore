@@ -12,25 +12,36 @@
 
 /.CFUserTextEncoding
 /.DS_Store
+/.ICEauthority
 /.Trash/
 /.Xauthority
 /.bash_history
 /.bazaar/
 /.bzr/
+/.cache/
+/.compiz/
+/.config/
 /.cups
+/.dbus/
 /.dropbox
 /.dvdcss
 /.eshell
 /.fontconfig
+/.gconf/
 /.gnupg
 /.history
+/.icons/
 /.ido.last
 /.irb_history
 /.lesshst
 /.local/
-/.macports
+/.macports/
+/.macromedia/
+/.mozilla/
 /.mysql_history
 /.pearrc
+/.pki/
+/.pulse/
 /.session
 /.sh_history
 /.ssh
@@ -42,11 +53,13 @@
 /.emacs.d/abbrevs
 /.emacs.d/bookmarks
 /.emacs.d/custom.el
+/.emacs.d/ede-projects.el
 /.emacs.d/elpa/
 /.emacs.d/eshell/history
 /.emacs.d/eshell/lastdir
 /.emacs.d/info/
 /.emacs.d/semanticdb
+/.emacs.d/srecode-map.el
 /.emacs.d/tramp
 
 # TODO: Turn these into submodules
