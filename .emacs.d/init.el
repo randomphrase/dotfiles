@@ -63,6 +63,7 @@
 (require 'init/tramp)
 (require 'init/cedet)
 (require 'init/c++)
+(require 'init/cmake)
 
 ;; Setup key bindings
 (require 'init/key-bindings)
