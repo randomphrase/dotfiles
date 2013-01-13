@@ -37,26 +37,26 @@
 (setq abbrev-file-name (expand-file-name "abbrevs" user-emacs-directory))
 
 ;; Twiddle exec paths and PATH for similar reasons
-(let ((my-exec-paths '("/opt/local/bin"
-                       "c:/cygwin/bin"
-                       "c:/cygwin/usr/local/bin")))
-  (dolist (my-exec-path 
-           (remove-if-not 'file-directory-p
-                          (mapcar 'expand-file-name my-exec-paths)))
-    (add-to-list 'exec-path my-exec-path)
-    (setenv "PATH" (concat (getenv "PATH") ":" my-exec-path))
-    ))
+(dolist (my-exec-path
+         (remove-if-not 'file-directory-p
+                        '("/opt/local/bin"
+                          "c:/cygwin/bin"
+                          "c:/cygwin/usr/local/bin")))
+  (add-to-list 'exec-path my-exec-path)
+  (setenv "PATH" (concat (getenv "PATH") ":" my-exec-path))
+  )
 
 ;; And Info paths
-(let ((my-info-paths (list (expand-file-name "info" user-emacs-directory)
-			   (expand-file-name "cedet/doc/info" extern-lisp-dir)
-			   "/usr/local/gcc-4.6.0/share/info"
-			   "c:/cygwin/usr/share/info")))
-  (dolist (my-info-path
-           (remove-if-not 'file-directory-p
-                          (mapcar 'expand-file-name my-info-paths)))
-    ;; Append it so that the emacs stuff appears first (a bit neater :)
-    (add-to-list 'Info-default-directory-list my-info-path)))
+(dolist (my-info-path
+         (remove-if-not 'file-directory-p
+                        (list (expand-file-name "info" user-emacs-directory)
+                              (expand-file-name "cedet/doc/info" extern-lisp-dir)
+                              "/usr/local/gcc-4.6.0/share/info"
+                              "c:/cygwin/usr/share/info")))
+
+  ;; Append it so that the emacs stuff appears first (a bit neater :)
+  (add-to-list 'Info-default-directory-list my-info-path)
+  )
 
 ; Move some stuff out of the home directory
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
