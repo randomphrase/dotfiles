@@ -33,6 +33,8 @@
   ;; Show hard tabs
   ;; TODO: Use whitespace mode from Emacs 24
   ;;(show-ws-highlight-tabs)
+
+  (add-to-list 'c-default-style (cons 'c++-mode (if (assoc "tibra" c-style-alist) "tibra" "stroustrup")))
 )
 (add-hook 'c-initialization-hook 'my-c-initialization-hook)
 
@@ -48,8 +50,6 @@
 
 ;; Load work style and skeletons
 (when (require-soft 'tibra-style)
-  (setq c-default-style "tibra")
-
   (autoload 'tibra-header-file "tibra-skeleton"
     "A skeleton for a Tibra c++ header file" t)
   (autoload 'tibra-source-file "tibra-skeleton"
