@@ -20,6 +20,7 @@
    (cons 'session melpa)
    (cons 'cmake-mode marmalade)
    (cons 'gtags marmalade)
+   (cons 'csharp-mode marmalade)
    ;; (cons 'exec-path-from-shell melpa)
    ;; (cons 'paredit melpa)
    ;; (cons 'move-text melpa)

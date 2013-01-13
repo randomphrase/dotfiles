@@ -21,9 +21,9 @@
 (add-to-list 'auto-mode-alist '("\\.xsd$"   . nxml-mode))
 ;(add-to-list 'auto-mode-alist '("\\.php[34]?$"   . nxml-mode))
 
-;; (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
-;; (setq auto-mode-alist
-;;       (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
+(autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
+(setq auto-mode-alist
+      (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
 
 ;; Relax NG Compact
 (autoload 'rnc-mode "rnc-mode")
