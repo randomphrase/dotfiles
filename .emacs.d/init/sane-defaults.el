@@ -87,6 +87,11 @@
 (put 'downcase-region 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
 
+;; Framemove is nice for moving between frames, we integrate it with windmove
+(require 'framemove)
+(windmove-default-keybindings 'meta)
+(setq framemove-hook-into-windmove t)
+
 ;; ;; A saner ediff
 ;; (setq ediff-diff-options "-w")
 ;; (setq ediff-split-window-function 'split-window-horizontally)

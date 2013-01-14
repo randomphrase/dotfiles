@@ -21,6 +21,7 @@
    (cons 'cmake-mode marmalade)
    (cons 'gtags marmalade)
    (cons 'csharp-mode marmalade)
+   (cons 'framemove melpa)
    ;; (cons 'exec-path-from-shell melpa)
    ;; (cons 'paredit melpa)
    ;; (cons 'move-text melpa)
