@@ -23,6 +23,8 @@
 /.bash_history
 /.bazaar/
 /.bzr/
+/.bzrignore
+/.bzr.log*
 /.cache/
 /.compiz/
 /.config/
@@ -51,6 +53,7 @@
 /.session
 /.sh_history
 /.ssh
+/.subversion/
 /.viminfo
 /.zcompdump
 
@@ -64,6 +67,7 @@
 /.emacs.d/elpa/
 /.emacs.d/eshell/history
 /.emacs.d/eshell/lastdir
+/.emacs.d/local.el
 /.emacs.d/info/
 /.emacs.d/semanticdb
 /.emacs.d/srecode-map.el
@@ -72,6 +76,7 @@
 # TODO: Turn these into submodules
 /.emacs.d/extern/cedet/
 /.emacs.d/extern/ede-cmake/
+/.emacs.d/extern/tibra/
 
 *.log
 *~
