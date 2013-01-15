@@ -64,7 +64,7 @@
 (global-subword-mode 1)
 
 ;; Don't break lines for me, please
-(setq-default truncate-lines t)
+;(setq-default truncate-lines t)
 
 ;; ;; Keep cursor away from edges when scrolling up/down
 ;; (require 'smooth-scrolling)
