@@ -83,6 +83,7 @@
     (when (fboundp 'cmake-project-compile-target-fast)
       (local-set-key [(ctrl shift f8)] 'cmake-project-compile-target-fast))
     )
+  (add-hook 'c-mode-common-hook 'my-cedet-hook)
   (add-hook 'lisp-mode-hook 'my-cedet-hook)
   (add-hook 'emacs-lisp-mode-hook 'my-cedet-hook)
   
