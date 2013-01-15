@@ -1,7 +1,7 @@
 ;;
 ;; CEDET Stuff
 ;;
-
+;; See also: https://gist.github.com/3930120
 
 ;; Load CEDET.
 ;; See cedet/common/cedet.info for configuration details.
