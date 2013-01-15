@@ -9,6 +9,11 @@
 /Public
 /Sites
 /hack
+/repo
+/lib
+/rpms
+/share
+/tmp
 
 /.CFUserTextEncoding
 /.DS_Store
@@ -27,6 +32,7 @@
 /.dvdcss
 /.eshell
 /.fontconfig
+/.fonts
 /.gconf/
 /.gnupg
 /.history
@@ -51,6 +57,7 @@
 # TODO: move transient data into a var directory or something
 /.emacs.d/.*
 /.emacs.d/abbrevs
+/.emacs.d/backups/
 /.emacs.d/bookmarks
 /.emacs.d/custom.el
 /.emacs.d/ede-projects.el
@@ -69,3 +76,4 @@
 *.log
 *~
 *.elc
+.bzr
