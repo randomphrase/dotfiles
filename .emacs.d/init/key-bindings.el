@@ -57,6 +57,11 @@
   (define-key smerge-mode-map (kbd "C-M-o") 'smerge-keep-other))
 (add-hook 'smerge-mode-hook 'my-smerge-hook)
 
+(when (require-soft 'iedit)
+  (define-key global-map (kbd "C-;") 'iedit-mode)
+  (define-key isearch-mode-map (kbd "C-;") 'iedit-mode)
+)
+
 ;; Use option as meta
 ;(setq mac-option-modifier 'meta)
 ;(setq mac-pass-option-to-system nil)

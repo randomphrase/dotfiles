@@ -16,12 +16,13 @@
 ;; Install extensions if they're missing
 (defun init--install-packages ()
   (packages-install
-   (cons 'magit melpa)
-   (cons 'session melpa)
    (cons 'cmake-mode marmalade)
-   (cons 'gtags marmalade)
    (cons 'csharp-mode marmalade)
    (cons 'framemove melpa)
+   (cons 'gtags marmalade)
+   (cons 'iedit melpa)
+   (cons 'magit melpa)
+   (cons 'session melpa)
    ;; (cons 'exec-path-from-shell melpa)
    ;; (cons 'paredit melpa)
    ;; (cons 'move-text melpa)
