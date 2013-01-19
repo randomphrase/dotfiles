@@ -12,27 +12,37 @@
 
   ;;(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode t)
   ;;(add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode t)
+  (add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode)
   (add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
-  (add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
   (add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
   (add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
-  (add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode)
   (add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode)
   (add-to-list 'semantic-default-submodes 'global-semantic-decoration-mode)
+  (add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
 
   ;; Enable Semantic
   (semantic-mode 1)
 
-  (require 'semantic/bovine/gcc)
+  ;; Detect GCC and set it up
+  (semantic-gcc-setup)
+
+  ;; TODO: Needed?
   (require 'semantic/ia)
-  (require 'semantic/decorate/include)
   (require 'semantic/lex-spp)
 
   ;; add some hard-to-find include directories
-  (dolist (dir '("/usr/include/boost-1_49"
+  (dolist (dir '("/opt/local/include"
+                 ;; TODO: search multiple versions, take the most recent (use file-expand-wildcards?)
+                 "/usr/include/boost-1_49"
                  "/usr/local/xsd-3.2.0-x86_64-linux-gnu/libxsd"))
-    (if (file-directory-p dir)
-        (semantic-add-system-include dir 'c++-mode)))
+    (when (file-directory-p dir)
+      (semantic-add-system-include dir 'c-mode)
+      (semantic-add-system-include dir 'c++-mode)))
+
+  ;; if boost is on the include path, set up preprocessor declarations from its config.hpp file
+  (let ((config-hpp (semantic-dependency-find-file-on-path "boost/config.hpp" t 'c++-mode)))
+    (when (file-readable-p config-hpp)
+      (add-to-list 'semantic-lex-c-preprocessor-symbol-file config-hpp)))
 
   ;; contrib stuff
   (load-file (expand-file-name "cedet/contrib/cedet-contrib-load.el" extern-lisp-dir))
@@ -94,18 +104,8 @@
     )
   (add-hook 'c-mode-common-hook 'my-cedet-c-hook)
 
-  (semanticdb-enable-gnu-global-databases 'c-mode t)
-  (semanticdb-enable-gnu-global-databases 'c++-mode t)
-
-  (when (cedet-ectag-version-check t)
-    (semantic-load-enable-primary-ectags-support))
-
-  ;; Called by c-mode initialization hook
-  (defun c++-setup-boost (boost-root)
-    (when (file-accessible-directory-p boost-root)
-      (let ((cfiles (recur-list-files boost-root "\\(config\\|user\\)\\.hpp")))
-        (dolist (file cfiles)
-          (add-to-list 'semantic-lex-c-preprocessor-symbol-file file)))))
+  ;; (when (cedet-ectag-version-check t)
+  ;;   (semantic-load-enable-primary-ectags-support))
 )
 
 (defvar parallel-make-count 4)
@@ -150,7 +150,7 @@
      :locate-fcn 'my-locate-header
      :locate-build-directory 'my-project-root-build-locator
      :build-tool (cmake-ninja-build-tool "Make" :additional-parameters (format "-j %d" parallel-make-count))
-     :include-path '( "/" "/pchNone" "/external/orc/9" )
+     :include-path '( "/" "/pchNone" )
      :spp-table '( ("override" . "") )
      ))
 
