@@ -68,25 +68,25 @@
 /.zcompdump
 
 # TODO: move transient data into a var directory or something
-/.emacs.d/.*
-/.emacs.d/abbrevs
-/.emacs.d/backups/
-/.emacs.d/bookmarks
-/.emacs.d/custom.el
-/.emacs.d/ede-projects.el
-/.emacs.d/elpa/
-/.emacs.d/eshell/history
-/.emacs.d/eshell/lastdir
-/.emacs.d/local.el
-/.emacs.d/info/
-/.emacs.d/semanticdb
-/.emacs.d/srecode-map.el
-/.emacs.d/tramp
+/emacs.d/.*
+/emacs.d/abbrevs
+/emacs.d/backups/
+/emacs.d/bookmarks
+/emacs.d/custom.el
+/emacs.d/ede-projects.el
+/emacs.d/elpa/
+/emacs.d/eshell/history
+/emacs.d/eshell/lastdir
+/emacs.d/local.el
+/emacs.d/info/
+/emacs.d/semanticdb
+/emacs.d/srecode-map.el
+/emacs.d/tramp
 
 # TODO: Turn these into submodules
-/.emacs.d/extern/cedet/
-/.emacs.d/extern/ede-cmake/
-/.emacs.d/extern/tibra/
+/emacs.d/extern/cedet/
+/emacs.d/extern/ede-cmake/
+/emacs.d/extern/tibra/
 
 *.log
 *~
