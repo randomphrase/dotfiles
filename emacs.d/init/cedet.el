@@ -111,10 +111,10 @@
 (defvar parallel-make-count 4)
 
 (defvar my-project-build-directories
-  '(("None" . "~/build")
-    ("Debug" . "~/build.dbg.64")
-    ("Release" . "~/build.rel.64")
-    ("RelWithDebInfo" . "~/build.r+d.64")))
+  '(("None" . "build")
+    ("Debug" . "build.dbg.64")
+    ("Release" . "build.rel.64")
+    ("RelWithDebInfo" . "build.r+d.64")))
 
 ;;
 ;; EDE
