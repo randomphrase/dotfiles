@@ -12,4 +12,4 @@
 ;; (define-key global-map "\C-ca" 'org-agenda)
 ;; (setq org-log-done t)
 
-(proviate 'init/org)
+(provide 'init/org)
