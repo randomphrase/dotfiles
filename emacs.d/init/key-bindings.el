@@ -1,3 +1,5 @@
+;; TODO: Get more good ones here: https://github.com/bbatsov/prelude/blob/master/core/prelude-global-keybindings.el
+
 ;; WindMove mode - use mod-arrow keys to move focus to the frame in that direction
 (when (fboundp 'windmove-default-keybindings)
   (windmove-default-keybindings 'meta))
@@ -39,9 +41,15 @@
 (define-key ctl-x-4-map (kbd "t") 'transpose-windows)
 
 ;; Magit
-(global-set-key (kbd "C-x m") 'magit-status)
 (autoload 'magit-status "magit")
+(global-set-key (kbd "C-x g") 'magit-status)
 
+;; Start eshell or switch to it if it's active.
+(global-set-key (kbd "C-x m") 'eshell)
+
+;; Font size
+(global-set-key (kbd "C-+") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
 
 ;; On mac, use C-s-up/down to toggle fullscreen, similar bindings to ubuntu defaults
 (when (fboundp 'ns-toggle-fullscreen)
