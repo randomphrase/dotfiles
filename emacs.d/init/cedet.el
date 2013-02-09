@@ -41,7 +41,7 @@
 
   ;; if boost is on the include path, set up preprocessor declarations from its config.hpp file
   (let ((config-hpp (semantic-dependency-find-file-on-path "boost/config.hpp" t 'c++-mode)))
-    (when (file-readable-p config-hpp)
+    (when (and config-hpp (file-readable-p config-hpp))
       (add-to-list 'semantic-lex-c-preprocessor-symbol-file config-hpp)))
 
   ;; contrib stuff
