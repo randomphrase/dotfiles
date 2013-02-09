@@ -10,6 +10,9 @@
 ; Set up lisp, exec, info paths
 (require 'init/paths)
 
+;; Needs to be set up early - replaces some built-in libraries
+(require 'init/cedet)
+
 ;; Setup packages
 (require 'init/package)
 
@@ -45,11 +48,6 @@
    (package-refresh-contents)
    (init--install-packages)))
 
-
-;; Lets start with a smattering of sanity
-(require 'init/sane-defaults)
-
-
 ;; Start session mode - TODO: redundant?
 (require 'session)
 (add-hook 'after-init-hook 'session-initialize)
@@ -59,13 +57,15 @@
   "*Try to require FEATURE, but don't signal an error if `require' fails."
   `(require ,feature ,file 'noerror))
 
+;; Lets start with a smattering of sanity
+(require 'init/sane-defaults)
+
 ; Favourite modes
 (eval-after-load 'org '(require 'init/org))
 
-(require 'init/tramp)
-(require 'init/cedet)
 (require 'init/c++)
 (require 'init/cmake)
+(require 'init/tramp)
 
 ;; Setup key bindings
 (require 'init/key-bindings)
