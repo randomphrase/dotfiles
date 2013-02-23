@@ -7,7 +7,7 @@
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
 ;; Highlight matching parentheses when the point is on them.
-(show-paren-mode 1)
+(show-paren-mode t)
 
 ;; Frame title format swiped from here: http://emacs-fu.blogspot.com/2011/01/setting-frame-title.html
 (setq frame-title-format

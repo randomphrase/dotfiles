@@ -4,6 +4,9 @@
 ;; Fontify org-mode code blocks
 (setq org-src-fontify-natively t)
 
+;; Can't get out of the shift-select habit
+(setq org-support-shift-select t)
+
 ;;
 ;; Org Mode
 ;;

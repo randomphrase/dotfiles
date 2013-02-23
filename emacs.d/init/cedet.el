@@ -30,6 +30,11 @@
   (require 'semantic/ia)
   (require 'semantic/lex-spp)
 
+  ;; Store semantic cache files here:
+  ;; (let ((dir (expand-file-name "semanticdb" user-emacs-directory)))
+  ;;   (when (file-directory-p dir)
+  ;;     (setq semanticdb-default-save-directory dir)))
+
   ;; add some hard-to-find include directories
   (dolist (dir '("/opt/local/include"
                  ;; TODO: search multiple versions, take the most recent (use file-expand-wildcards?)
