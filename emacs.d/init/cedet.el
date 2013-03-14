@@ -171,7 +171,7 @@
   ;; Name the compilation buffer after the current project - allows more than one project to be
   ;; compiled simultaneously
   (defun my-compilation-buffer-name-function (maj)
-    (let ((projname (if ede-object-root-project (aref ede-object-root-project object-name) nil)))
+    (let ((projname (if ede-object-root-project (eieio-object-name-string ede-object-root-project) nil)))
       (concat "*" (downcase maj) (when projname ":") (when projname projname) "*")))
 
   (setq compilation-buffer-name-function 'my-compilation-buffer-name-function)
