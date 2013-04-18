@@ -103,6 +103,10 @@ if [[ -x $(which ccache) ]]; then
     export CXX="ccache ${CXX-g++}"
 fi
 
+# pbcopy / pbpaste emulation on linux
+alias pbcopy="xsel --clipboard"
+alias pbpaste="xsel --clipboard"
+
 #manpath=($X11HOME/man /usr/man /usr/lang/man /usr/local/man)
 #export MANPATH
 
