@@ -36,11 +36,10 @@
   ;;     (setq semanticdb-default-save-directory dir)))
 
   ;; add some hard-to-find include directories
-  (dolist (dir '("/opt/local/include"
-                 ;; TODO: search multiple versions, take the most recent (use file-expand-wildcards?)
-                 "/usr/include/boost-1_49"
-                 "/usr/local/xsd-3.2.0-x86_64-linux-gnu/libxsd"))
-    (when (file-directory-p dir)
+  (dolist (dir (list "/opt/local/include"
+		     (car (last (file-expand-wildcards "/usr/include/boost-*")))
+		     "/usr/local/xsd-3.2.0-x86_64-linux-gnu/libxsd"))
+    (when (and dir (file-directory-p dir))
       (semantic-add-system-include dir 'c-mode)
       (semantic-add-system-include dir 'c++-mode)))
 
