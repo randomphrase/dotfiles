@@ -25,3 +25,5 @@ hardstatus string "[screen %n%?: %t%?] %h"
 
 # Lots of scrollback
 defscrollback 5000
+
+term screen-256color
