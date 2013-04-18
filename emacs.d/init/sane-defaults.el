@@ -92,6 +92,9 @@
 (windmove-default-keybindings 'meta)
 (setq framemove-hook-into-windmove t)
 
+;; Always reuse buffers across frames if visible:
+(setq display-buffer-base-action '(nil (reusable-frames . visible)))
+
 ;; ;; A saner ediff
 ;; (setq ediff-diff-options "-w")
 ;; (setq ediff-split-window-function 'split-window-horizontally)
