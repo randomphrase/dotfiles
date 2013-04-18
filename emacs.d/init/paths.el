@@ -48,11 +48,11 @@
 
 ;; And Info paths
 (dolist (my-info-path
-         (remove-if-not 'file-directory-p
-                        (list (expand-file-name "info" user-emacs-directory)
-                              (expand-file-name "cedet/doc/info" extern-lisp-dir)
-                              "/usr/local/gcc-4.6.0/share/info"
-                              "c:/cygwin/usr/share/info")))
+         (remove-if-not (lambda (d) (and d (file-directory-p d)))
+		    (list (expand-file-name "info" user-emacs-directory)
+			  (expand-file-name "cedet/doc/info" extern-lisp-dir)
+			  (car (last (file-expand-wildcards "/usr/local/gcc-*/share/info")))
+			  "c:/cygwin/usr/share/info")))
 
   ;; Append it so that the emacs stuff appears first (a bit neater :)
   (add-to-list 'Info-default-directory-list my-info-path)
