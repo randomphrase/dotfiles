@@ -70,6 +70,10 @@
   (define-key isearch-mode-map (kbd "C-;") 'iedit-mode)
 )
 
+(when (require-soft 'expand-region)
+  (global-set-key (kbd "C-=") 'er/expand-region)
+)
+
 ;; Use option as meta
 ;(setq mac-option-modifier 'meta)
 ;(setq mac-pass-option-to-system nil)
