@@ -33,7 +33,8 @@
 (global-unset-key [(insert)])
 
 ;; PuTTY sends this instead of end:
-(global-set-key [select] 'end-of-line)
+;; (not needed?)
+;;(global-set-key [select] 'end-of-line)
 
 (autoload 'copy-from-above-command "misc")
 (global-set-key [(meta p)] 'copy-from-above-command)
@@ -65,14 +66,9 @@
   (define-key smerge-mode-map (kbd "C-M-o") 'smerge-keep-other))
 (add-hook 'smerge-mode-hook 'my-smerge-hook)
 
-(when (require-soft 'iedit)
-  (define-key global-map (kbd "C-;") 'iedit-mode)
-  (define-key isearch-mode-map (kbd "C-;") 'iedit-mode)
-)
-
-(when (require-soft 'expand-region)
-  (global-set-key (kbd "C-=") 'er/expand-region)
-)
+(define-key global-map (kbd "C-;") 'iedit-mode)
+(define-key isearch-mode-map (kbd "C-;") 'iedit-mode)
+(define-key global-map (kbd "C-=") 'er/expand-region)
 
 ;; Use option as meta
 ;(setq mac-option-modifier 'meta)
