@@ -48,6 +48,10 @@
 ;; Start eshell or switch to it if it's active.
 (global-set-key (kbd "C-x m") 'eshell)
 
+;; Proced mode is cool!
+(when (fboundp 'proced)
+  (global-set-key (kbd "C-x p") 'proced))
+
 ;; Font size
 (global-set-key (kbd "C-+") 'text-scale-increase)
 (global-set-key (kbd "C--") 'text-scale-decrease)
