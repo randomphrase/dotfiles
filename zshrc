@@ -21,6 +21,8 @@ for eapp in /Applications/Emacs.app /Applications/MacPorts/Emacs.app; do
     fi
 done
 
+
+
 # Search path for the cd command
 cdpath=(.. ~)
 
@@ -98,10 +100,10 @@ alias plcat="plutil -convert xml1 -o - "
 
 
 # Use ccache if it's available
-if [[ -x $(which ccache) ]]; then
-    export CC="ccache ${CC-gcc}"
-    export CXX="ccache ${CXX-g++}"
-fi
+# if [[ -x $(which ccache) ]]; then
+#     export CC="ccache ${CC-gcc}"
+#     export CXX="ccache ${CXX-g++}"
+# fi
 
 # pbcopy / pbpaste emulation on linux
 alias pbcopy="xsel --clipboard"
@@ -155,8 +157,9 @@ SAVEHIST=1000
 HISTFILE=~/.history
 
 # Setup emacs as the editor of choice
-EDITOR=emacsclient
-alias em='emacsclient -n'
+export EDITOR=emacsclient
+export ALTERNATE_EDITOR=emacs
+alias e='emacsclient'
 
 # Use colour ls if at all possible
 CLICOLOR=1
