@@ -5,7 +5,7 @@ shopt -s nocasematch nullglob    # using Bash
 dotfiles=${0%%/*}
 dotfiles_abs=$(cd $dotfiles && pwd -L)
 
-echo "setting up symlinks to dotfiles in: $dotfiles_abs"
+echo "** setting up symlinks to dotfiles in: $dotfiles_abs"
 
 skipfiles=(bootstrap.sh)
 
@@ -47,6 +47,8 @@ for dst in $dotfiles/* ; do
     )
 done
 
+echo "** Checking out bzr libs"
+
 declare -A bzr_repos
 bzr_repos[".emacs.d/extern/cedet"]="bzr://cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk/"
 bzr_repos[".emacs.d/extern/ede-cmake"]="lp:~arankine/+junk/ede-cmake"
@@ -65,6 +67,11 @@ for i in ${!bzr_repos[@]}; do
     fi
 done
 
+echo "** Building libs"
+
+# Use ginstall-info if available
+hash ginstall-info && install_info_arg="INSTALL-INFO=ginstall-info"
+
 build=(
     ".emacs.d/extern/cedet"
     ".emacs.d/extern/cedet/contrib"
@@ -72,7 +79,6 @@ build=(
 for i in ${build[@]}; do
     (
 	    cd "$HOME/$i"
-	    # TODO: how to select which install-info to use?
-	    make INSTALL-INFO=ginstall-info
+	    make ${install_info_arg}
     )
 done
