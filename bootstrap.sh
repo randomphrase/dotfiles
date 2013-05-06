@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 shopt -s nocasematch nullglob    # using Bash
 
@@ -44,5 +44,35 @@ for dst in $dotfiles/* ; do
     (
         cd $HOME
         ln -s ${dotfiles_abs#$HOME/}/$nm .$nm
+    )
+done
+
+declare -A bzr_repos
+bzr_repos[".emacs.d/extern/cedet"]="bzr://cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk/"
+bzr_repos[".emacs.d/extern/ede-cmake"]="lp:~arankine/+junk/ede-cmake"
+
+for i in ${!bzr_repos[@]}; do
+    if [[ ! -d "$HOME/$i" ]]; then
+	(
+	    cd "$HOME/${i%/*}"
+	    bzr checkout --lightweight ${bzr_repos[$i]} ${i##*/}
+	)
+    else
+	(
+	    cd "$HOME/$i"
+	    bzr update
+	)
+    fi
+done
+
+build=(
+    ".emacs.d/extern/cedet"
+    ".emacs.d/extern/cedet/contrib"
+    )
+for i in ${build[@]}; do
+    (
+	cd "$HOME/$i"
+	# TODO: how to select which install-info to use?
+	make INSTALL-INFO=ginstall-info
     )
 done
