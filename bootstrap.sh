@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 shopt -s nocasematch nullglob    # using Bash
 
@@ -71,8 +71,8 @@ build=(
     )
 for i in ${build[@]}; do
     (
-	cd "$HOME/$i"
-	# TODO: how to select which install-info to use?
-	make INSTALL-INFO=ginstall-info
+	    cd "$HOME/$i"
+	    # TODO: how to select which install-info to use?
+	    make INSTALL-INFO=ginstall-info
     )
 done
