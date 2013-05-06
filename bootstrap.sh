@@ -5,6 +5,12 @@ shopt -s nocasematch nullglob    # using Bash
 dotfiles=${0%%/*}
 dotfiles_abs=$(cd $dotfiles && pwd -L)
 
+echo "** setting up git config"
+
+# Don't use work email name/address for this repo...
+git config --file "$dotfiles/.git/config" user.name "Alastair Rankine"
+git config --file "$dotfiles/.git/config" user.email "alastair@girtby.net"
+
 echo "** setting up symlinks to dotfiles in: $dotfiles_abs"
 
 skipfiles=(bootstrap.sh)
