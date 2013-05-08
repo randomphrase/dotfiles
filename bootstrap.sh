@@ -5,6 +5,22 @@ shopt -s nocasematch nullglob    # using Bash
 dotfiles=${0%%/*}
 dotfiles_abs=$(cd $dotfiles && pwd -L)
 
+echo "** checking environment"
+
+required_exes=(git bzr make)
+
+for e in ${required_exe[@]}; do
+    hash $e || {
+        echo "!! Missing: $e"
+        exit 1
+    }
+done
+
+if (( BASH_VERSINFO[0] < 4 )); then
+    echo "!! Bash version < 4: $BASH_VERSION"
+    exit 1
+fi
+
 echo "** setting up git config"
 
 # Don't use work email name/address for this repo...
