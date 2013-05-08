@@ -11,6 +11,7 @@ echo "** setting up git config"
 git config --file "$dotfiles/.git/config" user.name "Alastair Rankine"
 git config --file "$dotfiles/.git/config" user.email "alastair@girtby.net"
 
+
 echo "** setting up symlinks to dotfiles in: $dotfiles_abs"
 
 skipfiles=(bootstrap.sh)
@@ -53,8 +54,10 @@ for dst in $dotfiles/* ; do
     )
 done
 
+
 echo "** Checking out bzr libs"
 
+# FIXME: can't do this in bash 3 :(
 declare -A bzr_repos
 bzr_repos[".emacs.d/extern/cedet"]="bzr://cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk/"
 bzr_repos[".emacs.d/extern/ede-cmake"]="lp:~arankine/+junk/ede-cmake"
@@ -78,13 +81,19 @@ echo "** Building libs"
 # Use ginstall-info if available
 hash ginstall-info && install_info_arg="INSTALL-INFO=ginstall-info"
 
+# Use latest emacs if available
+for e in /Applications/MacPorts/Emacs.app/Contents/MacOS/Emacs ; do
+    [[ -x $e ]] || continue
+    emacs_arg="EMACS=$e"
+done
+
 build=(
     ".emacs.d/extern/cedet"
     ".emacs.d/extern/cedet/contrib"
-    )
+)
 for i in ${build[@]}; do
     (
 	    cd "$HOME/$i"
-	    make ${install_info_arg}
+	    make ${emacs_arg} ${install_info_arg}
     )
 done
