@@ -70,46 +70,61 @@ for dst in $dotfiles/* ; do
     )
 done
 
+checkout_libs() {
+    echo "** Checking out bzr libs"
 
-echo "** Checking out bzr libs"
+    # FIXME: can't do this in bash 3 :(
+    declare -A bzr_repos
+    bzr_repos[".emacs.d/extern/cedet"]="bzr+ssh://alastair@cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk/"
+    bzr_repos[".emacs.d/extern/ede-cmake"]="lp:~arankine/+junk/ede-cmake"
 
-# FIXME: can't do this in bash 3 :(
-declare -A bzr_repos
-bzr_repos[".emacs.d/extern/cedet"]="bzr://cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk/"
-bzr_repos[".emacs.d/extern/ede-cmake"]="lp:~arankine/+junk/ede-cmake"
+    for i in ${!bzr_repos[@]}; do
+        if [[ ! -d "$HOME/$i" ]]; then
+	        (
+	            cd "$HOME/${i%/*}"
+	            bzr checkout --lightweight ${bzr_repos[$i]} ${i##*/}
+	        )
+        else
+	        (
+	            cd "$HOME/$i"
+	            bzr update
+	        )
+        fi
+    done
+}
+checkout_libs
 
-for i in ${!bzr_repos[@]}; do
-    if [[ ! -d "$HOME/$i" ]]; then
-	(
-	    cd "$HOME/${i%/*}"
-	    bzr checkout --lightweight ${bzr_repos[$i]} ${i##*/}
-	)
-    else
-	(
-	    cd "$HOME/$i"
-	    bzr update
-	)
-    fi
-done
+build_libs() {
+    echo -n "** Building libs:"
 
-echo "** Building libs"
+    # Use ginstall-info if available
+    hash ginstall-info 2>/dev/null && install_info_arg="INSTALL-INFO=ginstall-info"
 
-# Use ginstall-info if available
-hash ginstall-info && install_info_arg="INSTALL-INFO=ginstall-info"
+    # Use latest emacs if available
+    for e in /Applications/MacPorts/Emacs.app/Contents/MacOS/Emacs ; do
+        [[ -x $e ]] || continue
+        emacs_arg="EMACS=$e"
+    done
 
-# Use latest emacs if available
-for e in /Applications/MacPorts/Emacs.app/Contents/MacOS/Emacs ; do
-    [[ -x $e ]] || continue
-    emacs_arg="EMACS=$e"
-done
-
-build=(
-    ".emacs.d/extern/cedet"
-    ".emacs.d/extern/cedet/contrib"
-)
-for i in ${build[@]}; do
-    (
-	    cd "$HOME/$i"
-	    make ${emacs_arg} ${install_info_arg}
+    build=(
+        ".emacs.d/extern/cedet"
+        ".emacs.d/extern/cedet/contrib"
     )
-done
+    for i in ${build[@]}; do
+        (
+            echo -n " $i"
+	        cd "$HOME/$i"
+
+            # build to a tmp file, display it only if err
+            buildlog=$(mktemp -t) || exit 1
+            trap 'rm "$buildlog"' EXIT INT QUIT TERM
+
+	        make $emacs_arg $install_info_arg >$buildlog 2>$buildlog || {
+                echo "ERROR:"
+                [[ -f $buildlog ]] && cat $buildlog
+            }
+        ) || exit 1
+    done
+    echo " ... done"
+}
+build_libs
