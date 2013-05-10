@@ -53,8 +53,8 @@ for dst in $dotfiles/* ; do
         if [[ -L $src ]]; then
             linkinode=$(statinode $src)
             dstinode=$(statinode $dst)
-            if [[ $linkinode != $dstinode ]]; then
-                echo "warning: $src is a symlink but doesn't point to desired $dst"
+            if (( linkinode != dstinode )); then
+                echo "warning: $src is a symlink but doesn't point to desired $dst ($linkinode != $dstinode)"
             fi
         else
             echo "warning: $src exists, cannot create symlink"
