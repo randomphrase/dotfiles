@@ -2,7 +2,11 @@
 
 ;; WindMove mode - use mod-arrow keys to move focus to the frame in that direction
 (when (fboundp 'windmove-default-keybindings)
-  (windmove-default-keybindings 'meta))
+  (windmove-default-keybindings 'meta)
+  
+  (global-set-key [(shift meta left)]  'transpose-windows-left)
+  (global-set-key [(shift meta right)] 'transpose-windows-right)
+  )
 
 
 (global-set-key [f5] 'kmacro-start-macro-or-insert-counter)
