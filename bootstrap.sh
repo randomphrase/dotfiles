@@ -124,7 +124,7 @@ build_libs() {
 	        cd "$HOME/$i"
 
             # build to a tmp file, display it only if err
-            buildlog=$(mktemp -t ${i##*/}_build) || exit 1
+            buildlog=$(mktemp ${i##*/}_build.XXXXXXXX) || exit 1
             trap 'rm "$buildlog"' EXIT INT QUIT TERM
 
 	        make $emacs_arg $install_info_arg >$buildlog 2>$buildlog || {
