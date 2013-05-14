@@ -30,6 +30,9 @@ git_config() {
     # Don't use work email name/address for this repo...
     git config --file "$dotfiles/.git/config" user.name "Alastair Rankine"
     git config --file "$dotfiles/.git/config" user.email "alastair@girtby.net"
+
+    # Need this because some submodules (like oh-my-zsh) are corrupted on github :(
+    git config --file "$dotfiles/.git/config" transfer.fsckobjects false
 }
 git_config
 
