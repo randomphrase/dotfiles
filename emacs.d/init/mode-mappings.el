@@ -24,6 +24,7 @@
 ;; Shell script
 (add-to-list 'auto-mode-alist '("\\.zsh$" . shell-script-mode))
 
+;; C# source
 (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
 (setq auto-mode-alist
       (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
@@ -32,6 +33,13 @@
 (autoload 'rnc-mode "rnc-mode")
 (setq auto-mode-alist       
       (cons '("\\.rnc\\'" . rnc-mode) auto-mode-alist))
+
+;; SSH config files
+(autoload 'ssh-config-mode "ssh-config-mode" t)
+(add-to-list 'auto-mode-alist '(".ssh/config\\'"  . ssh-config-mode))
+(add-to-list 'auto-mode-alist '("sshd?_config\\'" . ssh-config-mode))
+(add-hook 'ssh-config-mode-hook 'turn-on-font-lock)
+
 
 ;; CSS mode
 ;; (autoload 'css-mode "css-mode")
