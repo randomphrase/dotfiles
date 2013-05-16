@@ -136,4 +136,4 @@ build_libs() {
     done
     echo " ... done"
 }
-#build_libs
+build_libs
