@@ -16,11 +16,6 @@ check_environment() {
             exit 1
         }
     done
-    
-    if (( BASH_VERSINFO[0] < 4 )); then
-        echo "!! Bash version < 4: $BASH_VERSION"
-        exit 1
-    fi
 }
 check_environment
 
@@ -82,22 +77,25 @@ symlink_dotfiles() {
 symlink_dotfiles
 
 checkout_libs() {
-    echo "** Checking out bzr libs"
+    echo "** Checking out bzr libs: "
 
-    # FIXME: can't do this in bash 3 :(
-    declare -A bzr_repos
-    bzr_repos[".emacs.d/extern/cedet"]="bzr+ssh://alastair@cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk/"
-    bzr_repos[".emacs.d/extern/ede-cmake"]="lp:~arankine/+junk/ede-cmake"
+    bzr_repos=(
+        ".emacs.d/extern/cedet bzr+ssh://alastair@cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk/"
+        ".emacs.d/extern/ede-cmake lp:~arankine/+junk/ede-cmake"
+        )
 
-    for i in ${!bzr_repos[@]}; do
-        if [[ ! -d "$HOME/$i" ]]; then
+    for i in "${bzr_repos[@]}"; do
+        ia=($i)
+        path=${ia[0]}
+        repo=${ia[1]}
+        if [[ ! -d "$HOME/$path" ]]; then
 	        (
-	            cd "$HOME/${i%/*}"
-	            bzr checkout --lightweight ${bzr_repos[$i]} ${i##*/}
+	            cd "$HOME/${path%/*}"
+	            bzr checkout --lightweight ${repo} ${path##*/}
 	        )
         else
 	        (
-	            cd "$HOME/$i"
+	            cd "$HOME/$path"
 	            bzr update
 	        )
         fi
@@ -138,4 +136,4 @@ build_libs() {
     done
     echo " ... done"
 }
-build_libs
+#build_libs
