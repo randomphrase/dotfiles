@@ -28,6 +28,7 @@
    (cons 'session melpa)
    (cons 'expand-region melpa)
    (cons 'ssh-config-mode melpa)
+   (cons 'goto-last-change melpa)
    ;; (cons 'exec-path-from-shell melpa)
    ;; (cons 'paredit melpa)
    ;; (cons 'move-text melpa)
