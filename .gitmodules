@@ -1,3 +1,6 @@
 [submodule "zsh.d/oh-my-zsh"]
 	path = zsh.d/oh-my-zsh
 	url = git://github.com/robbyrussell/oh-my-zsh.git
+[submodule "emacs.d/extern/conf-info-mode"]
+	path = emacs.d/extern/conf-info-mode
+	url = git@github.com:randomphrase/conf-info-mode.git
