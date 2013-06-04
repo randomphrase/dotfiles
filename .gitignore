@@ -13,11 +13,11 @@
 /emacs.d/semanticdb
 /emacs.d/srecode-map.el
 /emacs.d/tramp
+/emacs.d/url
 
 # TODO: Turn these into submodules
 /emacs.d/extern/cedet/
 /emacs.d/extern/ede-cmake/
-/emacs.d/extern/tibra/
 
 *.log
 *~
