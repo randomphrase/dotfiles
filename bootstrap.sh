@@ -77,17 +77,13 @@ symlink_dotfiles() {
 symlink_dotfiles
 
 checkout_libs() {
-    echo "** Checking out bzr libs: "
+    echo -n "** Checking out bzr libs:"
 
-    bzr_repos=(
-        ".emacs.d/extern/cedet bzr+ssh://alastair@cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk/"
-        ".emacs.d/extern/ede-cmake lp:~arankine/+junk/ede-cmake"
-        )
-
-    for i in "${bzr_repos[@]}"; do
+    for i in "$@"; do
         ia=($i)
         path=${ia[0]}
         repo=${ia[1]}
+        echo -n " $path"
         if [[ ! -d "$HOME/$path" ]]; then
 	        (
 	            cd "$HOME/${path%/*}"
@@ -96,12 +92,15 @@ checkout_libs() {
         else
 	        (
 	            cd "$HOME/$path"
-	            bzr update
+	            bzr update --quiet
 	        )
         fi
     done
+    echo " ... done"
 }
-checkout_libs
+checkout_libs \
+    ".emacs.d/extern/cedet bzr+ssh://alastair@cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk/" \
+    ".emacs.d/extern/ede-cmake lp:~arankine/+junk/ede-cmake"
 
 build_libs() {
     echo -n "** Building libs:"
@@ -115,11 +114,7 @@ build_libs() {
         emacs_arg="EMACS=$e"
     done
 
-    build=(
-        ".emacs.d/extern/cedet"
-        ".emacs.d/extern/cedet/contrib"
-    )
-    for i in ${build[@]}; do
+    for i in "$@"; do
         (
             echo -n " $i"
 	        cd "$HOME/$i"
@@ -136,4 +131,6 @@ build_libs() {
     done
     echo " ... done"
 }
-build_libs
+build_libs \
+    ".emacs.d/extern/cedet" \
+    ".emacs.d/extern/cedet/contrib"
