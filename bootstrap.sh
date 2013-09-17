@@ -34,7 +34,7 @@ git_config
 symlink_dotfiles() {
     echo "** setting up symlinks to dotfiles in: $dotfiles_abs"
     
-    skipfiles=(bootstrap.sh)
+    skipfiles=(bootstrap.sh readme.org)
     
     case "$(uname -s)" in
         "Linux"   )   statinode() { stat -c '%i' "$@"; return 0; };;
