@@ -37,7 +37,7 @@ symlink_dotfiles() {
     skipfiles=(bootstrap.sh readme.org)
     
     case "$(uname -s)" in
-        "Linux"   )   statinode() { stat -c '%i' "$@"; return 0; };;
+        "Linux"   )   statinode() { stat -L -c '%i' "$@"; return 0; };;
         "Darwin"  )   statinode() { stat -L -f '%i' "$@"; return 0; };;
         "FreeBSD" )   statinode() { stat -L -f '%i' "$@"; return 0; };;
         * )           statinode() { ls -id "$@" | cut -d ' ' -f 1; return 0; };;
