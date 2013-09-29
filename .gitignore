@@ -17,7 +17,6 @@
 
 # TODO: Turn these into submodules
 /emacs.d/extern/cedet/
-/emacs.d/extern/ede-cmake/
 
 *.log
 *~

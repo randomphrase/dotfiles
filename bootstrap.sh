@@ -99,8 +99,7 @@ checkout_libs() {
     echo " ... done"
 }
 checkout_libs \
-    ".emacs.d/extern/cedet bzr+ssh://alastair@cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk/" \
-    ".emacs.d/extern/ede-cmake lp:~arankine/+junk/ede-cmake"
+    ".emacs.d/extern/cedet bzr+ssh://alastair@cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk/"
 
 build_libs() {
     echo -n "** Building libs:"

@@ -4,3 +4,6 @@
 [submodule "emacs.d/extern/conf-info-mode"]
 	path = emacs.d/extern/conf-info-mode
 	url = git@github.com:randomphrase/conf-info-mode.git
+[submodule "emacs.d/extern/ede-cmake"]
+	path = emacs.d/extern/ede-cmake
+	url = git@github.com:randomphrase/ede-cmake.git
