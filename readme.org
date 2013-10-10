@@ -6,7 +6,7 @@ Basic setup is:
 
 #+BEGIN_EXAMPLE
 $ cd
-$ git clone https://github.com/randomphrase/dotfiles .dotfiles
+$ git clone --recursive https://github.com/randomphrase/dotfiles .dotfiles
 $ .dotfiles/bootstrap.sh
 #+END_EXAMPLE
 
