@@ -1,3 +1,5 @@
+# -*- mode: shell-script -*-
+
 # Path to your oh-my-zsh configuration.
 ZSH=$HOME/.zsh.d/oh-my-zsh
 
