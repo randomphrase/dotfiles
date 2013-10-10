@@ -63,6 +63,9 @@
 ; Show me empty lines after buffer end
 (setq-default indicate-empty-lines t)
 
+;; enable some really cool extensions like C-x C-j(dired-jump)
+(require 'dired-x)
+
 ;; Don't break lines for me, please
 ;(setq-default truncate-lines t)
 
