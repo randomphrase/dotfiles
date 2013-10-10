@@ -13,45 +13,10 @@
 ;; Needs to be set up early - replaces some built-in libraries
 (require 'init/cedet)
 
-;; Setup packages
-(require 'init/package)
-
-;; Install extensions if they're missing
-(defun init--install-packages ()
-  (packages-install
-   (cons 'cmake-mode marmalade)
-   (cons 'csharp-mode marmalade)
-   (cons 'framemove melpa)
-   (cons 'gtags marmalade)
-   (cons 'iedit melpa)
-   (cons 'magit melpa)
-   (cons 'session melpa)
-   (cons 'expand-region melpa)
-   (cons 'ssh-config-mode melpa)
-   (cons 'goto-last-change melpa)
-   (cons 'markdown-mode melpa)
-   ;; (cons 'exec-path-from-shell melpa)
-   ;; (cons 'paredit melpa)
-   ;; (cons 'move-text melpa)
-   ;; (cons 'gist melpa)
-   ;; (cons 'htmlize melpa)
-   ;; (cons 'elisp-slime-nav melpa)
-   ;; ;(cons 'elnode marmalade)
-   ;; (cons 'slime-js marmalade)
-   ;; (cons 'git-commit-mode melpa)
-   ;; (cons 'gitconfig-mode melpa)
-   ;; (cons 'gitignore-mode melpa)
-   ;; (cons 'clojure-mode melpa)
-   ;; (cons 'clojure-test-mode melpa)
-   ;; (cons 'nrepl melpa)
-   ))
+;; Do package management
+(require 'cask)
+(cask-initialize)
    
-(condition-case nil
-    (init--install-packages)
-  (error
-   (package-refresh-contents)
-   (init--install-packages)))
-
 ;; Start session mode - TODO: redundant?
 (require 'session)
 (add-hook 'after-init-hook 'session-initialize)

@@ -87,11 +87,6 @@
 (put 'downcase-region 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
 
-;; Framemove is nice for moving between frames, we integrate it with windmove
-(require 'framemove)
-(windmove-default-keybindings 'meta)
-(setq framemove-hook-into-windmove t)
-
 ;; Always reuse buffers across frames if visible:
 (setq display-buffer-base-action '(nil (reusable-frames . visible)))
 
