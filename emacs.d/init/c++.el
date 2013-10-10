@@ -55,17 +55,6 @@
   )
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 
-;; Load work style and skeletons
-(when (require-soft 'tibra-style)
-  (autoload 'tibra-header-file "tibra-skeleton"
-    "A skeleton for a Tibra c++ header file" t)
-  (autoload 'tibra-source-file "tibra-skeleton"
-    "A skeleton for a Tibra c++ source file" t)
-  (autoload 'tibra-test-file "tibra-skeleton"
-    "A skeleton for a Tibra c++ unit test source file" t)
-)
-
-
 ;;
 ;; Doxymacs for doxygen comments:
 ;;
