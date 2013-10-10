@@ -1,11 +1,12 @@
 (source melpa)
 
-(depends-on "magit")
-(depends-on "session")
 (depends-on "expand-region")
-(depends-on "ssh-config-mode")
 (depends-on "goto-last-change")
+(depends-on "iedit")
+(depends-on "magit")
 (depends-on "markdown-mode")
+(depends-on "session")
+(depends-on "ssh-config-mode")
 
 (source marmalade)
 
