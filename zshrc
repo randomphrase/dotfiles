@@ -58,6 +58,7 @@ source $ZSH/oh-my-zsh.sh
 for eapp in /Applications/Emacs.app /Applications/MacPorts/Emacs.app; do
     if [[ -d $eapp/Contents/MacOS/bin ]]; then
         path=( $eapp/Contents/MacOS/bin $path )
+        export EMACS=$eapp/Contents/MacOS/Emacs
         break
     fi
 done
