@@ -133,3 +133,12 @@ build_libs() {
 build_libs \
     ".emacs.d/extern/cedet" \
     ".emacs.d/extern/cedet/contrib"
+
+run_cask() {
+    echo "** Updating cask packages"
+    (
+        cd "$HOME/.emacs.d"
+        $HOME/.emacs.d/extern/cask/bin/cask
+    )
+}
+run_cask

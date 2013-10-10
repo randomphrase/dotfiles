@@ -63,6 +63,9 @@ for eapp in /Applications/Emacs.app /Applications/MacPorts/Emacs.app; do
     fi
 done
 
+# Use cask
+path+=~/.emacs.d/extern/cask/bin
+
 # Setup emacs as the editor of choice
 export EDITOR=emacsclient
 export ALTERNATE_EDITOR=emacs

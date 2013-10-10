@@ -7,3 +7,6 @@
 [submodule "emacs.d/extern/ede-cmake"]
 	path = emacs.d/extern/ede-cmake
 	url = git@github.com:randomphrase/ede-cmake.git
+[submodule "emacs.d/extern/cask"]
+	path = emacs.d/extern/cask
+	url = https://github.com/cask/cask.git
