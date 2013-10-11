@@ -10,7 +10,7 @@ output_on_error() {
     log=$(mktemp ${0##*/}_log.XXXXXXXX) || exit 1
     trap 'rm "$log"' EXIT INT QUIT TERM
 
-	$* >$log 2>$log || {
+    $* >$log 2>$log || {
         echo "ERROR:"
         [[ -f $log ]] && cat $log
     }
@@ -102,15 +102,15 @@ checkout_libs() {
         repo=${ia[1]}
         echo -n " $path"
         if [[ ! -d "$HOME/$path" ]]; then
-	        (
-	            cd "$HOME/${path%/*}"
-	            bzr checkout --lightweight ${repo} ${path##*/}
-	        )
+            (
+                cd "$HOME/${path%/*}"
+                bzr checkout --lightweight ${repo} ${path##*/}
+            )
         else
-	        (
-	            cd "$HOME/$path"
-	            bzr update --quiet
-	        )
+            (
+                cd "$HOME/$path"
+                bzr update --quiet
+            )
         fi
     done
     echo " ... done"
@@ -128,7 +128,7 @@ build_libs() {
     for i in "$@"; do
         (
             echo -n " $i"
-	        cd "$HOME/$i"
+            cd "$HOME/$i"
             output_on_error make $install_info_arg
         ) || exit 1
     done
