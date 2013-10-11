@@ -5,6 +5,17 @@ shopt -s nocasematch nullglob    # using Bash
 dotfiles=${0%%/*}
 dotfiles_abs=$(cd $dotfiles && pwd -L)
 
+# run command but only show output if an error occurrs
+output_on_error() {
+    log=$(mktemp ${0##*/}_log.XXXXXXXX) || exit 1
+    trap 'rm "$log"' EXIT INT QUIT TERM
+
+	$* >$log 2>$log || {
+        echo "ERROR:"
+        [[ -f $log ]] && cat $log
+    }
+}
+
 check_environment() {
     echo "** checking environment"
 
@@ -15,6 +26,12 @@ check_environment() {
             echo "!! Missing: $e"
             exit 1
         }
+    done
+
+    # Use MacPorts emacs if available
+    for e in /Applications/MacPorts/Emacs.app/Contents/MacOS/Emacs ; do
+        [[ -x $e ]] || continue
+        export EMACS=$e
     done
 }
 check_environment
@@ -107,25 +124,12 @@ build_libs() {
     # Use ginstall-info if available
     hash ginstall-info 2>/dev/null && install_info_arg="INSTALL-INFO=ginstall-info"
 
-    # Use latest emacs if available
-    for e in /Applications/MacPorts/Emacs.app/Contents/MacOS/Emacs ; do
-        [[ -x $e ]] || continue
-        emacs_arg="EMACS=$e"
-    done
 
     for i in "$@"; do
         (
             echo -n " $i"
 	        cd "$HOME/$i"
-
-            # build to a tmp file, display it only if err
-            buildlog=$(mktemp ${i##*/}_build.XXXXXXXX) || exit 1
-            trap 'rm "$buildlog"' EXIT INT QUIT TERM
-
-	        make $emacs_arg $install_info_arg >$buildlog 2>$buildlog || {
-                echo "ERROR:"
-                [[ -f $buildlog ]] && cat $buildlog
-            }
+            output_on_error make $install_info_arg
         ) || exit 1
     done
     echo " ... done"
@@ -135,10 +139,11 @@ build_libs \
     ".emacs.d/extern/cedet/contrib"
 
 run_cask() {
-    echo "** Updating cask packages"
+    echo -n "** Updating cask packages"
     (
         cd "$HOME/.emacs.d"
-        $HOME/.emacs.d/extern/cask/bin/cask
-    )
+        output_on_error $HOME/.emacs.d/extern/cask/bin/cask
+    ) || exit 1
+    echo " ... done"
 }
 run_cask
