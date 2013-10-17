@@ -124,12 +124,14 @@ build_libs() {
     # Use ginstall-info if available
     hash ginstall-info 2>/dev/null && install_info_arg="INSTALL-INFO=ginstall-info"
 
+    # Use my Emacs
+    [[ $EMACS ]] && emacs_arg="EMACS=$EMACS"
 
     for i in "$@"; do
         (
             echo -n " $i"
             cd "$HOME/$i"
-            output_on_error make $install_info_arg
+            output_on_error make $emacs_arg $install_info_arg
         ) || exit 1
     done
     echo " ... done"
