@@ -39,9 +39,7 @@
 ;; Twiddle exec paths and PATH for similar reasons
 (dolist (my-exec-path
          (remove-if-not 'file-directory-p
-                        '("/opt/local/bin"
-                          "c:/cygwin/bin"
-                          "c:/cygwin/usr/local/bin")))
+                        '("/opt/local/bin")))
   (add-to-list 'exec-path my-exec-path)
   (setenv "PATH" (concat (getenv "PATH") ":" my-exec-path))
   )
@@ -52,7 +50,7 @@
 		    (list (expand-file-name "info" user-emacs-directory)
 			  (expand-file-name "cedet/doc/info" extern-lisp-dir)
 			  (car (last (file-expand-wildcards "/usr/local/gcc-*/share/info")))
-			  "c:/cygwin/usr/share/info")))
+			  )))
 
   ;; Append it so that the emacs stuff appears first (a bit neater :)
   (add-to-list 'Info-default-directory-list my-info-path)
