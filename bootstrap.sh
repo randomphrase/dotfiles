@@ -144,7 +144,7 @@ run_cask() {
     echo -n "** Updating cask packages"
     (
         cd "$HOME/.emacs.d"
-        output_on_error $HOME/.emacs.d/extern/cask/bin/cask
+        output_on_error $HOME/.emacs.d/extern/cask/bin/cask update
     ) || exit 1
     echo " ... done"
 }
