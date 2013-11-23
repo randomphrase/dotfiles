@@ -35,6 +35,7 @@
 (require 'init/c++)
 (require 'init/cmake)
 (require 'init/tramp)
+(require 'init/smartparens)
 
 ;; Setup key bindings
 (require 'init/key-bindings)
