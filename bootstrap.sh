@@ -2,7 +2,7 @@
 
 shopt -s nocasematch nullglob    # using Bash
 
-dotfiles=${0%%/*}
+dotfiles=${0%/*}
 dotfiles_abs=$(cd $dotfiles && pwd -L)
 
 # run command but only show output if an error occurrs
