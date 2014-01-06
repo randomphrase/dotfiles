@@ -1,3 +1,5 @@
+;; -*- mode: emacs-lisp -*-
+
 (source melpa)
 
 (depends-on "expand-region")
@@ -13,6 +15,12 @@
 
 (depends-on "cmake-mode")
 (depends-on "gtags")
+
+(source org)
+
+;(depends-on "org")
+; Use this instead (see https://github.com/cask/cask/issues/119)
+(depends-on "org-plus-contrib")
 
 ;; TODO: do we actually need this stuff?
 ;; ;; Install extensions if they're missing
