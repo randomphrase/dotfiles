@@ -87,15 +87,6 @@
     (local-set-key [(control c) (p)] 'semantic-analyze-proto-impl-toggle)
     (local-set-key (kbd "C-c <left>") 'semantic-tag-folding-fold-block)
     (local-set-key (kbd "C-c <right>") 'semantic-tag-folding-show-block)
-
-    (when (fboundp 'cmake-project-compile-buffer-file)
-      (local-set-key [(ctrl f7)] 'cmake-project-compile-buffer-file))
-    (when (fboundp 'cmake-project-build-custom-target)
-      (local-set-key [f8] 'cmake-project-build-custom-target))
-    (when (fboundp 'ede-compile-target)
-      (local-set-key [(ctrl f8)] 'ede-compile-target))
-    (when (fboundp 'cmake-project-compile-target-fast)
-      (local-set-key [(ctrl shift f8)] 'cmake-project-compile-target-fast))
     )
   (add-hook 'c-mode-common-hook 'my-cedet-hook)
   (add-hook 'lisp-mode-hook 'my-cedet-hook)
@@ -174,6 +165,19 @@
       (concat "*" (downcase maj) (when projname ":") (when projname projname) "*")))
 
   (setq compilation-buffer-name-function 'my-compilation-buffer-name-function)
-  )
+
+  (defun my-ede-hook ()
+    (when (fboundp 'cmake-project-compile-buffer-file)
+      (local-set-key [(ctrl f7)] 'cmake-project-compile-buffer-file))
+    (when (fboundp 'cmake-project-build-custom-target)
+      (local-set-key [f8] 'cmake-project-build-custom-target))
+    (when (fboundp 'ede-compile-target)
+      (local-set-key [(ctrl f8)] 'ede-compile-target))
+    (when (fboundp 'cmake-project-compile-target-fast)
+      (local-set-key [(ctrl shift f8)] 'cmake-project-compile-target-fast))
+    )
+  (add-hook 'ede-minor-mode-hook 'my-ede-hook)
+
+)
 
 (provide 'init/cedet)
