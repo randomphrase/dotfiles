@@ -46,9 +46,8 @@ plugins=(git)
 
 source $ZSH/oh-my-zsh.sh
 
-
-# set up path to include my stuff (possibly move this elsewhere?)
-[[ -d ~/bin ]] && path=( ~/bin $path )
+# bin subdirs (if any) should also be added - useful for script repos
+path+=(~/bin/*(/N))
 
 # MacPorts lives here:
 [[ -d /opt/local/bin ]] && path=( /opt/local/bin /opt/local/sbin $path ) \
