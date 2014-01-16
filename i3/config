@@ -26,6 +26,9 @@ floating_modifier $mod
 # Fix keyboard because bug
 exec setxkbmap -option "ctrl:nocaps"
 
+# Need dropbox
+exec dropbox start
+
 # Start urxvtd for fast terminal startup
 exec urxvtd --quiet --opendisplay --fork
 
