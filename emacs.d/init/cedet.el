@@ -23,30 +23,9 @@
   ;; Enable Semantic
   (semantic-mode 1)
 
-  ;; Detect GCC and set it up
-  (semantic-gcc-setup)
-
   ;; TODO: Needed?
   (require 'semantic/ia)
   (require 'semantic/lex-spp)
-
-  ;; Store semantic cache files here:
-  ;; (let ((dir (expand-file-name "semanticdb" user-emacs-directory)))
-  ;;   (when (file-directory-p dir)
-  ;;     (setq semanticdb-default-save-directory dir)))
-
-  ;; add some hard-to-find include directories
-  (dolist (dir (list "/opt/local/include"
-		     (car (last (file-expand-wildcards "/usr/include/boost-*")))
-		     "/usr/local/xsd-3.2.0-x86_64-linux-gnu/libxsd"))
-    (when (and dir (file-directory-p dir))
-      (semantic-add-system-include dir 'c-mode)
-      (semantic-add-system-include dir 'c++-mode)))
-
-  ;; if boost is on the include path, set up preprocessor declarations from its config.hpp file
-  (let ((config-hpp (semantic-dependency-find-file-on-path "boost/config.hpp" t 'c++-mode)))
-    (when (and config-hpp (file-readable-p config-hpp))
-      (add-to-list 'semantic-lex-c-preprocessor-symbol-file config-hpp)))
 
   ;; contrib stuff
   (load-file (expand-file-name "cedet/contrib/cedet-contrib-load.el" extern-lisp-dir))
@@ -61,14 +40,6 @@
   (require 'semantic/db-global)
   (semanticdb-enable-gnu-global-databases 'c-mode)
   (semanticdb-enable-gnu-global-databases 'c++-mode)
-  
-  ;; (add-hook 'semantic-init-hooks (lambda ()
-  ;;                                  (imenu-add-to-menubar "Tokens")))
-
-  ;; Adds semantic analyze display for speedbar
-  ;; (defun require-semantic-sb ()
-  ;;   (require 'semantic-sb))
-  ;; (add-hook 'speedbar-load-hook 'require-semantic-sb)
   
   ;; don't use semantic on remote files:
   (add-to-list 'semantic-inhibit-functions 'remote-buffer-p)
@@ -98,86 +69,76 @@
     (local-set-key "\C-c\C-r" 'semantic-symref)
     )
   (add-hook 'c-mode-common-hook 'my-cedet-c-hook)
-
-  ;; (when (cedet-ectag-version-check t)
-  ;;   (semantic-load-enable-primary-ectags-support))
 )
-
-(defvar parallel-make-count 4)
 
 (defvar my-project-build-directories
   '(("None" . "build")
-    ("Debug" . "build.dbg.64")
-    ("Release" . "build.rel.64")
-    ("RelWithDebInfo" . "build.r+d.64")))
+    ("Debug" . "build.dbg")
+    ("Release" . "build.rel")
+    ("RelWithDebInfo" . "build.r+d")))
+
 
 ;;
 ;; EDE
 ;;
-(when (fboundp 'global-ede-mode)
+;;(when (fboundp 'global-ede-mode)
 
-  (global-ede-mode t)
-  (require 'ede-cmake)
+(global-ede-mode t)
+(require 'ede-compdb)
 
-  (defun my-locate-header (name dir proj)
-    "locate name in current build directory if required"
-    (let ((build (ignore-errors (cmake-build-directory proj))))
-      (when build
-        (let* ((builddir (file-name-as-directory build))
-               (path (concat builddir name)))
-          (if (file-exists-p path) path)
-    ))))
+(defun vc-project-root (dir)
+  (require 'vc)
+  (let* ((default-directory dir)
+         (backend (vc-deduce-backend)))
+    (and backend (vc-call-backend backend 'root default-directory))))
 
-  (defun my-project-root-build-locator (config root-dir)
-    "Locates a build directory for a project."
-    (let ((build-base (assoc config my-project-build-directories)))
-      (if build-base
-          (concat (file-name-as-directory (cdr build-base))
-                  (file-name-nondirectory (directory-file-name root-dir)))
-        nil)))
+(defun my-load-cmake-project (dir)
+  "Creates a project for the given directory sourced at dir"
+  (let ((default-directory dir)
+        (config-and-dir (car (cl-member-if (lambda (c) (file-readable-p (expand-file-name "compile_commands.json" (cdr c))))
+                                           my-cmake-build-directories))))
+    (unless config-and-dir
+      (error "Couldn't determine build directory for project at %s" dir))
+    (ede-add-project-to-global-list
+     (ede-compdb-project 
+      (file-name-nondirectory (directory-file-name dir))
+      :file (expand-file-name "CMakeLists.txt" dir)
+      :compdb-file (expand-file-name "compile_commands.json" (cdr config-and-dir))
+      :configuration-default (car config-and-dir)
+      :configuration-directories (mapcar #'cdr my-cmake-build-directories)
+      :configurations (mapcar #'car my-cmake-build-directories)
+      :build-command "cmake --build ."
+      ))))
 
-  (defun my-load-project (dir)
-    "Load a project of type `cpp-root' for the directory DIR.
-     Return nil if there isn't one."
-    (ede-cmake-cpp-project 
-     (file-name-nondirectory (directory-file-name dir))
-     :directory dir
-     :locate-fcn 'my-locate-header
-     :locate-build-directory 'my-project-root-build-locator
-     :build-tool (cmake-ninja-build-tool "Make" :additional-parameters (format "-j %d" parallel-make-count))
-     :include-path '( "/" "/pchNone" )
-     :spp-table '( ("override" . "") )
-     ))
+(ede-add-project-autoload
+ (ede-project-autoload "CMake"
+                       :file 'ede-compdb
+                       :proj-file "CMakeLists.txt"
+                       :proj-root 'vc-project-root
+                       :load-type 'my-load-cmake-project
+                       :class-sym 'ede-compdb-project))
+ ;'unique)
 
-  (ede-add-project-autoload
-   (ede-project-autoload "CMake"
-                         :file 'ede-cmake
-                         :proj-file "CMakeLists.txt"
-                         :proj-root 'ede-cmake-cpp-project-root
-                         :load-type 'my-load-project
-                         :class-sym 'ede-cmake-cpp-project)
-   'unique)
+;; Name the compilation buffer after the current project - allows more than one project to be
+;; compiled simultaneously
+(defun my-compilation-buffer-name-function (maj)
+  (let ((projname (if ede-object-root-project (eieio-object-name-string ede-object-root-project) nil)))
+    (concat "*" (downcase maj) (when projname ":") (when projname projname) "*")))
 
-  ;; Name the compilation buffer after the current project - allows more than one project to be
-  ;; compiled simultaneously
-  (defun my-compilation-buffer-name-function (maj)
-    (let ((projname (if ede-object-root-project (eieio-object-name-string ede-object-root-project) nil)))
-      (concat "*" (downcase maj) (when projname ":") (when projname projname) "*")))
+(setq compilation-buffer-name-function 'my-compilation-buffer-name-function)
 
-  (setq compilation-buffer-name-function 'my-compilation-buffer-name-function)
+(defun my-ede-hook ()
+  (when (fboundp 'cmake-project-compile-buffer-file)
+    (local-set-key [(ctrl f7)] 'cmake-project-compile-buffer-file))
+  (when (fboundp 'cmake-project-build-custom-target)
+    (local-set-key [f8] 'cmake-project-build-custom-target))
+  (when (fboundp 'ede-compile-target)
+    (local-set-key [(ctrl f8)] 'ede-compile-target))
+  (when (fboundp 'cmake-project-compile-target-fast)
+    (local-set-key [(ctrl shift f8)] 'cmake-project-compile-target-fast))
+  )
+(add-hook 'ede-minor-mode-hook 'my-ede-hook)
 
-  (defun my-ede-hook ()
-    (when (fboundp 'cmake-project-compile-buffer-file)
-      (local-set-key [(ctrl f7)] 'cmake-project-compile-buffer-file))
-    (when (fboundp 'cmake-project-build-custom-target)
-      (local-set-key [f8] 'cmake-project-build-custom-target))
-    (when (fboundp 'ede-compile-target)
-      (local-set-key [(ctrl f8)] 'ede-compile-target))
-    (when (fboundp 'cmake-project-compile-target-fast)
-      (local-set-key [(ctrl shift f8)] 'cmake-project-compile-target-fast))
-    )
-  (add-hook 'ede-minor-mode-hook 'my-ede-hook)
-
-)
+;;  )
 
 (provide 'init/cedet)
