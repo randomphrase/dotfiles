@@ -96,17 +96,17 @@
   "Creates a project for the given directory sourced at dir"
   (let ((default-directory dir)
         (config-and-dir (car (cl-member-if (lambda (c) (file-readable-p (expand-file-name "compile_commands.json" (cdr c))))
-                                           my-cmake-build-directories))))
+                                           my-project-build-directories))))
     (unless config-and-dir
-      (error "Couldn't determine build directory for project at %s" dir))
+      (message "Couldn't determine build directory for project at %s" dir))
     (ede-add-project-to-global-list
-     (ede-compdb-project 
+     (ede-ninja-project 
       (file-name-nondirectory (directory-file-name dir))
       :file (expand-file-name "CMakeLists.txt" dir)
       :compdb-file (expand-file-name "compile_commands.json" (cdr config-and-dir))
       :configuration-default (car config-and-dir)
-      :configuration-directories (mapcar #'cdr my-cmake-build-directories)
-      :configurations (mapcar #'car my-cmake-build-directories)
+      :configuration-directories (mapcar #'cdr my-project-build-directories)
+      :configurations (mapcar #'car my-project-build-directories)
       :build-command "cmake --build ."
       ))))
 
