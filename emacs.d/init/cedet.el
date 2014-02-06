@@ -61,7 +61,7 @@
 )
 
 (defvar my-project-build-directories
-  '(("None" . "build")
+  '(("None" . ".")
     ("Debug" . "build.dbg")
     ("Release" . "build.rel")
     ("RelWithDebInfo" . "build.r+d")))
@@ -83,20 +83,29 @@
 
 (defun my-load-cmake-project (dir)
   "Creates a project for the given directory sourced at dir"
-  (let ((default-directory dir)
-        (config-and-dir (car (cl-member-if (lambda (c) (file-readable-p (expand-file-name "compile_commands.json" (cdr c))))
-                                           my-project-build-directories))))
-    (unless config-and-dir
+  (let* ((default-directory dir)
+         (projname (file-name-nondirectory (directory-file-name dir)))
+         (config-and-build-dirs
+          (mapcar (lambda (c)
+                    (cons (car c)
+                          ;; Expand directory
+                          (if (file-name-absolute-p (cdr c)) (expand-file-name projname (cdr c))
+                            (expand-file-name (cdr c) dir))))
+                  my-project-build-directories))
+         (active-config-and-dir
+          (car (cl-member-if (lambda (c)
+                               (file-readable-p (expand-file-name "rules.ninja" (cdr c))))
+                             config-and-build-dirs))))
+    (unless active-config-and-dir
       (message "Couldn't determine build directory for project at %s" dir))
     (ede-add-project-to-global-list
      (ede-ninja-project 
-      (file-name-nondirectory (directory-file-name dir))
+      projname
       :file (expand-file-name "CMakeLists.txt" dir)
-      :compdb-file (expand-file-name "compile_commands.json" (cdr config-and-dir))
-      :configuration-default (car config-and-dir)
-      :configuration-directories (mapcar #'cdr my-project-build-directories)
-      :configurations (mapcar #'car my-project-build-directories)
-      :build-command "cmake --build ."
+      :compdb-file (expand-file-name "rules.ninja" (cdr active-config-and-dir))
+      :configuration-default (car active-config-and-dir)
+      :configuration-directories (mapcar #'cdr config-and-build-dirs)
+      :configurations (mapcar #'car config-and-build-dirs)
       ))))
 
 (ede-add-project-autoload
@@ -117,14 +126,10 @@
 (setq compilation-buffer-name-function 'my-compilation-buffer-name-function)
 
 (defun my-ede-hook ()
-  (when (fboundp 'cmake-project-compile-buffer-file)
-    (local-set-key [(ctrl f7)] 'cmake-project-compile-buffer-file))
-  (when (fboundp 'cmake-project-build-custom-target)
-    (local-set-key [f8] 'cmake-project-build-custom-target))
+  (when (fboundp 'ede-compdb-build-target)
+    (local-set-key [f8] 'ede-compdb-build-target))
   (when (fboundp 'ede-compile-target)
     (local-set-key [(ctrl f8)] 'ede-compile-target))
-  (when (fboundp 'cmake-project-compile-target-fast)
-    (local-set-key [(ctrl shift f8)] 'cmake-project-compile-target-fast))
   )
 (add-hook 'ede-minor-mode-hook 'my-ede-hook)
 
