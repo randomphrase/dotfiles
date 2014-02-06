@@ -25,6 +25,20 @@
 
 ;; (add-to-list 'magic-fallback-mode-alist '(buffer-standard-include-p . c++-mode))
 
+;; set up our own c++ extension mappings
+(defvar my-cpp-other-file-alist
+  '(("\\.cpp\\'" (".hpp" ".ipp"))
+    ("\\.ipp\\'" (".hpp" ".cpp"))
+    ("\\.hpp\\'" (".ipp" ".cpp"))
+    ("\\.cxx\\'" (".hxx" ".ixx"))
+    ("\\.ixx\\'" (".cxx" ".hxx"))
+    ("\\.hxx\\'" (".ixx" ".cxx"))
+    ("\\.c\\'" (".h"))
+    ("\\.h\\'" (".c"))
+    ))
+
+(setq-default ff-other-file-alist 'my-cpp-other-file-alist)
+
 (defun my-c-initialization-hook ()
   ;; Debug keys
   (define-key c-mode-base-map [(f10)] 'gud-next)
@@ -40,6 +54,9 @@
   ;; Show hard tabs
   ;; TODO: Use whitespace mode from Emacs 24
   ;;(show-ws-highlight-tabs)
+
+  ;; (setq ff-ignore-include t)
+  (define-key c-mode-base-map [(meta o)] 'ff-get-other-file)
 
   (add-to-list 'c-default-style (cons 'c++-mode (if (assoc "tibra" c-style-alist) "tibra" "stroustrup")))
 )

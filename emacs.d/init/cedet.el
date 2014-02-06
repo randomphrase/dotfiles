@@ -27,15 +27,6 @@
   (require 'semantic/ia)
   (require 'semantic/lex-spp)
 
-  ;; contrib stuff
-  (load-file (expand-file-name "cedet/contrib/cedet-contrib-load.el" extern-lisp-dir))
-
-  (require 'eassist (expand-file-name "cedet/contrib/eassist.el" extern-lisp-dir))
-  (add-to-list 'eassist-header-switches '("cxx" . ("hxx" "hpp" "h")))
-  (add-to-list 'eassist-header-switches '("hxx" . ("cxx" "cpp")))
-  (add-to-list 'eassist-header-switches '("ipp" . ("hxx" "hpp" "h")))
-  (add-to-list 'eassist-header-switches '("hpp" . ("cxx" "cpp" "ipp")))
-  
   ;; Ensure semantic can get info from gnu global
   (require 'semantic/db-global)
   (semanticdb-enable-gnu-global-databases 'c-mode)
@@ -64,8 +55,6 @@
   (add-hook 'emacs-lisp-mode-hook 'my-cedet-hook)
   
   (defun my-cedet-c-hook ()
-    (local-set-key [(meta o)] 'eassist-switch-h-cpp)
-    (local-set-key "\C-ce" 'eassist-list-methods)
     (local-set-key "\C-c\C-r" 'semantic-symref)
     )
   (add-hook 'c-mode-common-hook 'my-cedet-c-hook)
