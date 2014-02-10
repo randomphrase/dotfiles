@@ -1,10 +1,8 @@
-(setq is-mac (equal system-type 'darwin))
-
 ;; Turn off this stuff - we don't need it. Except for mac menu bars - they don't cost any screen
 ;; real-estate, might as well leave them enabled...
-(if (and (not is-mac) (fboundp 'menu-bar-mode)) (menu-bar-mode -1))
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+(unless (equal system-type 'darwin) (menu-bar-mode -1))
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
 
 ;; Highlight matching parentheses when the point is on them.
 (show-paren-mode t)

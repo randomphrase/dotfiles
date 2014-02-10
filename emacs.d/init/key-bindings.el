@@ -53,18 +53,11 @@
 (global-set-key (kbd "C-x m") 'eshell)
 
 ;; Proced mode is cool!
-(when (fboundp 'proced)
-  (global-set-key (kbd "C-x p") 'proced))
+(global-set-key (kbd "C-x p") 'proced)
 
 ;; Font size
 (global-set-key (kbd "C-+") 'text-scale-increase)
 (global-set-key (kbd "C--") 'text-scale-decrease)
-
-;; On mac, use C-s-up/down to toggle fullscreen, similar bindings to ubuntu defaults
-(when (fboundp 'ns-toggle-fullscreen)
-  (global-set-key [(control super up)] 'ns-toggle-fullscreen)
-  (global-set-key [(control super down)] 'ns-toggle-fullscreen)
-  )
 
 ;; smerge has horrible key bindings by default, add some nicer ones
 (defun my-smerge-hook ()
@@ -76,6 +69,7 @@
 
 (define-key global-map (kbd "C-;") 'iedit-mode)
 (define-key isearch-mode-map (kbd "C-;") 'iedit-mode)
+
 (define-key global-map (kbd "C-=") 'er/expand-region)
 
 ;; Use option as meta
