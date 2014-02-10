@@ -86,4 +86,8 @@
   (setq doxymacs-doxygen-style "C++")
 )
 
+;; Add our file extensions to enable project searching using find-file-in-project
+(require 'find-file-in-project)
+(setq ffip-patterns (append '("*.cpp" "*.hpp" "*.cxx" "*.hxx") ffip-patterns))
+
 (provide 'init/c++)

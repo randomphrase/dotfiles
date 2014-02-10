@@ -72,6 +72,8 @@
 
 (define-key global-map (kbd "C-=") 'er/expand-region)
 
+(global-set-key (kbd "C-x f") 'find-file-in-project)
+
 ;; Use option as meta
 ;(setq mac-option-modifier 'meta)
 ;(setq mac-pass-option-to-system nil)

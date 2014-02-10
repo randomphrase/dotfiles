@@ -10,6 +10,7 @@
 (depends-on "session")
 (depends-on "smartparens")
 (depends-on "ssh-config-mode")
+(depends-on "find-file-in-project")
 
 (source marmalade)
 

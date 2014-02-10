@@ -130,6 +130,10 @@
     (local-set-key [f8] 'ede-compdb-build-target))
   (when (fboundp 'ede-compile-target)
     (local-set-key [(ctrl f8)] 'ede-compile-target))
+
+  ;; set the project root for use with find-file-in-project
+  (when ede-object-root-project
+    (setq ffip-project-root (oref ede-object-root-project directory)))
   )
 (add-hook 'ede-minor-mode-hook 'my-ede-hook)
 
