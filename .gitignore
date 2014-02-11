@@ -8,12 +8,15 @@
 /emacs.d/elpa/
 /emacs.d/eshell/history
 /emacs.d/eshell/lastdir
+/emacs.d/extern/cask/
 /emacs.d/local.el
 /emacs.d/info/
 /emacs.d/semanticdb
 /emacs.d/srecode-map.el
 /emacs.d/tramp
 /emacs.d/url
+
+/zsh.d/oh-my-zsh/
 
 # TODO: Turn these into submodules
 /emacs.d/extern/cedet/

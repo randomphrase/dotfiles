@@ -93,33 +93,45 @@ symlink_dotfiles() {
 }
 symlink_dotfiles
 
-checkout_libs() {
-    echo -n "** Checking out bzr libs:"
-
-    for i in "$@"; do
-        ia=($i)
-        path=${ia[0]}
-        repo=${ia[1]}
-        echo -n " $path"
-        if [[ ! -d "$HOME/$path" ]]; then
-            (
-                cd "$HOME/${path%/*}"
-                bzr checkout --lightweight ${repo} ${path##*/}
-            )
-        else
-            (
-                cd "$HOME/$path"
-                bzr update --quiet
-            )
-        fi
-    done
+update_bzr_lib() {
+    path=$1
+    repo=$2
+    if [[ ! -d "$HOME/$path" ]]; then
+        echo -n "** Checking out bzr lib: $path"
+        (
+            cd "$HOME/${path%/*}"
+            bzr checkout --lightweight ${repo} ${path##*/}
+        )
+    else
+        echo -n "** Updating bzr lib: $path"
+        (
+            cd "$HOME/$path"
+            bzr update --quiet
+        )
+    fi
     echo " ... done"
 }
-checkout_libs \
-    ".emacs.d/extern/cedet bzr+ssh://alastair@cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk/"
+update_bzr_lib \
+    ".emacs.d/extern/cedet" "bzr+ssh://alastair@cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk/"
 
-build_libs() {
-    echo -n "** Building libs:"
+clone_git_repo() {
+    # Some tools are self-updating, so we don't import them as submodules, instead just clone
+    path=$1
+    repo=$2
+    if [[ ! -d "$HOME/$path" ]]; then
+        echo -n "** Clone git repo: $path"
+        (
+            cd "$HOME/${path%/*}"
+            git clone -q ${repo} ${path##*/}
+        )
+        echo " ... done"
+    fi
+}
+clone_git_repo ".zsh.d/oh-my-zsh" "https://github.com/robbyrussell/oh-my-zsh.git"
+clone_git_repo ".emacs.d/extern/cask" "https://github.com/cask/cask.git"
+
+build_lib() {
+    echo -n "** Building: $1"
 
     # Use ginstall-info if available
     hash ginstall-info 2>/dev/null && install_info_arg="INSTALL-INFO=ginstall-info"
@@ -127,20 +139,23 @@ build_libs() {
     # Use my Emacs
     [[ $EMACS ]] && emacs_arg="EMACS=$EMACS"
 
-    for i in "$@"; do
-        (
-            echo -n " $i"
-            cd "$HOME/$i"
-            output_on_error make $emacs_arg $install_info_arg
-        ) || exit 1
-    done
+    (
+        cd "$HOME/$1"
+        output_on_error make $emacs_arg $install_info_arg
+    ) || exit 1
     echo " ... done"
 }
-build_libs \
-    ".emacs.d/extern/cedet" \
-    ".emacs.d/extern/cedet/contrib"
+build_lib ".emacs.d/extern/cedet"
+build_lib ".emacs.d/extern/cedet/contrib"
 
 run_cask() {
+    echo -n "** Updating cask"
+    (
+        cd "$HOME/.emacs.d"
+        output_on_error $HOME/.emacs.d/extern/cask/bin/cask upgrade
+    ) || exit 1
+    echo " ... done"
+
     echo -n "** Updating cask packages"
     (
         cd "$HOME/.emacs.d"
