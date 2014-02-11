@@ -42,9 +42,6 @@ git_config() {
     # Don't use work email name/address for this repo...
     git config --file "$dotfiles/.git/config" user.name "Alastair Rankine"
     git config --file "$dotfiles/.git/config" user.email "alastair@girtby.net"
-
-    # Need this because some submodules (like oh-my-zsh) are corrupted on github :(
-    git config --file "$dotfiles/.git/config" transfer.fsckobjects false
 }
 git_config
 
@@ -118,11 +115,15 @@ clone_git_repo() {
     # Some tools are self-updating, so we don't import them as submodules, instead just clone
     path=$1
     repo=$2
+
+    # Need this because some submodules (like oh-my-zsh) are corrupted on github :(
+    opts="-c transfer.fsckobjects=false"
+
     if [[ ! -d "$HOME/$path" ]]; then
         echo -n "** Clone git repo: $path"
         (
             cd "$HOME/${path%/*}"
-            git clone -q ${repo} ${path##*/}
+            git ${opts} clone -q ${repo} ${path##*/}
         )
         echo " ... done"
     fi
