@@ -130,6 +130,10 @@
   (local-set-key [f8] 'ede-compile-selected)
   (local-set-key [(ctrl f8)] 'ede-compile-target)
 
+  ;; Add bindings for these (TODO: move into package)
+  (local-set-key (kbd "C-c . s") 'ede-project-configurations-set)
+  (local-set-key (kbd "C-c . S") 'ede-compdb-set-configuration-directory)
+
   ;; set the project root for use with find-file-in-project
   (when ede-object-root-project
     (setq ffip-project-root (oref ede-object-root-project directory)))
