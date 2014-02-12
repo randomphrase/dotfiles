@@ -126,10 +126,9 @@
 (setq compilation-buffer-name-function 'my-compilation-buffer-name-function)
 
 (defun my-ede-hook ()
-  (when (fboundp 'ede-compdb-build-target)
-    (local-set-key [f8] 'ede-compdb-build-target))
-  (when (fboundp 'ede-compile-target)
-    (local-set-key [(ctrl f8)] 'ede-compile-target))
+  ;; These are a bit more convenient than default bindings
+  (local-set-key [f8] 'ede-compile-selected)
+  (local-set-key [(ctrl f8)] 'ede-compile-target)
 
   ;; set the project root for use with find-file-in-project
   (when ede-object-root-project
