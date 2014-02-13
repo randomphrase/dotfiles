@@ -103,7 +103,7 @@
       projname
       :file (expand-file-name "CMakeLists.txt" dir)
       :compdb-file (expand-file-name "rules.ninja" (cdr active-config-and-dir))
-      :configuration-default (or (car active-config-and-dir) (car my-project-build-directories))
+      :configuration-default (or (car active-config-and-dir) (car (car my-project-build-directories)))
       :configuration-directories (mapcar #'cdr config-and-build-dirs)
       :configurations (mapcar #'car config-and-build-dirs)
       ))))
