@@ -12,14 +12,15 @@
 (define-key subword-mode-map [(control left)] 'subword-backward)
 (define-key subword-mode-map [(control right)] 'subword-forward)
 
-(global-set-key [f5] 'kmacro-start-macro-or-insert-counter)
-(global-set-key [f6] 'kmacro-end-or-call-macro)
+(global-set-key [f5] 'next-error)
+(global-set-key [(shift f5)] 'previous-error)
 
-(global-set-key [f4] 'next-error)
 (global-set-key [f7] 'compile)
 (global-set-key [(shift f7)] 'recompile)
-(global-set-key [(shift f4)] 'previous-error)
 
+;; TODO: replace?
+;; (define-key c-mode-base-map [(f10)] 'gud-next)
+;; (define-key c-mode-base-map [(f11)] 'gud-step)
 (global-set-key [f9]    'gdb-toggle-breakpoint)
 (global-set-key [f10]   'gud-next)
 (global-set-key [f11]   'gud-step)
