@@ -6,9 +6,6 @@
 (add-to-list 'auto-mode-alist '("\\.[it]pp$" . c++-mode))
 (add-to-list 'auto-mode-alist '("\\.[it]xx$" . c++-mode))
 
-;; Org-mode files
-(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-
 ;; CMake files
 (require 'cmake-mode)
 (add-to-list 'auto-mode-alist '("CMake[A-Za-z0-9-]*\\.txt\\'" . cmake-mode))
