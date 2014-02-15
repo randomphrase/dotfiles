@@ -40,10 +40,6 @@
 (setq-default ff-other-file-alist 'my-cpp-other-file-alist)
 
 (defun my-c-initialization-hook ()
-  ;; Debug keys
-  (define-key c-mode-base-map [(f10)] 'gud-next)
-  (define-key c-mode-base-map [(f11)] 'gud-step)
-
 
   (subword-mode 1)
 
