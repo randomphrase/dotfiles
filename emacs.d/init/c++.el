@@ -44,12 +44,8 @@
   (define-key c-mode-base-map [(f10)] 'gud-next)
   (define-key c-mode-base-map [(f11)] 'gud-step)
 
-  ;; Don't use subword mode - instead bind ctrl-cursor keys for subword movement. Non-subword
-  ;; movement can hence still be done using M-f, M-b
-  ;;(subword-mode 1)
-  (require 'subword)
-  (define-key c-mode-base-map [(control left)] 'subword-backward)
-  (define-key c-mode-base-map [(control right)] 'subword-forward)
+
+  (subword-mode 1)
 
   ;; Show hard tabs
   ;; TODO: Use whitespace mode from Emacs 24

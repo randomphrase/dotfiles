@@ -8,6 +8,9 @@
   (global-set-key [(shift meta right)] 'transpose-windows-right)
   )
 
+(require 'subword)
+(define-key subword-mode-map [(control left)] 'subword-backward)
+(define-key subword-mode-map [(control right)] 'subword-forward)
 
 (global-set-key [f5] 'kmacro-start-macro-or-insert-counter)
 (global-set-key [f6] 'kmacro-end-or-call-macro)
