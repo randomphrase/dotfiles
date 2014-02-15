@@ -2,11 +2,11 @@
 
 ;; WindMove mode - use mod-arrow keys to move focus to the frame in that direction
 (when (fboundp 'windmove-default-keybindings)
-  (windmove-default-keybindings 'meta)
+  (windmove-default-keybindings 'meta))
   
-  (global-set-key [(shift meta left)]  'transpose-windows-left)
-  (global-set-key [(shift meta right)] 'transpose-windows-right)
-  )
+(define-key ctl-x-4-map [t]     'transpose-windows)
+(define-key ctl-x-4-map [left]  'transpose-windows-left)
+(define-key ctl-x-4-map [right] 'transpose-windows-right)
 
 (require 'subword)
 (define-key subword-mode-map [(control left)] 'subword-backward)
@@ -46,8 +46,6 @@
 
 (autoload 'copy-from-above-command "misc")
 (global-set-key [(meta p)] 'copy-from-above-command)
-
-(define-key ctl-x-4-map (kbd "t") 'transpose-windows)
 
 ;; Magit
 (autoload 'magit-status "magit")
