@@ -30,12 +30,12 @@
 (require 'init/sane-defaults)
 
 ; Favourite modes
-(eval-after-load 'org '(require 'init/org))
-
 (require 'init/c++)
 (require 'init/cmake)
 (require 'init/tramp)
 (require 'init/smartparens)
+
+(eval-after-load 'org '(require 'init/org))
 
 ;; Setup key bindings
 (require 'init/key-bindings)
