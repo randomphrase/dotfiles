@@ -1,9 +1,10 @@
 ;; CMake mode for CMake*.txt files
-(require 'cmake-mode)
-(setq cmake-tab-width 4)
+(defun my-cmake-hook ()
+  (setq cmake-tab-width 4)
+  (subword-mode 1)
+  (local-set-key (kbd "C-h c") 'cmake-help-command)
+  )
 
-(when (fboundp 'subword-mode)
-  (add-hook 'cmake-mode-hook (lambda ()
-                               (subword-mode 1))))
+(add-hook 'cmake-mode-hook 'my-cmake-hook)
 
 (provide 'init/cmake)
