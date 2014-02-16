@@ -125,6 +125,11 @@
 
 (setq compilation-buffer-name-function 'my-compilation-buffer-name-function)
 
+(defun ede-object-system-include-path ()
+  "Returns the system include path for the current buffer"
+  (when ede-object
+    (ede-system-include-path ede-object)))
+
 (defun my-ede-hook ()
   ;; These are a bit more convenient than default bindings
   (local-set-key [f8] 'ede-compile-selected)
@@ -133,6 +138,10 @@
   ;; set the project root for use with find-file-in-project
   (when ede-object-root-project
     (setq ffip-project-root (oref ede-object-root-project directory)))
+
+  ;; enable include file completion
+  (when (boundp 'achead:get-include-directories-function)
+    (setq achead:get-include-directories-function 'ede-object-system-include-path))
   )
 (add-hook 'ede-minor-mode-hook 'my-ede-hook)
 

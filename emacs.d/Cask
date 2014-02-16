@@ -11,6 +11,8 @@
 (depends-on "smartparens")
 (depends-on "ssh-config-mode")
 (depends-on "find-file-in-project")
+(depends-on "auto-complete")
+(depends-on "auto-complete-c-headers")
 
 (source marmalade)
 

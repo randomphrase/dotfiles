@@ -34,6 +34,7 @@
 (require 'init/cmake)
 (require 'init/tramp)
 (require 'init/smartparens)
+(require 'init/auto-complete)
 
 (eval-after-load 'org '(require 'init/org))
 

@@ -61,6 +61,10 @@
     (gtags-mode 1))
   ;(semantic-tag-folding-mode 1)
   ;(setq show-trailing-whitespace t)
+
+  (require 'auto-complete-c-headers)
+  (add-to-list 'ac-sources 'ac-source-c-headers)
+
   )
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 
