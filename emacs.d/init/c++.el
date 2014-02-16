@@ -4,28 +4,7 @@
 ;;
 (require-soft 'gtags)
 
-;; Don't seem to need this stuff any more - the standard c++ headers have their own mode detection strings
-;; 
-;; (defun file-in-directory-list-p (file dirlist)
-;;   "Returns true if the file specified is contained within one of
-;; the directories in the list. The directories must also exist."
-;;   (let ((dirs (mapcar 'expand-file-name dirlist))
-;;         (filedir (expand-file-name (file-name-directory file))))
-;;     (and
-;;      (file-directory-p filedir)
-;;      (member-if (lambda (x) ; Check directory prefix matches
-;;                   (string-match (substring x 0 (min(length filedir) (length x))) filedir))
-;;                 dirs))))
-
-;; (defun buffer-standard-include-p ()
-;;   "Returns true if the current buffer is contained within one of
-;; the directories in the INCLUDE environment variable."
-;;   (and (getenv "INCLUDE")
-;;        (file-in-directory-list-p buffer-file-name (split-string (getenv "INCLUDE") path-separator))))
-
-;; (add-to-list 'magic-fallback-mode-alist '(buffer-standard-include-p . c++-mode))
-
-;; set up our own c++ extension mappings
+;; set up our own c++ extension mappings for ff-other-file support
 (defvar my-cpp-other-file-alist
   '(("\\.cpp\\'" (".hpp" ".ipp"))
     ("\\.ipp\\'" (".hpp" ".cpp"))
