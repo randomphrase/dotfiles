@@ -29,6 +29,12 @@
   ;; (setq ff-ignore-include t)
   (define-key c-mode-base-map [(meta o)] 'ff-get-other-file)
 
+  ;; If we have clang-format, load and bind it to C-|
+  (when (load-library "clang-format")
+    (define-key c-mode-base-map [(ctrl |)] 'clang-format-region)
+    (define-key c-mode-base-map [(ctrl meta |)] 'clang-format-buffer)
+    )
+
   (add-to-list 'c-default-style (cons 'c++-mode (if (assoc "tibra" c-style-alist) "tibra" "stroustrup")))
 )
 (add-hook 'c-initialization-hook 'my-c-initialization-hook)
@@ -43,7 +49,6 @@
 
   (require 'auto-complete-c-headers)
   (add-to-list 'ac-sources 'ac-source-c-headers)
-
   )
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 

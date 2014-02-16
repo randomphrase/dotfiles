@@ -19,6 +19,12 @@
   (when (file-regular-p file)
     (load file)))
 
+;; clang-format is installed in strange locations
+(let ((D (car (remove-if-not 'file-directory-p
+                             (append (file-expand-wildcards "/opt/local/libexec/llvm-*/libexec/clang-format")
+                                     (file-expand-wildcards "/usr/share/emacs/site-lisp/clang-format-*"))))))
+  (when D (add-to-list 'load-path D)))
+
 
 ;; Write backup files to own directory
 (setq backup-directory-alist
