@@ -11,7 +11,8 @@
 (require 'init/paths)
 
 ;; Needs to be set up early - replaces some built-in libraries
-(require 'init/cedet)
+(when (load-file (expand-file-name "cedet/cedet-devel-load.el" extern-lisp-dir))
+  (require 'init/cedet))
 
 ;; Do package management
 (require 'cask)
@@ -30,6 +31,7 @@
 (require 'init/sane-defaults)
 
 ; Favourite modes
+(require 'init/ede)
 (require 'init/c++)
 (require 'init/cmake)
 (require 'init/tramp)
