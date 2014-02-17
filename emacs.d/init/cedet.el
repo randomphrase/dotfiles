@@ -35,26 +35,24 @@
 (add-to-list 'semantic-inhibit-functions 'remote-buffer-p)
 
 (defun my-cedet-hook ()
-  (local-set-key [(meta return)] 'semantic-ia-complete-symbol-menu)
-  ;;(local-set-key [(control c) (tab)] 'semantic-ia-complete-symbol-menu)
-  (local-set-key [(control c) (\?)] 'semantic-ia-complete-symbol)
-  ;;
-  (local-set-key [(control c) (\>)] 'semantic-complete-analyze-inline)
-  (local-set-key [(control c) (=)] 'semantic-decoration-include-visit)
-  
   (local-set-key [(control c) (j)] 'semantic-ia-fast-jump)
   (local-set-key [(control c) (q)] 'semantic-ia-show-doc)
   (local-set-key [(control c) (s)] 'semantic-ia-show-summary)
-  (local-set-key [(control c) (p)] 'semantic-analyze-proto-impl-toggle)
-  (local-set-key (kbd "C-c <left>") 'semantic-tag-folding-fold-block)
-  (local-set-key (kbd "C-c <right>") 'semantic-tag-folding-show-block)
+
+  (local-set-key [(control c) (left)] 'senator-fold-tag)
+  (local-set-key [(control c) (right)] 'senator-unfold-tag)
+
+  ;; Use auto-complete with semantic
+  (add-to-list 'ac-sources 'ac-source-semantic)
   )
 (add-hook 'c-mode-common-hook 'my-cedet-hook)
-(add-hook 'lisp-mode-hook 'my-cedet-hook)
 (add-hook 'emacs-lisp-mode-hook 'my-cedet-hook)
 
 (defun my-cedet-c-hook ()
-  (local-set-key "\C-c\C-r" 'semantic-symref)
+  (local-set-key [(control c) (=)] 'semantic-decoration-include-visit)
+  (local-set-key [(control c) (p)] 'semantic-analyze-proto-impl-toggle)
+
+  (local-set-key [(control c) (control r)] 'semantic-symref)
   )
 (add-hook 'c-mode-common-hook 'my-cedet-c-hook)
 
