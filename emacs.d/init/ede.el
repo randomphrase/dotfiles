@@ -12,7 +12,7 @@
     (ffip-project-root)))
 
 (defvar my-project-build-directories
-  '(("None" . ".")
+  '(("None" . "build")
     ("Debug" . "build.dbg")
     ("Release" . "build.rel")
     ("RelWithDebInfo" . "build.r+d")))
