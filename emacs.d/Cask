@@ -19,7 +19,6 @@
 (source marmalade)
 
 (depends-on "cmake-mode")
-(depends-on "gtags")
 
 (source org)
 

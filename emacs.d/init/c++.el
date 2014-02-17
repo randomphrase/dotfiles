@@ -2,7 +2,6 @@
 ;;
 ;; c/c++ stuff
 ;;
-(require-soft 'gtags)
 
 ;; set up our own c++ extension mappings for ff-other-file support
 (defvar my-cpp-other-file-alist
@@ -42,8 +41,6 @@
 (defun my-c-mode-common-hook ()
 
   ;(c-toggle-auto-newline 1)
-  (when (fboundp 'gtags-mode)
-    (gtags-mode 1))
   ;(semantic-tag-folding-mode 1)
   ;(setq show-trailing-whitespace t)
 
