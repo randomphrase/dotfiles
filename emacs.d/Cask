@@ -13,6 +13,8 @@
 (depends-on "find-file-in-project")
 (depends-on "auto-complete")
 (depends-on "auto-complete-c-headers")
+(depends-on "flymake")
+(depends-on "flymake-cursor")
 
 (source marmalade)
 

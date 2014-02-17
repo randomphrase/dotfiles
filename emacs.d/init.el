@@ -34,6 +34,7 @@
 (require 'init/ede)
 (require 'init/c++)
 (require 'init/cmake)
+(require 'init/flymake)
 (require 'init/tramp)
 (require 'init/smartparens)
 (require 'init/auto-complete)
