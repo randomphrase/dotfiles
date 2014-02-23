@@ -49,20 +49,6 @@
   )
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 
-;;
-;; Doxymacs for doxygen comments:
-;;
-(when (require-soft 'doxymacs)
-  ;; Use doxymacs in all c-modes:
-  (add-hook 'c-mode-common-hook 'doxymacs-mode)
-  ;; Use font-lock mode in c and c++ mode:
-  (defun my-doxymacs-font-lock-hook ()
-    (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
-        (doxymacs-font-lock)))
-  (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
-  (setq doxymacs-doxygen-style "C++")
-)
-
 ;; Add our file extensions to enable project searching using find-file-in-project
 (require 'find-file-in-project)
 (setq ffip-patterns (append '("*.cpp" "*.hpp" "*.cxx" "*.hxx") ffip-patterns))
