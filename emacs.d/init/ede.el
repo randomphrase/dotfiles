@@ -6,10 +6,13 @@
 (global-ede-mode t)
 (require 'ede-compdb)
 
-(defun ffip-project-root-for-dir (dir)
+(defun vc-project-root (dir)
   "Return the root of project in DIR."
-  (let ((default-directory dir))
-    (ffip-project-root)))
+  (require 'vc)
+  (let* ((default-directory dir)
+         (backend (vc-deduce-backend)))
+    (or (and backend (vc-call-backend backend 'root dir))
+        dir)))
 
 (defvar my-project-build-directories
   '(("None" . "build")
@@ -48,7 +51,7 @@
  (ede-project-autoload "CMake"
                        :file 'ede-compdb
                        :proj-file "CMakeLists.txt"
-                       :proj-root 'ffip-project-root-for-dir
+                       :proj-root 'vc-project-root
                        :load-type 'my-load-cmake-project
                        :class-sym 'ede-compdb-project))
  ;'unique)
