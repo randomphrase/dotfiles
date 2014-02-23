@@ -18,7 +18,7 @@
   (font-lock-add-keywords
    nil '(("\\<\\(FIX\\|TODO\\|FIXME\\|HACK\\|REFACTOR\\):"
           1 font-lock-warning-face t))))
-(add-hook 'coding-hook 'add-watchwords)
+(add-hook 'prog-mode-hook 'add-watchwords)
 
 ;; Make zooming affect frame instead of buffers
 ;; (require 'zoom-frm)
