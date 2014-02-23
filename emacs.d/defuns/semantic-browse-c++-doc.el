@@ -1,0 +1,1 @@
+semantic-browse-c++-doc/semantic-browse-c++-doc.el

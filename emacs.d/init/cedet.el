@@ -51,6 +51,7 @@
 (defun my-cedet-c-hook ()
   (local-set-key [(control c) (=)] 'semantic-decoration-include-visit)
   (local-set-key [(control c) (p)] 'semantic-analyze-proto-impl-toggle)
+  (local-set-key [(control c) (Q)] 'semantic-browse-c++-doc)
 
   (local-set-key [(control c) (control r)] 'semantic-symref)
   )

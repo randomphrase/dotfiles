@@ -4,3 +4,6 @@
 [submodule "emacs.d/extern/ede-compdb"]
 	path = emacs.d/extern/ede-compdb
 	url = git@github.com:randomphrase/ede-compdb.git
+[submodule "emacs.d/defuns/semantic-browse-c++-doc"]
+	path = emacs.d/defuns/semantic-browse-c++-doc
+	url = https://gist.github.com/9177867.git
