@@ -29,7 +29,7 @@
   (define-key c-mode-base-map [(meta o)] 'ff-get-other-file)
 
   ;; If we have clang-format, load and bind it to C-|
-  (when (load-library "clang-format")
+  (when (require-soft 'clang-format)
     (define-key c-mode-base-map [(ctrl |)] 'clang-format-region)
     (define-key c-mode-base-map [(ctrl meta |)] 'clang-format-buffer)
     )
