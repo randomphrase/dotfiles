@@ -16,7 +16,7 @@
 ;; My lisp functions are here:
 (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
 (dolist (file (directory-files defuns-dir t "\\w+"))
-  (when (file-readable-p file)
+  (when (file-regular-p file)
     (load file)))
 
 ;; clang-format is installed in strange locations
