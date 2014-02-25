@@ -1,7 +1,7 @@
 ;; Use ede-compdb to configure flymake
 (require 'flymake)
 (setq flymake-allowed-file-name-masks
-      (cons '("\\.[ch]pp$" ede-compdb-flymake-init)
+      (cons '("\\.[ch](pp)?$" ede-compdb-flymake-init)
             flymake-allowed-file-name-masks))
 
 ;; This makes emacs on Mac sad...
