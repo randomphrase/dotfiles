@@ -29,13 +29,18 @@
   (define-key c-mode-base-map [(meta o)] 'ff-get-other-file)
 
   ;; If we have clang-format, load and bind it to C-|
-  (when (require-soft 'clang-format)
-    (define-key c-mode-base-map [(ctrl |)] 'clang-format-region)
-    (define-key c-mode-base-map [(ctrl meta |)] 'clang-format-buffer)
-    )
-
+  ;; clang-format is installed in strange locations
+  (let* ((clang-format-file (locate-file "clang-format"
+                                         (append (file-expand-wildcards "/opt/local/libexec/llvm-*/libexec/clang-format")
+                                                 (file-expand-wildcards "/usr/share/emacs/site-lisp/clang-format-*")) (get-load-suffixes))))
+    (when clang-format-file
+      (load clang-format-file)
+      (define-key c-mode-base-map [(ctrl |)] 'clang-format-region)
+      (define-key c-mode-base-map [(ctrl meta |)] 'clang-format-buffer)
+      ))
+  
   (add-to-list 'c-default-style (cons 'c++-mode (if (assoc "tibra" c-style-alist) "tibra" "stroustrup")))
-)
+  )
 (add-hook 'c-initialization-hook 'my-c-initialization-hook)
 
 (defun my-c-mode-common-hook ()
