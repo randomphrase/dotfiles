@@ -37,7 +37,7 @@
 (require 'init/flymake)
 (require 'init/tramp)
 (require 'init/smartparens)
-(require 'init/auto-complete)
+(require 'init/company)
 
 (eval-after-load 'org '(require 'init/org))
 
