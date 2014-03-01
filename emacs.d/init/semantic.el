@@ -1,13 +1,5 @@
 ;;
-;; CEDET Stuff
-;;
 ;; See also: https://gist.github.com/3930120
-
-;; Load CEDET.
-;; See cedet/common/cedet.info for configuration details.
-;; IMPORTANT: For Emacs >= 23.2, you must place this *before* any
-;; CEDET component (including EIEIO) gets activated by another 
-;; package (Gnus, auth-source, ...).
 
 ;;(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode t)
 ;;(add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode t)
@@ -34,20 +26,20 @@
 ;; don't use semantic on remote files:
 (add-to-list 'semantic-inhibit-functions 'remote-buffer-p)
 
-(defun my-cedet-hook ()
+(defun my-semantic-hook ()
   (local-set-key [(control c) (j)] 'semantic-ia-fast-jump)
   (local-set-key [(control c) (q)] 'semantic-ia-show-doc)
   (local-set-key [(control c) (s)] 'semantic-ia-show-summary)
 
   (local-set-key [(control c) (left)] 'senator-fold-tag)
   (local-set-key [(control c) (right)] 'senator-unfold-tag)
-
-  ;; Use auto-complete with semantic
-  (add-to-list 'ac-sources 'ac-source-semantic)
   )
-(add-hook 'c-mode-common-hook 'my-cedet-hook)
-(add-hook 'emacs-lisp-mode-hook 'my-cedet-hook)
 
+;; TODO: use semantic-mode-init-hook instead?
+(add-hook 'c-mode-common-hook 'my-semantic-hook)
+(add-hook 'emacs-lisp-mode-hook 'my-semantic-hook)
+
+;; TODO: move to init/c++.el?
 (defun my-cedet-c-hook ()
   (local-set-key [(control c) (=)] 'semantic-decoration-include-visit)
   (local-set-key [(control c) (p)] 'semantic-analyze-proto-impl-toggle)
@@ -57,4 +49,4 @@
   )
 (add-hook 'c-mode-common-hook 'my-cedet-c-hook)
 
-(provide 'init/cedet)
+(provide 'init/semantic)
