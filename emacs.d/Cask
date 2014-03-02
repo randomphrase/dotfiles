@@ -2,7 +2,12 @@
 
 (source melpa)
 
+(depends-on "cmake-mode")
+(depends-on "company")
 (depends-on "expand-region")
+(depends-on "find-file-in-project")
+(depends-on "flymake")
+(depends-on "flymake-cursor")
 (depends-on "goto-last-change")
 (depends-on "iedit")
 (depends-on "magit")
@@ -10,48 +15,9 @@
 (depends-on "session")
 (depends-on "smartparens")
 (depends-on "ssh-config-mode")
-(depends-on "find-file-in-project")
-(depends-on "company")
-(depends-on "flymake")
-(depends-on "flymake-cursor")
-
-(source marmalade)
-
-(depends-on "cmake-mode")
 
 (source org)
 
 ;(depends-on "org")
 ; Use this instead (see https://github.com/cask/cask/issues/119)
 (depends-on "org-plus-contrib")
-
-;; TODO: do we actually need this stuff?
-;; ;; Install extensions if they're missing
-;; (defun init--install-packages ()
-;;   (packages-install
-;;    (cons 'cmake-mode marmalade)
-;;    (cons 'csharp-mode marmalade)
-;;    (cons 'framemove melpa)
-;;    (cons 'gtags marmalade)
-;;    (cons 'iedit melpa)
-;;    (cons 'magit melpa)
-;;    (cons 'session melpa)
-;;    (cons 'expand-region melpa)
-;;    (cons 'ssh-config-mode melpa)
-;;    (cons 'goto-last-change melpa)
-;;    (cons 'markdown-mode melpa)
-;;    ;; (cons 'exec-path-from-shell melpa)
-;;    ;; (cons 'paredit melpa)
-;;    ;; (cons 'move-text melpa)
-;;    ;; (cons 'gist melpa)
-;;    ;; (cons 'htmlize melpa)
-;;    ;; (cons 'elisp-slime-nav melpa)
-;;    ;; ;(cons 'elnode marmalade)
-;;    ;; (cons 'slime-js marmalade)
-;;    ;; (cons 'git-commit-mode melpa)
-;;    ;; (cons 'gitconfig-mode melpa)
-;;    ;; (cons 'gitignore-mode melpa)
-;;    ;; (cons 'clojure-mode melpa)
-;;    ;; (cons 'clojure-test-mode melpa)
-;;    ;; (cons 'nrepl melpa)
-;;    ))
