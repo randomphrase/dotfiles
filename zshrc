@@ -42,16 +42,17 @@ ZSH_THEME="jreese"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git)
-
-source $ZSH/oh-my-zsh.sh
+plugins=(git terminalapp colored-man)
 
 # bin subdirs (if any) should also be added - useful for script repos
 path=(~/bin/*(-/N) $path)
 
 # MacPorts lives here:
-[[ -d /opt/local/bin ]] && path=( /opt/local/bin /opt/local/sbin $path ) \
-    && manpath=( /opt/local/share/man /usr/share/man /usr/X11/man )
+if [[ -d /opt/local/bin ]]; then
+    path=( /opt/local/bin /opt/local/sbin $path )
+    manpath=( /opt/local/share/man /usr/share/man /usr/X11/man )
+    plugins+=(macports)
+fi
 
 # Use Emacs.app emacsclient in preference to built-in emacsclient if found:
 for eapp in /Applications/Emacs.app /Applications/MacPorts/Emacs.app; do
@@ -69,6 +70,9 @@ path+=~/.emacs.d/extern/cask/bin
 export EDITOR=emacsclient
 export ALTERNATE_EDITOR=emacs
 alias e='emacsclient'
+
+
+source $ZSH/oh-my-zsh.sh
 
 
 # Mac-specific stuff:
