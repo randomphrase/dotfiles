@@ -9,6 +9,7 @@
 (depends-on "flymake")
 (depends-on "flymake-cursor")
 (depends-on "goto-last-change")
+(depends-on "ibuffer-vc")
 (depends-on "iedit")
 (depends-on "magit")
 (depends-on "markdown-mode")

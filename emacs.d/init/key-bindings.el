@@ -37,10 +37,6 @@
 
 (global-set-key [(control tab)] 'next-multiframe-window)
 
-;; Use ibuffer
-(autoload 'ibuffer "ibuffer" "List buffers." t)
-(global-set-key [(control x) (control b)] 'ibuffer)
-
 ;; Don't need to be prompted for a buffer to kill...
 (global-set-key [(control x) (k)] 'kill-this-buffer)
 

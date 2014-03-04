@@ -38,6 +38,7 @@
 (require 'init/tramp)
 (require 'init/smartparens)
 (require 'init/company)
+(require 'init/ibuffer)
 
 (eval-after-load 'org '(require 'init/org))
 
