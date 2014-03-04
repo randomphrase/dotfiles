@@ -37,6 +37,13 @@
 
 (global-set-key [(control tab)] 'next-multiframe-window)
 
+;; Use ibuffer
+(autoload 'ibuffer "ibuffer" "List buffers." t)
+(global-set-key [(control x) (control b)] 'ibuffer)
+
+;; Don't need to be prompted for a buffer to kill...
+(global-set-key [(control x) (k)] 'kill-this-buffer)
+
 ;; I *hate* getting overwrite mode by accident...
 (global-unset-key [(insert)])
 
@@ -79,13 +86,13 @@
 ;; Prevent org taking over my meta-arrow keys
 (setq org-disputed-keys
       '(([M-right]   . [S-M-right])
-        ([M-left]	 . [S-M-left])
+        ([M-left]    . [S-M-left])
         ([S-up]	     . [M-p])
-        ([S-down]	 . [M-n])
-        ([S-left]	 . [M--])
+        ([S-down]    . [M-n])
+        ([S-left]    . [M--])
         ([S-right]   . [M-+])
         ([C-S-right] . [M-S-+])
-        ([C-S-left]	 . [M-S--])))
+        ([C-S-left]  . [M-S--])))
 (setq org-replace-disputed-keys t)
 
 ;; Use option as meta
