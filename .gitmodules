@@ -1,9 +1,6 @@
 [submodule "emacs.d/extern/conf-info-mode"]
 	path = emacs.d/extern/conf-info-mode
 	url = git@github.com:randomphrase/conf-info-mode.git
-[submodule "emacs.d/extern/ede-compdb"]
-	path = emacs.d/extern/ede-compdb
-	url = git@github.com:randomphrase/ede-compdb.git
 [submodule "emacs.d/defuns/semantic-browse-c++-doc"]
 	path = emacs.d/defuns/semantic-browse-c++-doc
 	url = https://gist.github.com/9177867.git

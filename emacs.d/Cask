@@ -5,6 +5,7 @@
 (depends-on "cmake-mode")
 (depends-on "company")
 (depends-on "expand-region")
+(depends-on "ede-compdb")
 (depends-on "find-file-in-project")
 (depends-on "flymake")
 (depends-on "flymake-cursor")
