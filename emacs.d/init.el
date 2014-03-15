@@ -41,6 +41,7 @@
 (require 'init/ibuffer)
 
 (eval-after-load 'org '(require 'init/org))
+(require 'init/markdown)
 
 ;; Setup key bindings
 (require 'init/key-bindings)
