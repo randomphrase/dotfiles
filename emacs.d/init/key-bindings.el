@@ -79,18 +79,6 @@
 
 (global-set-key (kbd "C-x f") 'find-file-in-project)
 
-;; Prevent org taking over my meta-arrow keys
-(setq org-disputed-keys
-      '(([M-right]   . [S-M-right])
-        ([M-left]    . [S-M-left])
-        ([S-up]	     . [M-p])
-        ([S-down]    . [M-n])
-        ([S-left]    . [M--])
-        ([S-right]   . [M-+])
-        ([C-S-right] . [M-S-+])
-        ([C-S-left]  . [M-S--])))
-(setq org-replace-disputed-keys t)
-
 ;; Use option as meta
 ;(setq mac-option-modifier 'meta)
 ;(setq mac-pass-option-to-system nil)

@@ -39,9 +39,8 @@
 (require 'init/smartparens)
 (require 'init/company)
 (require 'init/ibuffer)
-
-(eval-after-load 'org '(require 'init/org))
 (require 'init/markdown)
+(require 'init/org)
 
 ;; Setup key bindings
 (require 'init/key-bindings)
