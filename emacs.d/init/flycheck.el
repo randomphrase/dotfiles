@@ -1,6 +1,7 @@
 ;; 
 (require 'flycheck)
 (require 'cl-lib)
+(require 'ede-compdb)
 
 ;; This code based on discussion with flycheck maintainer, see https://github.com/flycheck/flycheck/issues/354
 
@@ -9,9 +10,9 @@
   :command ("clang" 
             ;; TODO: What if the compiler isn't clang and isn't compatible with these args?
             "-fsyntax-only"
-            "-fno-color-diagnostics"
-            "-fno-caret-diagnostics"
-            "-fno-diagnostics-show-option"
+            ;"-fno-color-diagnostics"
+            "-fno-diagnostics-show-caret"
+            ;"-fno-diagnostics-show-option"
             "-x" (eval (cl-case major-mode
                          (c++-mode "c++")
                          (c-mode "c")))
@@ -49,7 +50,7 @@
     ;; Process args, building up a new list as we go. Each new element is added to the head of the
     ;; list, so we need to reverse it once done
     (while args
-      (let ((argi (pop args)))
+      (let ((argi (pop args)) (case-fold-search nil))
         (cond
          ;; substitude /dev/null for the output file
          ((equal argi "-o")
@@ -65,12 +66,24 @@
          ((member argi '("-MF" "-MT" "-MQ"))
           (pop args))
 
-         ;; remove the input file
-         ((file-equal-p (expand-file-name argi (oref comp directory)) buffer-file-name))
-                                        ;(setq ret (cons temp-file ret)))
+         ;; Relative include directories need to be resolved to absolute :(
+         ((string-match "\\`\\(-[IF]\\)\\(.+\\)\\'" argi)
+          (setq ret (cons (concat (match-string 1 argi)
+                                  (expand-file-name (match-string 2 argi) (oref comp directory)))
+                          ret)))
+
+         ((equal argi "-isystem")
+          (setq ret (cons (expand-file-name (pop args) (oref comp directory))
+                          (cons argi ret))))
+
          (t
           (setq ret (cons argi ret)))
          )))
+
+    ;; remove the source file
+    ;; FIXME: is it always the last?
+    (pop ret)
+
     (reverse ret)
     ))
 
@@ -86,8 +99,14 @@
     (setq flycheck-c/c++-clang-compdb-executable
           (flycheck-compdb-get-compiler))))
 
-(add-to-list 'flycheck-checkers 'c/c++-clang-compdb)
+(when (boundp 'ede-compdb-project-rescan-hook)
+  (add-hook 'ede-compdb-project-rescan-hook 'flycheck-compdb-setup)
+  (add-hook 'ede-minor-mode-hook 'flycheck-compdb-setup)
+  (add-to-list 'flycheck-checkers 'c/c++-clang-compdb)
+  (setq-default flycheck-disabled-checkers '(c/c++-clang))
+  )
 
+(add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;; (flycheck-define-checker compdb
 ;;                          "A checker which invokes the specified 
@@ -103,3 +122,4 @@
 ;;         (setq flycheck-clang-language-standard 
 
 (provide 'init/flycheck)
+
