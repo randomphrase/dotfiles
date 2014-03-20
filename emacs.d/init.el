@@ -65,3 +65,7 @@
 (require 'server)
 (unless (server-running-p)
   (server-start))
+
+;; Local Variables:
+;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
+;; End:
