@@ -42,6 +42,7 @@
 (require 'init/ibuffer)
 (require 'init/markdown)
 (require 'init/org)
+(require 'init/yasnippet)
 
 ;; Setup key bindings
 (require 'init/key-bindings)
