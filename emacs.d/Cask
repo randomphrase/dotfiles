@@ -4,6 +4,7 @@
 
 (depends-on "cmake-mode")
 (depends-on "company")
+(depends-on "company-c-headers")
 (depends-on "expand-region")
 (depends-on "ede-compdb")
 (depends-on "find-file-in-project")

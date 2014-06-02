@@ -74,8 +74,10 @@
     (setq ffip-project-root (oref ede-object-root-project directory)))
 
   ;; enable include file completion
-  (when (boundp 'achead:get-include-directories-function)
-    (setq achead:get-include-directories-function 'ede-object-system-include-path))
+  (when (boundp 'company-c-headers-path-system)
+    (setq company-c-headers-path-system 'ede-object-system-include-path))
+
+
   )
 (add-hook 'ede-minor-mode-hook 'my-ede-hook)
 
