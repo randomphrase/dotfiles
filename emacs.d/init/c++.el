@@ -26,7 +26,7 @@
   ;;(show-ws-highlight-tabs)
 
   ;; (setq ff-ignore-include t)
-  (define-key c-mode-base-map [(meta o)] 'ff-get-other-file)
+  (define-key c-mode-base-map [(meta o)] 'projectile-find-other-file)
 
   ;; If we have clang-format, load and bind it to C-|
   (when (fboundp 'clang-format-region)

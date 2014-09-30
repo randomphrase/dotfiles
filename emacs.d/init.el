@@ -43,6 +43,7 @@
 (require 'init/markdown)
 (require 'init/org)
 (require 'init/yasnippet)
+(require 'init/projectile)
 
 ;; Setup key bindings
 (require 'init/key-bindings)
