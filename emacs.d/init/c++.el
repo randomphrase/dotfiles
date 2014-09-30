@@ -33,8 +33,6 @@
     (define-key c-mode-base-map [(ctrl |)] 'clang-format-region)
     (define-key c-mode-base-map [(ctrl meta |)] 'clang-format-buffer)
     )
-  
-  (add-to-list 'c-default-style (cons 'c++-mode (if (assoc "tibra" c-style-alist) "tibra" "stroustrup")))
   )
 (add-hook 'c-initialization-hook 'my-c-initialization-hook)
 
@@ -45,6 +43,7 @@
   ;(setq show-trailing-whitespace t)
   )
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
+(add-hook 'c-mode-common-hook 'google-set-c-style)
 
 ;; Add our file extensions to enable project searching using find-file-in-project
 (require 'find-file-in-project)
