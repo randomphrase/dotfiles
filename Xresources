@@ -1,3 +1,5 @@
+Emacs.font:              Source Code Pro-10
+
 URxvt*font:              xft:Ubuntu Mono:size=11
 URxvt*letterSpace:       -1
 URxvt.scrollstyle:       plain
