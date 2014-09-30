@@ -48,7 +48,7 @@
       ))))
 
 (ede-add-project-autoload
- (ede-project-autoload "CMake"
+ (ede-project-autoload "CMake" :name "CMake"
                        :file 'ede-compdb
                        :proj-file "CMakeLists.txt"
                        :proj-root 'vc-project-root
