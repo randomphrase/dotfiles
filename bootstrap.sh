@@ -122,7 +122,9 @@ clone_git_repo() {
     if [[ ! -d "$HOME/$path" ]]; then
         echo -n "** Clone git repo: $path"
         (
-            cd "$HOME/${path%/*}"
+            dir="$HOME/${path%/*}"
+            mkdir -p $dir
+            cd $dir
             git ${opts} clone -q ${repo} ${path##*/}
         )
         echo " ... done"
