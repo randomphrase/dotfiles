@@ -62,6 +62,10 @@
 ;;
 (load custom-file t)
 
+;; Yaay zenburn - load after custom file so that it appears in custom-safe-themest
+(load-theme 'zenburn)
+
+
 ;; Emacs server
 (require 'server)
 (unless (server-running-p)
