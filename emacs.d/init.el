@@ -16,10 +16,6 @@
 ;; Do package management
 (require 'cask)
 (cask-initialize)
-   
-;; Start session mode - TODO: redundant?
-(require 'session)
-(add-hook 'after-init-hook 'session-initialize)
 
 ;; require-soft macro stolen from http://www.emacswiki.org/emacs/LocateLibrary
 (defmacro require-soft (feature &optional file)
@@ -49,6 +45,10 @@
 
 ;; Map files to modes
 (require 'init/mode-mappings)
+
+;; Start session mode - TODO: redundant?
+(require 'session)
+(add-hook 'after-init-hook 'session-initialize)
 
 ;; Load local stuff here
 (let ((f (expand-file-name "local.el" user-emacs-directory)))
