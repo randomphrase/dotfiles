@@ -10,6 +10,7 @@
 (depends-on "find-file-in-project")
 (depends-on "flycheck")
 (depends-on "goto-last-change")
+(depends-on "htmlize")
 (depends-on "ibuffer-vc")
 (depends-on "iedit")
 (depends-on "magit")

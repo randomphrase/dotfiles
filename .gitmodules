@@ -4,3 +4,6 @@
 [submodule "emacs.d/defuns/semantic-browse-c++-doc"]
 	path = emacs.d/defuns/semantic-browse-c++-doc
 	url = https://gist.github.com/9177867.git
+[submodule "emacs.d/extern/org-reveal"]
+	path = emacs.d/extern/org-reveal
+	url = https://github.com/yjwen/org-reveal.git
