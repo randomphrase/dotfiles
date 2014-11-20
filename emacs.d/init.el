@@ -10,13 +10,6 @@
 ; Set up lisp, exec, info paths
 (require 'init/paths)
 
-;; Needs to be set up early - replaces some built-in libraries
-(load-file (expand-file-name "cedet/cedet-devel-load.el" extern-lisp-dir))
-
-;; Do package management
-(require 'cask)
-(cask-initialize)
-
 ;; require-soft macro stolen from http://www.emacswiki.org/emacs/LocateLibrary
 (defmacro require-soft (feature &optional file)
   "*Try to require FEATURE, but don't signal an error if `require' fails."
@@ -52,8 +45,8 @@
 
 ;; Load local stuff here
 (let ((f (expand-file-name "local.el" user-emacs-directory)))
-  (if (file-readable-p f)
-      (load f)))
+  (when (file-readable-p f)
+    (load f)))
 
 ;;
 ;; All custom variables live in here

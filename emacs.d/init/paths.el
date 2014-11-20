@@ -2,16 +2,22 @@
 (require 'cl)
 
 ;; Set path to dependencies
-(setq extern-lisp-dir
-      (expand-file-name "extern" user-emacs-directory))
+(defvar extern-lisp-dir
+  (expand-file-name "extern" user-emacs-directory))
 
-;; Set up load path
-(add-to-list 'load-path extern-lisp-dir)
+;; Do package management first
+(add-to-list 'load-path (expand-file-name "cask" extern-lisp-dir))
+(require 'cask)
+(cask-initialize)
 
-;; Add external projects to load path
-(dolist (project (directory-files extern-lisp-dir t "\\w+"))
-  (when (file-directory-p project)
-    (add-to-list 'load-path project)))
+;; CEDET needs to be set up early - replaces some built-in libraries
+(load-file (expand-file-name "cedet/cedet-devel-load.el" extern-lisp-dir))
+
+;; Add remaining extern directories to the load path
+(dolist (E (directory-files extern-lisp-dir t "\\w+"))
+  (when (and (file-directory-p E)
+             (not (member (file-name-nondirectory E) '("cedet" "cask"))))
+    (add-to-list 'load-path E)))
 
 ;; My lisp functions are here:
 (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
