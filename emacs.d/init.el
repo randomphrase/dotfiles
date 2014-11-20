@@ -2,7 +2,9 @@
 ;;
 ;; Overall structure, much code, and several ideas copied shamelessly from https://github.com/magnars/.emacs.d
 
-(add-to-list 'load-path user-emacs-directory)
+(defvar user-lisp-directory
+  (expand-file-name "lisp" user-emacs-directory))
+(add-to-list 'load-path user-lisp-directory)
 
 ;; Set up appearance early to avoid momentary display
 (require 'init/appearance)

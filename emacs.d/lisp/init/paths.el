@@ -20,7 +20,7 @@
     (add-to-list 'load-path E)))
 
 ;; My lisp functions are here:
-(setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
+(setq defuns-dir (expand-file-name "defuns" user-lisp-directory))
 (dolist (file (directory-files defuns-dir t "\\w+"))
   (when (file-regular-p file)
     (load file)))
