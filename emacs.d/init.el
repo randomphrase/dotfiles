@@ -32,6 +32,7 @@
 (require 'init/org)
 (require 'init/yasnippet)
 (require 'init/projectile)
+(require 'init/ido)
 
 ;; Setup key bindings
 (require 'init/key-bindings)

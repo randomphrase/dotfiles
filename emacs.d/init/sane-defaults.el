@@ -20,9 +20,6 @@
 ; I am a wimp
 (cua-mode t)
 
-; Can't live without ido mode
-(ido-mode 'both)
-
 ; Answering just 'y' or 'n' will do
 (defalias 'yes-or-no-p 'y-or-n-p)
 
