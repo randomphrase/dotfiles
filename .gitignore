@@ -9,7 +9,7 @@
 /emacs.d/elpa/
 /emacs.d/eshell/history
 /emacs.d/eshell/lastdir
-/emacs.d/extern/cask/
+/emacs.d/extern/
 /emacs.d/local.el
 /emacs.d/info/
 /emacs.d/projectile*
@@ -19,9 +19,6 @@
 /emacs.d/url
 
 /zsh.d/oh-my-zsh/
-
-# TODO: Turn these into submodules
-/emacs.d/extern/cedet/
 
 *.log
 *~
