@@ -7,7 +7,6 @@
 (depends-on "company-c-headers")
 (depends-on "ede-compdb")
 (depends-on "expand-region")
-(depends-on "find-file-in-project")
 (depends-on "flycheck")
 (depends-on "google-c-style")
 (depends-on "goto-last-change")

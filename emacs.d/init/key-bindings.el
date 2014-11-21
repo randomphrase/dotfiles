@@ -77,7 +77,8 @@
 
 (define-key global-map (kbd "C-=") 'er/expand-region)
 
-(global-set-key (kbd "C-x f") 'find-file-in-project)
+(global-set-key (kbd "C-x f") 'projectile-find-file)
+(global-set-key (kbd "C-x F") 'projectile-find-file-dwim)
 
 ;; Use option as meta
 ;(setq mac-option-modifier 'meta)

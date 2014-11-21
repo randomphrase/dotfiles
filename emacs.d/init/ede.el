@@ -69,10 +69,6 @@
   (local-set-key [f8] 'ede-compile-selected)
   (local-set-key [(ctrl f8)] 'ede-compile-target)
 
-  ;; set the project root for use with find-file-in-project
-  (when ede-object-root-project
-    (setq ffip-project-root (oref ede-object-root-project directory)))
-
   ;; enable include file completion
   (when (boundp 'company-c-headers-path-system)
     (setq company-c-headers-path-system 'ede-object-system-include-path))
