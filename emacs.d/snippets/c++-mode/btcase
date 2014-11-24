@@ -1,9 +1,0 @@
-# -*- mode: snippet; require-final-newline: nil -*-
-# name: boost test case
-# key: btcase
-# group: boost
-# --
-BOOST_AUTO_TEST_CASE($1)
-{
-    $0
-}

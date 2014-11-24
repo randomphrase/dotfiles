@@ -32,7 +32,6 @@
 (require 'init/ibuffer)
 (require 'init/markdown)
 (require 'init/org)
-(require 'init/yasnippet)
 (require 'init/projectile)
 (require 'init/ido)
 
@@ -60,7 +59,6 @@
 
 ;; Yaay zenburn - load after custom file so that it appears in custom-safe-themest
 (load-theme 'zenburn)
-
 
 ;; Emacs server
 (require 'server)
