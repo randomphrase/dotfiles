@@ -45,8 +45,4 @@
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 (add-hook 'c-mode-common-hook 'google-set-c-style)
 
-;; Add our file extensions to enable project searching using find-file-in-project
-(require 'find-file-in-project)
-(setq ffip-patterns (append '("*.cpp" "*.hpp" "*.cxx" "*.hxx") ffip-patterns))
-
 (provide 'init/c++)
