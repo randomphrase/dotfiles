@@ -46,7 +46,7 @@
 (add-hook 'after-init-hook 'session-initialize)
 
 ;; Load local stuff here
-(let ((f (expand-file-name "local.el" user-emacs-directory)))
+(let ((f (expand-file-name "local.el" user-lisp-directory)))
   (when (file-readable-p f)
     (load f)))
 
