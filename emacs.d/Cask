@@ -1,5 +1,6 @@
 ;; -*- mode: emacs-lisp -*-
 
+(source gnu)
 (source melpa)
 
 (depends-on "cmake-mode")
