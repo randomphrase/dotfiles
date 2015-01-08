@@ -7,3 +7,6 @@
 [submodule "emacs.d/lisp/defuns/semantic-browse-c++-doc"]
 	path = emacs.d/lisp/defuns/semantic-browse-c++-doc
 	url = https://gist.github.com/9177867.git
+[submodule "emacs.d/extern/cedet"]
+	path = emacs.d/extern/cedet
+	url = http://git.code.sf.net/p/cedet/git

@@ -19,7 +19,7 @@ output_on_error() {
 check_environment() {
     echo "** checking environment"
 
-    required_exes=(git bzr make)
+    required_exes=(git make)
     
     for e in ${required_exe[@]}; do
         hash $e || {
@@ -90,29 +90,7 @@ symlink_dotfiles() {
 }
 symlink_dotfiles
 
-update_bzr_lib() {
-    path=$1
-    repo=$2
-    if [[ ! -d "$HOME/$path" ]]; then
-        echo -n "** Checking out bzr lib: $path"
-        (
-            cd "$HOME/${path%/*}"
-            bzr checkout --lightweight ${repo} ${path##*/}
-        )
-    else
-        echo -n "** Updating bzr lib: $path"
-        (
-            cd "$HOME/$path"
-            bzr update --quiet
-        )
-    fi
-    echo " ... done"
-}
-update_bzr_lib \
-    ".emacs.d/extern/cedet" "bzr+ssh://alastair@cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk/"
-
 clone_git_repo() {
-    # Some tools are self-updating, so we don't import them as submodules, instead just clone
     path=$1
     repo=$2
 
@@ -130,6 +108,7 @@ clone_git_repo() {
         echo " ... done"
     fi
 }
+# Some tools are self-updating, so we don't import them as submodules, instead just clone
 clone_git_repo ".zsh.d/oh-my-zsh" "https://github.com/robbyrussell/oh-my-zsh.git"
 clone_git_repo ".emacs.d/extern/cask" "https://github.com/cask/cask.git"
 

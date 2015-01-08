@@ -9,7 +9,7 @@
 /emacs.d/elpa/
 /emacs.d/eshell/history
 /emacs.d/eshell/lastdir
-/emacs.d/extern/
+/emacs.d/extern/cask/
 /emacs.d/local.el
 /emacs.d/info/
 /emacs.d/projectile*
