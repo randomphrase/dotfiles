@@ -5,6 +5,14 @@ shopt -s nocasematch nullglob    # using Bash
 dotfiles=${0%/*}
 dotfiles_abs=$(cd $dotfiles && pwd -L)
 
+# portable statinode function
+case "$(uname -s)" in
+    "Linux"   )   statinode() { stat -L -c '%i' "$@"; return 0; };;
+    "Darwin"  )   statinode() { stat -L -f '%i' "$@"; return 0; };;
+    "FreeBSD" )   statinode() { stat -L -f '%i' "$@"; return 0; };;
+    * )           statinode() { ls -id "$@" | cut -d ' ' -f 1; return 0; };;
+esac
+
 # run command but only show output if an error occurrs
 output_on_error() {
     log=$(mktemp ${0##*/}_log.XXXXXXXX) || exit 1
@@ -16,11 +24,53 @@ output_on_error() {
     }
 }
 
+# Make a relative path from src -> dst. Stolen from http://stackoverflow.com/a/12498485/31038
+make_relative_path() {
+    # both $1 and $2 are absolute paths beginning with /
+    # returns relative path to $2/$target from $1/$source
+    source=$1
+    target=$2
+
+    common_part=$source # for now
+    result="" # for now
+
+    while [[ "${target#$common_part}" == "${target}" ]]; do
+        # no match, means that candidate common part is not correct
+        # go up one level (reduce common part)
+        common_part="$(dirname $common_part)"
+        # and record that we went back, with correct / handling
+        if [[ -z $result ]]; then
+            result=".."
+        else
+            result="../$result"
+        fi
+    done
+
+    if [[ $common_part == "/" ]]; then
+        # special case for root (no common path)
+        result="$result/"
+    fi
+
+    # since we now have identified the common part,
+    # compute the non-common part
+    forward_part="${target#$common_part}"
+
+    # and now stick all parts together
+    if [[ -n $result ]] && [[ -n $forward_part ]]; then
+        result="$result$forward_part"
+    elif [[ -n $forward_part ]]; then
+        # extra slash removal
+        result="${forward_part:1}"
+    fi
+
+    echo $result
+}
+
 check_environment() {
     echo "** checking environment"
 
     required_exes=(git make)
-    
+
     for e in ${required_exe[@]}; do
         hash $e || {
             echo "!! Missing: $e"
@@ -34,7 +84,6 @@ check_environment() {
         export EMACS=$e
     done
 }
-check_environment
 
 git_config() {
     echo "** setting up git config"
@@ -43,52 +92,62 @@ git_config() {
     git config --file "$dotfiles/.git/config" user.name "Alastair Rankine"
     git config --file "$dotfiles/.git/config" user.email "alastair@girtby.net"
 }
-git_config
+
+# Make a symbolic link $1 -> $2
+make_symlink() {
+    src=$1
+    dst=$2
+
+    if [[ -e $src ]]; then
+        if [[ -L $src ]]; then
+            linkinode=$(statinode $src)
+            dstinode=$(statinode $dst)
+            if (( linkinode != dstinode )); then
+                echo "warning: $src is a symlink but doesn't point to desired $dst ($linkinode != $dstinode)"
+            fi
+        else
+            echo "warning: $src exists, cannot create symlink"
+        fi
+
+        return
+    fi
+
+    srcdir=${src%/*}
+    srcnm=${src##*/}
+    dstpath=$(make_relative_path $srcdir $dst)
+    echo "   ${srcdir}/${srcnm} -> ${dstpath}"
+    (
+        cd ${srcdir}
+        ln -s ${dstpath} ${srcnm}
+    )
+}
 
 symlink_dotfiles() {
-    echo "** setting up symlinks to dotfiles in: $dotfiles_abs"
-    
-    skipfiles=(bootstrap.sh readme.org)
-    
-    case "$(uname -s)" in
-        "Linux"   )   statinode() { stat -L -c '%i' "$@"; return 0; };;
-        "Darwin"  )   statinode() { stat -L -f '%i' "$@"; return 0; };;
-        "FreeBSD" )   statinode() { stat -L -f '%i' "$@"; return 0; };;
-        * )           statinode() { ls -id "$@" | cut -d ' ' -f 1; return 0; };;
-    esac
-    
-    for dst in $dotfiles/* ; do
+    echo "** setting up symlinks ~/.* -> dotfiles/*"
+
+    skipfiles=(bootstrap.sh readme.org bin)
+
+    for dst in $dotfiles_abs/* ; do
         nm=${dst##*/}
-        
-        # TODO: is this a reliable test?
+
+        # Todo: is this a reliable test?
         if [[ ${skipfiles[*]} =~ $nm ]]; then
             continue
         fi
-        
-        src=$HOME/.$nm
-        
-        if [[ -e $src ]]; then
-            if [[ -L $src ]]; then
-                linkinode=$(statinode $src)
-                dstinode=$(statinode $dst)
-                if (( linkinode != dstinode )); then
-                    echo "warning: $src is a symlink but doesn't point to desired $dst ($linkinode != $dstinode)"
-                fi
-            else
-                echo "warning: $src exists, cannot create symlink"
-            fi
-            
-            continue
-        fi
-        
-        echo "$src -> $dst"
-        (
-            cd $HOME
-            ln -s ${dotfiles_abs#$HOME/}/$nm .$nm
-        )
+
+        make_symlink $HOME/.$nm $dst
     done
 }
-symlink_dotfiles
+
+symlink_bindirs() {
+    echo "** setting up symlinks ~/bin/* -> dotfiles/bin/*"
+
+    [[ -d $HOME/bin ]] || mkdir $HOME/bin
+
+    for dst in $dotfiles_abs/bin/* ; do
+        make_symlink $HOME/bin/${dst##*/} $dst
+    done
+}
 
 clone_git_repo() {
     path=$1
@@ -108,9 +167,6 @@ clone_git_repo() {
         echo " ... done"
     fi
 }
-# Some tools are self-updating, so we don't import them as submodules, instead just clone
-clone_git_repo ".zsh.d/oh-my-zsh" "https://github.com/robbyrussell/oh-my-zsh.git"
-clone_git_repo ".emacs.d/extern/cask" "https://github.com/cask/cask.git"
 
 build_lib() {
     echo -n "** Building: $1"
@@ -127,8 +183,6 @@ build_lib() {
     ) || exit 1
     echo " ... done"
 }
-build_lib ".emacs.d/extern/cedet"
-build_lib ".emacs.d/extern/cedet/contrib"
 
 run_cask() {
     echo -n "** Updating cask"
@@ -145,4 +199,19 @@ run_cask() {
     ) || exit 1
     echo " ... done"
 }
+
+# main
+
+check_environment
+git_config
+symlink_dotfiles
+symlink_bindirs
+
+# Some tools are self-updating, so we don't import them as submodules, instead just clone
+clone_git_repo ".zsh.d/oh-my-zsh" "https://github.com/robbyrussell/oh-my-zsh.git"
+clone_git_repo ".emacs.d/extern/cask" "https://github.com/cask/cask.git"
+
+build_lib ".emacs.d/extern/cedet"
+build_lib ".emacs.d/extern/cedet/contrib"
+
 run_cask
