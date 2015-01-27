@@ -1,0 +1,36 @@
+# -*- mode: shell-script; eval: (sh-set-shell "bash")  -*-
+
+# handy aliases
+alias ..='cd ..'
+alias ll='ls -lh'
+
+# Give me back my ^s key...
+stty -ixon
+
+# Set TERM to use 256 colors. This is a hack working around a bug in VTE (MATE terminal), see
+# discussion here: http://fedoraproject.org/wiki/Features/256_Color_Terminals
+# We enable 256 colors if COLORTERM is set, or we are remote over SSH.
+if [[ "$COLORTERM" || "$XTERM_VERSION" || "$SSH_CLIENT" ]]; then
+    case "$TERM" in
+        xterm) TERM=xterm-256color ;;
+        screen) TERM=screen-256color ;;
+    esac
+    export TERM
+fi
+
+# Use emacs if present
+hash emacs 2>/dev/null && EDITOR=emacs
+
+# Are we logging in with sshrc?
+if [[ $SSHHOME ]]; then
+
+    # Tell screen to use my screenrc file
+    SCREENRC=$SSHHOME/.sshrd.d/.screenrc
+fi
+
+# Are we using a shared account?
+if [[ $SSH_INCOMING_USER && $USER != $SSH_INCOMING_USER ]]; then
+
+    # Use my own shell history file
+    HISTFILE=$HOME/.bash_history.$SSH_INCOMING_USER
+fi
