@@ -10,3 +10,6 @@
 [submodule "emacs.d/extern/cedet"]
 	path = emacs.d/extern/cedet
 	url = http://git.code.sf.net/p/cedet/git
+[submodule "bin/sshrc"]
+	path = bin/sshrc
+	url = https://github.com/Russell91/sshrc.git
