@@ -43,6 +43,5 @@
   ;(setq show-trailing-whitespace t)
   )
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
-(add-hook 'c-mode-common-hook 'google-set-c-style)
 
 (provide 'init/c++)
