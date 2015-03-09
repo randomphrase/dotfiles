@@ -1,5 +1,4 @@
-;; TODO replace with dash
-(require 'cl)
+(require 'cl-lib)
 
 ;; Set path to dependencies
 (defvar extern-lisp-dir
@@ -17,7 +16,8 @@
 (dolist (E (directory-files extern-lisp-dir t "\\w+"))
   (when (and (file-directory-p E)
              (not (member (file-name-nondirectory E) '("cedet" "cask"))))
-    (add-to-list 'load-path E)))
+    (let ((EL (expand-file-name "lisp" E)))
+      (add-to-list 'load-path (if (file-directory-p EL) EL E)))))
 
 ;; My lisp functions are here:
 (setq defuns-dir (expand-file-name "defuns" user-lisp-directory))
@@ -27,11 +27,7 @@
 
 ;; Write backup files to own directory
 (setq backup-directory-alist
-      `(("." . ,(expand-file-name
-                 (concat user-emacs-directory "backups")))))
-
-;; Make backups of files, even when they're in version control
-(setq vc-make-backup-files t)
+      `(("." . ,(expand-file-name "backups" user-emacs-directory))))
 
 ;; Save point position between sessions
 ;; (require 'saveplace)
@@ -42,25 +38,19 @@
 (setq abbrev-file-name (expand-file-name "abbrevs" user-emacs-directory))
 
 ;; Twiddle exec paths and PATH for similar reasons
-(dolist (my-exec-path
-         (remove-if-not 'file-directory-p
-                        '("/opt/local/bin")))
-  (add-to-list 'exec-path my-exec-path)
-  (setenv "PATH" (concat (getenv "PATH") ":" my-exec-path))
-  )
+(let* ((trypaths '("/opt/local/bin"))
+       (addpaths (cl-remove-if-not #'file-directory-p trypaths)))
+  (nconc exec-path addpaths)
+  (mapconcat #'concat `(,(getenv "PATH") ,@addpaths) path-separator))
 
 ;; And Info paths
-(dolist (my-info-path
-         (remove-if-not (lambda (d) (and d (file-directory-p d)))
-		    `(,(expand-file-name "info" user-emacs-directory)
-                      ,(expand-file-name "cedet/doc/info" extern-lisp-dir)
-                      ,(car (last (file-expand-wildcards "/usr/local/gcc-*/share/info")))
-                      "/opt/local/share/info"
-                      )))
-
-  ;; Append it so that the emacs stuff appears first (a bit neater :)
-  (add-to-list 'Info-default-directory-list my-info-path t)
-  )
+(let* ((trypaths `(,(expand-file-name "info" user-emacs-directory)
+                   ,(expand-file-name "cedet/doc/info" extern-lisp-dir)
+                   ,(car (last (file-expand-wildcards "/usr/local/gcc-*/share/info")))
+                   "/opt/local/share/info"))
+       (addpaths (cl-remove-if-not (lambda (d) (and d (file-directory-p d))) trypaths)))
+  ;; Append my stuff so that the emacs stuff appears first (a bit neater :)
+  (nconc Info-default-directory-list addpaths))
 
 ; Move some stuff out of the home directory
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))

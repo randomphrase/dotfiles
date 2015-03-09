@@ -14,6 +14,9 @@
 ; Move files to trash when deleting
 (setq delete-by-moving-to-trash t)
 
+;; Make backups of files, even when they're in version control
+(setq vc-make-backup-files t)
+
 ;; Real emacs knights don't use shift to mark things
 ;(setq shift-select-mode nil)
 
