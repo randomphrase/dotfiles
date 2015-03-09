@@ -4,7 +4,7 @@
 ;;(when (fboundp 'global-ede-mode)
 
 (global-ede-mode t)
-(require 'ede-compdb)
+(require 'ede/compdb)
 
 (defun vc-project-root (dir)
   "Return the root of project in DIR."
@@ -49,7 +49,7 @@
 
 (ede-add-project-autoload
  (ede-project-autoload "CMake" :name "CMake"
-                       :file 'ede-compdb
+                       :file 'ede/compdb
                        :proj-file "CMakeLists.txt"
                        :proj-root 'vc-project-root
                        :load-type 'my-load-cmake-project

@@ -1,7 +1,7 @@
 (require 'flycheck)
 
 ;; TODO: load lazily...
-(require 'ede-compdb)
+(require 'ede/compdb)
 
 (defun flycheck-compdb-setup ()
   (when (and ede-object (oref ede-object compilation))

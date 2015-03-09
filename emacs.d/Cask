@@ -6,7 +6,6 @@
 (depends-on "cmake-mode")
 (depends-on "company")
 (depends-on "company-c-headers")
-(depends-on "ede-compdb")
 (depends-on "expand-region")
 (depends-on "flx-ido")
 (depends-on "flycheck")
