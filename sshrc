@@ -4,6 +4,8 @@
 alias ..='cd ..'
 alias ll='ls -lh'
 
+take() { mkdir -p $1 && cd $1; }
+
 # Give me back my ^s key...
 stty -ixon
 
@@ -19,7 +21,7 @@ if [[ "$COLORTERM" || "$XTERM_VERSION" || "$SSH_CLIENT" ]]; then
 fi
 
 # Use emacs if present
-hash emacs 2>/dev/null && EDITOR=emacs
+hash emacs 2>/dev/null && export EDITOR=emacs
 
 # Are we logging in with sshrc?
 if [[ $SSHHOME ]]; then
@@ -32,5 +34,5 @@ fi
 if [[ $SSH_INCOMING_USER && $USER != $SSH_INCOMING_USER ]]; then
 
     # Use my own shell history file
-    HISTFILE=$HOME/.bash_history.$SSH_INCOMING_USER
+    export HISTFILE=$HOME/.bash_history.$SSH_INCOMING_USER
 fi
