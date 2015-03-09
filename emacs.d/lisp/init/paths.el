@@ -25,13 +25,6 @@
   (when (file-regular-p file)
     (load file)))
 
-;; Search for and try to load clang-format
-(let* ((clang-format-file (locate-file "clang-format"
-                                       (append (file-expand-wildcards "/opt/local/libexec/llvm-*/libexec/clang-format")
-                                               (file-expand-wildcards "/usr/share/emacs/site-lisp/clang-format-*")) (get-load-suffixes))))
-  (when clang-format-file
-    (load clang-format-file)))
-
 ;; Write backup files to own directory
 (setq backup-directory-alist
       `(("." . ,(expand-file-name
