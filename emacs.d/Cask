@@ -20,6 +20,7 @@
 (depends-on "projectile")
 (depends-on "session")
 (depends-on "smartparens")
+(depends-on "smex")
 (depends-on "ssh-config-mode")
 (depends-on "zenburn-theme")
 

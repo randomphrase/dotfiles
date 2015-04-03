@@ -80,6 +80,10 @@
 (global-set-key (kbd "C-x f") 'projectile-find-file)
 (global-set-key (kbd "C-x F") 'projectile-find-file-dwim)
 
+;; Use Smex to invoke commands
+(autoload 'smex "smex")
+(global-set-key (kbd "M-x") 'smex)
+
 ;; Use option as meta
 ;(setq mac-option-modifier 'meta)
 ;(setq mac-pass-option-to-system nil)
