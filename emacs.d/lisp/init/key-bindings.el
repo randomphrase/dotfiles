@@ -78,7 +78,9 @@
 (define-key global-map (kbd "C-=") 'er/expand-region)
 
 (global-set-key (kbd "C-x f") 'projectile-find-file)
+(global-set-key (kbd "C-x 4 f") 'projectile-find-file-other-window)
 (global-set-key (kbd "C-x F") 'projectile-find-file-dwim)
+(global-set-key (kbd "C-x 4 F") 'projectile-find-file-dwim-other-window)
 
 ;; Use Smex to invoke commands
 (autoload 'smex "smex")
