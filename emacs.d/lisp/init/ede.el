@@ -3,16 +3,8 @@
 ;;
 ;;(when (fboundp 'global-ede-mode)
 
+(require 'ede)
 (global-ede-mode t)
-(require 'ede/compdb)
-
-(defun vc-project-root (dir)
-  "Return the root of project in DIR."
-  (require 'vc)
-  (let* ((default-directory dir)
-         (backend (vc-deduce-backend)))
-    (or (and backend (vc-call-backend backend 'root dir))
-        dir)))
 
 (defvar my-project-build-directories
   '(("None" . "build")
@@ -27,9 +19,7 @@
          (config-and-build-dirs
           (mapcar (lambda (c)
                     (cons (car c)
-                          ;; Expand directory
-                          (if (file-name-absolute-p (cdr c)) (expand-file-name projname (cdr c))
-                            (expand-file-name (cdr c) dir))))
+                          (expand-file-name (cdr c) dir)))
                   my-project-build-directories))
          (active-config-and-dir
           (car (cl-member-if (lambda (c)
@@ -51,9 +41,10 @@
  (ede-project-autoload "CMake" :name "CMake"
                        :file 'ede/compdb
                        :proj-file "CMakeLists.txt"
-                       :proj-root 'vc-project-root
-                       :load-type 'my-load-cmake-project
-                       :class-sym 'ede-compdb-project))
+                       :load-type #'my-load-cmake-project
+                       :class-sym 'ede-ninja-project
+                       :root-only nil   ; triggers upward scan of directories containing CMakeLists.txt
+                       ))
  ;'unique)
 
 ;; Name the compilation buffer after the current project - allows more than one project to be
