@@ -25,8 +25,9 @@
   ;; TODO: Use whitespace mode from Emacs 24
   ;;(show-ws-highlight-tabs)
 
-  ;; (setq ff-ignore-include t)
+  ;; Handy toggling of source/header files
   (define-key c-mode-base-map [(meta o)] 'projectile-find-other-file)
+  (define-key c-mode-base-map [(shift meta o)] 'projectile-find-other-file-other-window)
 
   ;; If we have clang-format, load and bind it to C-|
   (when (fboundp 'clang-format-region)
