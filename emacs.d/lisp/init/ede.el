@@ -33,7 +33,7 @@
                   my-project-build-directories))
          (active-config-and-dir
           (car (cl-member-if (lambda (c)
-                               (file-readable-p (expand-file-name "rules.ninja" (cdr c))))
+                               (file-readable-p (expand-file-name "build.ninja" (cdr c))))
                              config-and-build-dirs))))
     (unless active-config-and-dir
       (message "Couldn't determine build directory for project at %s" dir))
@@ -41,7 +41,7 @@
      (ede-ninja-project 
       projname
       :file (expand-file-name "CMakeLists.txt" dir)
-      :compdb-file (expand-file-name "rules.ninja" (cdr active-config-and-dir))
+      :compdb-file (expand-file-name "build.ninja" (cdr active-config-and-dir))
       :configuration-default (or (car active-config-and-dir) (car (car my-project-build-directories)))
       :configuration-directories (mapcar #'cdr config-and-build-dirs)
       :configurations (mapcar #'car config-and-build-dirs)
