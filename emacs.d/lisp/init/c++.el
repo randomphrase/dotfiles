@@ -3,20 +3,6 @@
 ;; c/c++ stuff
 ;;
 
-;; set up our own c++ extension mappings for ff-other-file support
-(defvar my-cpp-other-file-alist
-  '(("\\.cpp\\'" (".hpp" ".ipp"))
-    ("\\.ipp\\'" (".hpp" ".cpp"))
-    ("\\.hpp\\'" (".ipp" ".cpp"))
-    ("\\.cxx\\'" (".hxx" ".ixx"))
-    ("\\.ixx\\'" (".cxx" ".hxx"))
-    ("\\.hxx\\'" (".ixx" ".cxx"))
-    ("\\.c\\'" (".h"))
-    ("\\.h\\'" (".c"))
-    ))
-
-(setq-default ff-other-file-alist 'my-cpp-other-file-alist)
-
 (defun my-c-initialization-hook ()
 
   (subword-mode 1)
