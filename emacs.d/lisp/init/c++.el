@@ -26,8 +26,7 @@
 (defun my-c-mode-common-hook ()
 
   ;(c-toggle-auto-newline 1)
-  ;(semantic-tag-folding-mode 1)
-  ;(setq show-trailing-whitespace t)
+  (setq-local show-trailing-whitespace t)
   )
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 
