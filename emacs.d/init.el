@@ -30,6 +30,7 @@
 (require 'init/smartparens)
 (require 'init/company)
 (require 'init/ibuffer)
+(require 'init/magit)
 (require 'init/markdown)
 (require 'init/org)
 (require 'init/projectile)
