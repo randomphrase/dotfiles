@@ -15,24 +15,25 @@ esac
 
 # run command but only show output if an error occurrs
 output_on_error() {
-    log=$(mktemp ${0##*/}_log.XXXXXXXX) || exit 1
-    trap 'rm "$log"' EXIT INT QUIT TERM
+    local log=$(mktemp ${0##*/}_log.XXXXXXXX) || exit 1
+    trap 'rm "$log"' RETURN
 
     $* >$log 2>$log || {
         echo "ERROR:"
         [[ -f $log ]] && cat $log
     }
+    # TODO return result or exit on error?
 }
 
 # Make a relative path from src -> dst. Stolen from http://stackoverflow.com/a/12498485/31038
 make_relative_path() {
     # both $1 and $2 are absolute paths beginning with /
     # returns relative path to $2/$target from $1/$source
-    source=$1
-    target=$2
+    local source=$1
+    local target=$2
 
-    common_part=$source # for now
-    result="" # for now
+    local common_part=$source # for now
+    local result="" # for now
 
     while [[ "${target#$common_part}" == "${target}" ]]; do
         # no match, means that candidate common part is not correct
@@ -53,7 +54,7 @@ make_relative_path() {
 
     # since we now have identified the common part,
     # compute the non-common part
-    forward_part="${target#$common_part}"
+    local forward_part="${target#$common_part}"
 
     # and now stick all parts together
     if [[ -n $result ]] && [[ -n $forward_part ]]; then
@@ -69,7 +70,7 @@ make_relative_path() {
 check_environment() {
     echo "** checking environment"
 
-    required_exes=(git make)
+    local required_exes=(git make curl unzip)
 
     for e in ${required_exe[@]}; do
         hash $e || {
@@ -95,13 +96,13 @@ git_config() {
 
 # Make a symbolic link $1 -> $2
 make_symlink() {
-    src=$1
-    dst=$2
+    local src=$1
+    local dst=$2
 
     if [[ -e $src ]]; then
         if [[ -L $src ]]; then
-            linkinode=$(statinode $src)
-            dstinode=$(statinode $dst)
+            local linkinode=$(statinode $src)
+            local dstinode=$(statinode $dst)
             if (( linkinode != dstinode )); then
                 echo "warning: $src is a symlink but doesn't point to desired $dst ($linkinode != $dstinode)"
             fi
@@ -112,9 +113,9 @@ make_symlink() {
         return
     fi
 
-    srcdir=${src%/*}
-    srcnm=${src##*/}
-    dstpath=$(make_relative_path $srcdir $dst)
+    local srcdir=${src%/*}
+    local srcnm=${src##*/}
+    local dstpath=$(make_relative_path $srcdir $dst)
     echo "   ${srcdir}/${srcnm} -> ${dstpath}"
     (
         cd ${srcdir}
@@ -123,12 +124,12 @@ make_symlink() {
 }
 
 symlink_dotfiles() {
-    echo "** setting up symlinks ~/.* -> dotfiles/*"
+    echo "** setting up symlinks: ~/.* -> dotfiles/*"
 
-    skipfiles=(bootstrap.sh readme.org bin)
+    local skipfiles=(bootstrap.sh readme.org bin)
 
     for dst in $dotfiles_abs/* ; do
-        nm=${dst##*/}
+        local nm=${dst##*/}
 
         # Todo: is this a reliable test?
         if [[ ${skipfiles[*]} =~ $nm ]]; then
@@ -140,7 +141,7 @@ symlink_dotfiles() {
 }
 
 symlink_bindirs() {
-    echo "** setting up symlinks ~/bin/* -> dotfiles/bin/*"
+    echo "** setting up symlinks: ~/bin/* -> dotfiles/bin/*"
 
     [[ -d $HOME/bin ]] || mkdir $HOME/bin
 
@@ -150,14 +151,14 @@ symlink_bindirs() {
 }
 
 clone_git_repo() {
-    path=$1
-    repo=$2
+    local path=$1
+    local repo=$2
 
     # Need this because some submodules (like oh-my-zsh) are corrupted on github :(
-    opts="-c transfer.fsckobjects=false"
+    local opts="-c transfer.fsckobjects=false"
 
     if [[ ! -d "$HOME/$path" ]]; then
-        echo -n "** Clone git repo: $path"
+        echo -n "** clone git repo: $path"
         (
             dir="$HOME/${path%/*}"
             mkdir -p $dir
@@ -168,14 +169,49 @@ clone_git_repo() {
     fi
 }
 
+get_tarball() {
+    # could do something more sophisticated here, but ... nah.
+    [[ -d ${HOME}/$1 ]] && return
+
+    echo -n "** installing from tarball: $1 "
+
+    # Make the temp dir here so it is in the same filesystem
+    local destdir=${HOME}/${1%/*}
+    local tmp=$(mktemp -d ${destdir}/bootstrap.XXXXX) || exit 1
+    trap "rm -r ${tmp}" RETURN
+
+    echo -n "... downloading"
+    (
+        cd ${tmp}
+        output_on_error curl -s -O "$2"
+    )
+
+    local archive=${2##*/}
+    local ext=${archive##*.}
+    echo -n "... extracting"
+    (
+        case ${ext} in
+            zip) (
+                cd ${tmp}
+                output_on_error unzip -q ${archive}
+            );;
+            # ... add more here?
+            *) ;;
+        esac
+    )
+
+    mv ${tmp}/${archive%.${ext}} ${HOME}/$1
+    echo "... done"
+}
+
 build_lib() {
-    echo -n "** Building: $1"
+    echo -n "** building: $1"
 
     # Use ginstall-info if available
-    hash ginstall-info 2>/dev/null && install_info_arg="INSTALL-INFO=ginstall-info"
+    hash ginstall-info 2>/dev/null && local install_info_arg="INSTALL-INFO=ginstall-info"
 
     # Use my Emacs
-    [[ $EMACS ]] && emacs_arg="EMACS=$EMACS"
+    [[ $EMACS ]] && local emacs_arg="EMACS=$EMACS"
 
     (
         cd "$HOME/$1"
@@ -185,19 +221,14 @@ build_lib() {
 }
 
 run_cask() {
-    echo -n "** Updating cask"
-    (
-        cd "$HOME/.emacs.d"
-        output_on_error $HOME/.emacs.d/extern/cask/bin/cask upgrade
-    ) || exit 1
-    echo " ... done"
-
-    echo -n "** Updating cask packages"
-    (
-        cd "$HOME/.emacs.d"
-        output_on_error $HOME/.emacs.d/extern/cask/bin/cask update
-    ) || exit 1
-    echo " ... done"
+    for op in upgrade "" update; do
+        echo -n "** cask $op"
+        (
+            cd "$HOME/.emacs.d"
+            output_on_error $HOME/.emacs.d/extern/cask/bin/cask op
+        ) || exit 1
+        echo " ... done"
+    done
 }
 
 # main
@@ -211,7 +242,12 @@ symlink_bindirs
 clone_git_repo ".zsh.d/oh-my-zsh" "https://github.com/robbyrussell/oh-my-zsh.git"
 clone_git_repo ".emacs.d/extern/cask" "https://github.com/cask/cask.git"
 
+# Can't get cc-mode from a git mirror, use a snapshot instead
+get_tarball ".emacs.d/extern/cc-mode" \
+            "http://sourceforge.net/code-snapshots/hg/c/cc/cc-mode/cc-mode/cc-mode-cc-mode-ed795c1c9c7f6e4badac5138e973c28c5ea30fb2.zip"
+
+build_lib ".emacs.d/extern/cc-mode"
 build_lib ".emacs.d/extern/cedet"
 build_lib ".emacs.d/extern/cedet/contrib"
 
-run_cask
+# run_cask

@@ -23,3 +23,5 @@
 *.log
 *~
 *.elc
+/emacs.d/extern/cc-mode/
+/emacs.d/smex-items
