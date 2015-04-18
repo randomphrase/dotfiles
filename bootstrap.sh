@@ -225,7 +225,7 @@ run_cask() {
         echo -n "** cask $op"
         (
             cd "$HOME/.emacs.d"
-            output_on_error $HOME/.emacs.d/extern/cask/bin/cask op
+            output_on_error $HOME/.emacs.d/extern/cask/bin/cask ${op}
         ) || exit 1
         echo " ... done"
     done
@@ -250,4 +250,4 @@ build_lib ".emacs.d/extern/cc-mode"
 build_lib ".emacs.d/extern/cedet"
 build_lib ".emacs.d/extern/cedet/contrib"
 
-# run_cask
+run_cask
