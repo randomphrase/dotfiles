@@ -13,7 +13,7 @@
 (depends-on "google-c-style")
 (depends-on "goto-last-change")
 (depends-on "htmlize")
-(depends-on "ibuffer-vc")
+(depends-on "ibuffer-projectile")
 (depends-on "iedit")
 (depends-on "magit")
 (depends-on "markdown-mode")
