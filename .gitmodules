@@ -1,6 +1,6 @@
 [submodule "emacs.d/extern/conf-info-mode"]
 	path = emacs.d/extern/conf-info-mode
-	url = git@github.com:randomphrase/conf-info-mode.git
+	url = https://github.com/randomphrase/conf-info-mode.git
 [submodule "emacs.d/extern/org-reveal"]
 	path = emacs.d/extern/org-reveal
 	url = https://github.com/yjwen/org-reveal.git
