@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eu
 
 shopt -s nocasematch nullglob    # using Bash
 
@@ -72,7 +72,7 @@ check_environment() {
 
     local required_exes=(git make curl unzip)
 
-    for e in ${required_exe[@]}; do
+    for e in ${required_exes[@]}; do
         hash $e || {
             echo "!! Missing: $e"
             exit 1
@@ -207,11 +207,14 @@ get_tarball() {
 build_lib() {
     echo -n "** building: $1"
 
+    local install_info_arg=
+    local emacs_arg=
+
     # Use ginstall-info if available
     hash ginstall-info 2>/dev/null && local install_info_arg="INSTALL-INFO=ginstall-info"
 
     # Use my Emacs
-    [[ $EMACS ]] && local emacs_arg="EMACS=$EMACS"
+    [[ -v EMACS ]] && emacs_arg="EMACS=$EMACS"
 
     (
         cd "$HOME/$1"
