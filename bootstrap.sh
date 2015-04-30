@@ -211,7 +211,7 @@ build_lib() {
     local emacs_arg=
 
     # Use ginstall-info if available
-    hash ginstall-info 2>/dev/null && local install_info_arg="INSTALL-INFO=ginstall-info"
+    hash ginstall-info 2>/dev/null && install_info_arg="INSTALL-INFO=ginstall-info"
 
     # Use my Emacs
     [[ -v EMACS ]] && emacs_arg="EMACS=$EMACS"
