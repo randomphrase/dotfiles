@@ -207,14 +207,12 @@ get_tarball() {
 build_lib() {
     echo -n "** building: $1"
 
-    local install_info_arg=
-    local emacs_arg=
-
     # Use ginstall-info if available
+    local install_info_arg=
     hash ginstall-info 2>/dev/null && install_info_arg="INSTALL-INFO=ginstall-info"
 
     # Use my Emacs
-    [[ -z ${EMACS+x} ]] && emacs_arg="EMACS=$EMACS"
+    local emacs_arg=${EMACS+"EMACS=$EMACS"}
 
     (
         cd "$HOME/$1"
