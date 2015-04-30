@@ -214,7 +214,7 @@ build_lib() {
     hash ginstall-info 2>/dev/null && install_info_arg="INSTALL-INFO=ginstall-info"
 
     # Use my Emacs
-    [[ -v EMACS ]] && emacs_arg="EMACS=$EMACS"
+    [[ -z ${EMACS+x} ]] && emacs_arg="EMACS=$EMACS"
 
     (
         cd "$HOME/$1"
