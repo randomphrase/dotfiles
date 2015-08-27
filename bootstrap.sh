@@ -169,41 +169,6 @@ clone_git_repo() {
     fi
 }
 
-get_tarball() {
-    # could do something more sophisticated here, but ... nah.
-    [[ -d ${HOME}/$1 ]] && return
-
-    echo -n "** installing from tarball: $1 "
-
-    # Make the temp dir here so it is in the same filesystem
-    local destdir=${HOME}/${1%/*}
-    local tmp=$(mktemp -d ${destdir}/bootstrap.XXXXX) || exit 1
-    trap "rm -r ${tmp}" RETURN
-
-    echo -n "... downloading"
-    (
-        cd ${tmp}
-        output_on_error curl -s -O "$2"
-    )
-
-    local archive=${2##*/}
-    local ext=${archive##*.}
-    echo -n "... extracting"
-    (
-        case ${ext} in
-            zip) (
-                cd ${tmp}
-                output_on_error unzip -q ${archive}
-            );;
-            # ... add more here?
-            *) ;;
-        esac
-    )
-
-    mv ${tmp}/${archive%.${ext}} ${HOME}/$1
-    echo "... done"
-}
-
 build_lib() {
     echo -n "** building: $1"
 
@@ -243,11 +208,6 @@ symlink_bindirs
 clone_git_repo ".zsh.d/oh-my-zsh" "https://github.com/robbyrussell/oh-my-zsh.git"
 clone_git_repo ".emacs.d/extern/cask" "https://github.com/cask/cask.git"
 
-# Can't get cc-mode from a git mirror, use a snapshot instead
-get_tarball ".emacs.d/extern/cc-mode" \
-            "http://sourceforge.net/code-snapshots/hg/c/cc/cc-mode/cc-mode/cc-mode-cc-mode-ed795c1c9c7f6e4badac5138e973c28c5ea30fb2.zip"
-
-build_lib ".emacs.d/extern/cc-mode"
 build_lib ".emacs.d/extern/cedet"
 build_lib ".emacs.d/extern/cedet/contrib"
 
