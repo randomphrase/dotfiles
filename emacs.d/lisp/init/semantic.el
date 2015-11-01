@@ -18,11 +18,6 @@
 (require 'semantic/ia)
 (require 'semantic/lex-spp)
 
-;; Ensure semantic can get info from gnu global
-(require 'semantic/db-global)
-(semanticdb-enable-gnu-global-databases 'c-mode)
-(semanticdb-enable-gnu-global-databases 'c++-mode)
-
 ;; don't use semantic on remote files:
 (add-to-list 'semantic-inhibit-functions 'remote-buffer-p)
 
