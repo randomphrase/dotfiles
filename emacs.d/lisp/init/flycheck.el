@@ -5,7 +5,7 @@
 (require 'ede/compdb)
 
 (defun flycheck-compdb-setup ()
-  (when (and ede-object (oref ede-object compilation))
+  (when (and ede-object (slot-boundp ede-object 'compilation) (oref ede-object compilation))
     (let* ((comp (oref ede-object compilation))
            (cmd (get-command-line comp)))
       
