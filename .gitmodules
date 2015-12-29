@@ -13,7 +13,3 @@
 [submodule "bin/sshrc"]
 	path = bin/sshrc
 	url = https://github.com/Russell91/sshrc.git
-[submodule "fonts/source-code-pro"]
-	path = fonts/source-code-pro
-	url = https://github.com/adobe-fonts/source-code-pro.git
-	branch = release
