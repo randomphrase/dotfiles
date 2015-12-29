@@ -151,11 +151,15 @@ symlink_bindirs() {
 }
 
 clone_git_repo() {
-    local path=$1
-    local repo=$2
-
-    # Need this because some submodules (like oh-my-zsh) are corrupted on github :(
+    # Need to disable fsckobjects because some submodules (like oh-my-zsh) are corrupted on github :(
     local opts="-c transfer.fsckobjects=false"
+    local copts="-q"
+
+    local path=$1
+    shift
+    local repo=$1
+    shift
+    copts="${copts} $*"
 
     if [[ ! -d "$HOME/$path" ]]; then
         echo -n "** clone git repo: $path"
@@ -163,7 +167,7 @@ clone_git_repo() {
             dir="$HOME/${path%/*}"
             mkdir -p $dir
             cd $dir
-            git ${opts} clone -q ${repo} ${path##*/}
+            git ${opts} clone ${copts} ${repo} ${path##*/}
         )
         echo " ... done"
     fi
@@ -197,6 +201,18 @@ run_cask() {
     done
 }
 
+rebuild_font_cache() {
+    echo -n "** rebuilding font cache: $1"
+
+    hash fc-cache 2>/dev/null || {
+        echo " ... skipped"
+        return
+    }
+
+    fc-cache -f $HOME/$1
+    echo " ... done"
+}
+
 # main
 
 check_environment
@@ -204,11 +220,16 @@ git_config
 symlink_dotfiles
 symlink_bindirs
 
-# Some tools are self-updating, so we don't import them as submodules, instead just clone
+# some tools are self-updating, so we don't import them as submodules, instead just clone
 clone_git_repo ".zsh.d/oh-my-zsh" "https://github.com/robbyrussell/oh-my-zsh.git"
 clone_git_repo ".emacs.d/extern/cask" "https://github.com/cask/cask.git"
+
+# This one can't be added as a submodule, see http://stackoverflow.com/q/34456530/31038
+clone_git_repo ".fonts/source-code-pro" "https://github.com/adobe-fonts/source-code-pro.git" "--depth 1" "-b release"
 
 build_lib ".emacs.d/extern/cedet"
 build_lib ".emacs.d/extern/cedet/contrib"
 
 run_cask
+
+rebuild_font_cache ".fonts/source-code-pro/OTF"
