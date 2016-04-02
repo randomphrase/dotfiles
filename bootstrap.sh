@@ -13,6 +13,28 @@ case "$(uname -s)" in
     * )           statinode() { ls -id "$@" | cut -d ' ' -f 1; return 0; };;
 esac
 
+# checks for available commands
+require() {
+    for e in $*; do
+        hash $e 2>/dev/null || {
+            echo "skipped (missing: $e)"
+            exit 1
+        }
+    done
+}
+
+start_task() {
+    echo -n "** $1 ... "
+    shift
+    for e in $*; do
+        require "$e" || exit 1
+    done
+}
+
+end_task() {
+    echo ${1:-"done"}
+}
+
 # run command but only show output if an error occurrs
 output_on_error() {
     local log=$(mktemp ${0##*/}_log.XXXXXXXX) || exit 1
@@ -67,33 +89,6 @@ make_relative_path() {
     echo $result
 }
 
-check_environment() {
-    echo "** checking environment"
-
-    local required_exes=(git make curl unzip)
-
-    for e in ${required_exes[@]}; do
-        hash $e || {
-            echo "!! Missing: $e"
-            exit 1
-        }
-    done
-
-    # Use MacPorts emacs if available
-    for e in /Applications/MacPorts/Emacs.app/Contents/MacOS/Emacs ; do
-        [[ -x $e ]] || continue
-        export EMACS=$e
-    done
-}
-
-git_config() {
-    echo "** setting up git config"
-
-    # Don't use work email name/address for this repo...
-    git config --file "$dotfiles/.git/config" user.name "Alastair Rankine"
-    git config --file "$dotfiles/.git/config" user.email "alastair@girtby.net"
-}
-
 # Make a symbolic link $1 -> $2
 make_symlink() {
     local src=$1
@@ -123,8 +118,30 @@ make_symlink() {
     )
 }
 
+check_environment() {
+    start_task "checking environment" || exit 1
+
+    # Use MacPorts emacs if available
+    for e in /Applications/MacPorts/Emacs.app/Contents/MacOS/Emacs ; do
+        [[ -x $e ]] || continue
+        export EMACS=$e
+    done
+
+    end_task
+}
+
+git_config() {
+    start_task "setting up git config" "git" || exit 1
+
+    # Don't use work email name/address for this repo...
+    git config --file "$dotfiles/.git/config" user.name "Alastair Rankine"
+    git config --file "$dotfiles/.git/config" user.email "alastair@girtby.net"
+
+    end_task
+}
+
 symlink_dotfiles() {
-    echo "** setting up symlinks: ~/.* -> dotfiles/*"
+    start_task "setting up symlinks: ~/.* -> dotfiles/*" || exit 1
 
     local skipfiles=(bootstrap.sh readme.org bin)
 
@@ -138,16 +155,20 @@ symlink_dotfiles() {
 
         make_symlink $HOME/.$nm $dst
     done
+
+    end_task
 }
 
 symlink_bindirs() {
-    echo "** setting up symlinks: ~/bin/* -> dotfiles/bin/*"
+    start_task "setting up symlinks: ~/bin/* -> dotfiles/bin/*" || exit 1
 
     [[ -d $HOME/bin ]] || mkdir $HOME/bin
 
     for dst in $dotfiles_abs/bin/* ; do
         make_symlink $HOME/bin/${dst##*/} $dst
     done
+
+    end_task
 }
 
 clone_git_repo() {
@@ -161,20 +182,23 @@ clone_git_repo() {
     shift
     copts="${copts} $*"
 
+    start_task "clone git repo: $path" "git" || exit 1
+
     if [[ ! -d "$HOME/$path" ]]; then
-        echo -n "** clone git repo: $path"
         (
             dir="$HOME/${path%/*}"
             mkdir -p $dir
             cd $dir
             git ${opts} clone ${copts} ${repo} ${path##*/}
         )
-        echo " ... done"
+        end_task
+    else
+        end_task "skipped"
     fi
 }
 
 build_lib() {
-    echo -n "** building: $1"
+    start_task "building: $1" "make" || exit 1
 
     # Use ginstall-info if available
     local install_info_arg=
@@ -187,30 +211,31 @@ build_lib() {
         cd "$HOME/$1"
         output_on_error make $emacs_arg $install_info_arg
     ) || exit 1
-    echo " ... done"
+
+    end_task
 }
 
 run_cask() {
-    for op in upgrade "" update; do
-        echo -n "** cask $op"
-        (
-            cd "$HOME/.emacs.d"
-            output_on_error $HOME/.emacs.d/extern/cask/bin/cask ${op}
-        ) || exit 1
-        echo " ... done"
+    start_task "cask ${1:-}" "cask" || exit 1
+    (
+        cd "$HOME/.emacs.d"
+        output_on_error $HOME/.emacs.d/extern/cask/bin/cask "${1:-}"
+    ) || exit 1
+    end_task
+}
+
+cask_all() {
+    for op in $*; do
+        run_cask $op
     done
 }
 
 rebuild_font_cache() {
-    echo -n "** rebuilding font cache: $1"
-
-    hash fc-cache 2>/dev/null || {
-        echo " ... skipped"
-        return
-    }
+    start_task "rebuilding font cache: $1" "fc-cache" || exit 1
 
     fc-cache -f $HOME/$1
-    echo " ... done"
+
+    end_task
 }
 
 # main
@@ -230,6 +255,6 @@ clone_git_repo ".fonts/source-code-pro" "https://github.com/adobe-fonts/source-c
 build_lib ".emacs.d/extern/cedet"
 build_lib ".emacs.d/extern/cedet/contrib"
 
-run_cask
+cask_all upgrade "" update
 
 rebuild_font_cache ".fonts/source-code-pro/OTF"
