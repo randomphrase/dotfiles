@@ -23,6 +23,7 @@
 ; Favourite modes
 (require 'init/semantic)
 (require 'init/ede)
+(require 'init/compile)
 (require 'init/c++)
 (require 'init/cmake)
 (require 'init/flycheck)
