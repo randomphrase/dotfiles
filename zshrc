@@ -71,13 +71,10 @@ export EDITOR=emacsclient
 export ALTERNATE_EDITOR=emacs
 alias e='emacsclient'
 
-
 source $ZSH/oh-my-zsh.sh
-
 
 # Mac-specific stuff:
 alias plcat="plutil -convert xml1 -o - "
-
 
 # Use ccache if it's available
 # if [[ -x $(which ccache) ]]; then
@@ -88,3 +85,6 @@ alias plcat="plutil -convert xml1 -o - "
 # pbcopy / pbpaste emulation on linux
 alias pbcopy="xsel --clipboard"
 alias pbpaste="xsel --clipboard"
+
+# Use sshrc, enable ssh completion
+compdef sshrc=ssh
