@@ -26,6 +26,7 @@ if [ hash emacsclient 2>/dev/null ]; then
     export ALTERNATE_EDITOR=""
 elif [ hash emacs 2>/dev/null ]; then
     export EDITOR=emacs
+fi
 
 # Are we logging in with sshrc?
 if [[ $SSHHOME ]]; then
