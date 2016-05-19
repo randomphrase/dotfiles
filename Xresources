@@ -1,6 +1,6 @@
 Emacs.font:              Source Code Pro-10
 
-URxvt*font:              xft:Ubuntu Mono:size=11
+URxvt*font:              xft:Source Code Pro:size=10
 URxvt*letterSpace:       -1
 URxvt.scrollstyle:       plain
 URxvt.scrollBar_right:   true
