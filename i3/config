@@ -26,6 +26,9 @@ floating_modifier $mod
 # Fix keyboard because bug
 exec setxkbmap -option "ctrl:nocaps"
 
+# Screensaver
+exec xscreensaver
+
 # Need dropbox
 exec dropbox start
 
