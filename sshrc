@@ -20,8 +20,12 @@ if [[ "$COLORTERM" || "$XTERM_VERSION" || "$SSH_CLIENT" ]]; then
     export TERM
 fi
 
-# Use emacs if present
-hash emacs 2>/dev/null && export EDITOR=emacs
+# Use emacs/emacsclient if present
+if [ hash emacsclient 2>/dev/null ]; then
+    export EDITOR=emacsclient
+    export ALTERNATE_EDITOR=""
+elif [ hash emacs 2>/dev/null ]; then
+    export EDITOR=emacs
 
 # Are we logging in with sshrc?
 if [[ $SSHHOME ]]; then
