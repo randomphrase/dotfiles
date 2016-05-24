@@ -44,6 +44,10 @@
 (-when-let (gcc-exe (locate-file "gcc-mp-" exec-path '("4.9" "4.8" "4.7") #'file-executable-p))
   (setq-default flycheck-c/c++-gcc-executable gcc-exe))
 
+;; Clang may be under a different name also
+(-when-let (clang-exe (locate-file "clang-" exec-path '("3.5" "3.6" "3.7" "3.8") #'file-executable-p))
+  (setq-default flycheck-c/c++-clang-executable clang-exe))
+
 (add-hook 'ede-compdb-project-rescan-hook #'flycheck-compdb-setup)
 (add-hook 'ede-minor-mode-hook #'flycheck-compdb-setup)
 
