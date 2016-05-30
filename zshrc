@@ -42,7 +42,7 @@ ZSH_THEME="jreese"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git terminalapp colored-man command-not-found vagrant)
+plugins=(git terminalapp colored-man command-not-found tmux)
 
 # bin subdirs (if any) should also be added - useful for script repos
 path=(~/bin/*(-/N) $path)
