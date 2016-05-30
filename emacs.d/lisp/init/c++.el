@@ -30,4 +30,7 @@
   )
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 
+;; Use modern c++ font lock mode
+(add-hook 'c++-mode-hook #'modern-c++-font-lock-mode)
+
 (provide 'init/c++)
