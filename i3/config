@@ -32,8 +32,8 @@ exec xscreensaver
 # Need dropbox
 exec dropbox start
 
-# Start urxvtd for fast terminal startup
-exec urxvtd --quiet --opendisplay --fork
+# Start rxvt-unicode (with 256 colors) for fast terminal startup
+exec urxvt256c-mld --quiet --opendisplay --fork
 
 # Start emacs for fast emacs startup
 exec emacs --daemon
