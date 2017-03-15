@@ -1,12 +1,6 @@
-[submodule "emacs.d/extern/conf-info-mode"]
-	path = emacs.d/extern/conf-info-mode
-	url = https://github.com/randomphrase/conf-info-mode.git
-[submodule "emacs.d/lisp/defuns/semantic-browse-c++-doc"]
-	path = emacs.d/lisp/defuns/semantic-browse-c++-doc
-	url = https://gist.github.com/9177867.git
-[submodule "emacs.d/extern/cedet"]
-	path = emacs.d/extern/cedet
-	url = http://git.code.sf.net/p/cedet/git
 [submodule "bin/sshrc"]
 	path = bin/sshrc
 	url = https://github.com/Russell91/sshrc.git
+[submodule "emacs.d"]
+	path = emacs.d
+	url = https://github.com/syl20bnr/spacemacs.git

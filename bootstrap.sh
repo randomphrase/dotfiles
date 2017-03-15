@@ -197,39 +197,6 @@ clone_git_repo() {
     fi
 }
 
-build_lib() {
-    start_task "building: $1" "make" || exit 1
-
-    # Use ginstall-info if available
-    local install_info_arg=
-    hash ginstall-info 2>/dev/null && install_info_arg="INSTALL-INFO=ginstall-info"
-
-    # Use my Emacs
-    local emacs_arg=${EMACS+"EMACS=$EMACS"}
-
-    (
-        cd "$HOME/$1"
-        output_on_error make $emacs_arg $install_info_arg
-    ) || exit 1
-
-    end_task
-}
-
-run_cask() {
-    start_task "cask ${1:-}" "cask" || exit 1
-    (
-        cd "$HOME/.emacs.d"
-        output_on_error $HOME/.emacs.d/extern/cask/bin/cask "${1:-}"
-    ) || exit 1
-    end_task
-}
-
-cask_all() {
-    for op in $*; do
-        run_cask $op
-    done
-}
-
 rebuild_font_cache() {
     start_task "rebuilding font cache: $1" "fc-cache" || exit 1
 
@@ -247,14 +214,8 @@ symlink_bindirs
 
 # some tools are self-updating, so we don't import them as submodules, instead just clone
 clone_git_repo ".zsh.d/oh-my-zsh" "https://github.com/robbyrussell/oh-my-zsh.git"
-clone_git_repo ".emacs.d/extern/cask" "https://github.com/cask/cask.git"
 
 # This one can't be added as a submodule, see http://stackoverflow.com/q/34456530/31038
 clone_git_repo ".fonts/source-code-pro" "https://github.com/adobe-fonts/source-code-pro.git" "--depth 1" "-b release"
-
-build_lib ".emacs.d/extern/cedet"
-build_lib ".emacs.d/extern/cedet/contrib"
-
-cask_all upgrade "" update
 
 rebuild_font_cache ".fonts/source-code-pro/OTF"

@@ -63,7 +63,5 @@ for eapp in /Applications/Emacs.app /Applications/MacPorts/Emacs.app; do
     fi
 done
 
-# Use cask
-path+=~/.emacs.d/extern/cask/bin
 
 source $ZSH/oh-my-zsh.sh

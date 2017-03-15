@@ -1,5 +1,3 @@
-Emacs.font:              Source Code Pro-10
-
 URxvt*font:              xft:Source Code Pro:size=10
 URxvt*letterSpace:       -1
 URxvt.scrollstyle:       plain
