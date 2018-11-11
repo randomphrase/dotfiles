@@ -63,5 +63,7 @@ for eapp in /Applications/Emacs.app /Applications/MacPorts/Emacs.app; do
     fi
 done
 
+# just save everything
+HISTSIZE=100000
 
 source $ZSH/oh-my-zsh.sh
