@@ -1,6 +1,6 @@
 Here are my dotfiles. Feel free to fork and/or use and/or ignore.
 
-It's obviously tailored more towards my usage, which is [[http://www.gnu.org/software/emacs/][GNU Emacs]] with [[http://cedet.sourceforge.net/][CEDET]] and [[http://www.zsh.org/][zsh]] with [[https://github.com/robbyrussell/oh-my-zsh][oh-my-zsh]]. Recently I have been experimenting with the [[http://i3wm.org/][i3 tiling window manager]], which is nice.
+It's obviously tailored more towards my usage, which is [[http://spacemacs.org/][spacemacs]], [[https://github.com/tmux/tmux][tmux]] and [[http://www.zsh.org/][zsh]] with [[https://github.com/robbyrussell/oh-my-zsh][oh-my-zsh]].
 
 Basic setup is:
 
@@ -10,4 +10,4 @@ $ git clone --recursive https://github.com/randomphrase/dotfiles .dotfiles
 $ .dotfiles/bootstrap.sh
 #+END_EXAMPLE
 
-This will attempt to set up symlinks from ~.dotfiles/foo~ to ~.foo~. If you already have a ~.foo~, move it out of the way (or not!) and re-run ~bootstrap.sh~. The ~bootstrap.sh~ file is intended to be re-run periodically; there are some external emacs libraries like CEDET which I use directly from their repo, and the bootstrap script does an update and rebuild of these.
+This will attempt to set up symlinks from ~.dotfiles/foo~ to ~.foo~. If you already have a ~.foo~, move it out of the way (or not!) and re-run ~bootstrap.sh~.
