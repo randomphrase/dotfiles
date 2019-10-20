@@ -218,4 +218,6 @@ clone_git_repo ".zsh.d/oh-my-zsh" "https://github.com/robbyrussell/oh-my-zsh.git
 # This one can't be added as a submodule, see http://stackoverflow.com/q/34456530/31038
 clone_git_repo ".fonts/source-code-pro" "https://github.com/adobe-fonts/source-code-pro.git" "--depth 1" "-b release"
 
+clone_git_repo ".tmux/plugins/tpm" "https://github.com/tmux-plugins/tpm"
+
 rebuild_font_cache ".fonts/source-code-pro/OTF"
