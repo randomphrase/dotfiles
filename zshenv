@@ -45,7 +45,7 @@ ZSH_THEME="jreese"
 plugins=(git colored-man-pages command-not-found tmux)
 
 # bin subdirs (if any) should also be added - useful for script repos
-path=(~/bin ~/bin/*(-/N) $path)
+path=(~/bin ~/bin/*(-/N) ~/.local/bin(-/N) $path)
 
 # MacPorts lives here:
 if [[ -d /opt/local/bin ]]; then
