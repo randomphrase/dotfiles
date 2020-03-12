@@ -1,6 +1,3 @@
-[submodule "bin/sshrc"]
-	path = bin/sshrc
-	url = https://github.com/Russell91/sshrc.git
 [submodule "emacs.d"]
 	path = emacs.d
 	url = https://github.com/syl20bnr/spacemacs.git
