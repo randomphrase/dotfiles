@@ -25,3 +25,4 @@
 *.elc
 /emacs.d/extern/cc-mode/
 /emacs.d/smex-items
+/spacemacs.d/.spacemacs.env
