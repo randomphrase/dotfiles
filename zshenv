@@ -53,6 +53,9 @@ path+=~/bin/*(-/N)
 path+=~/.local/bin(/N)
 path+=~/.gem/ruby/*/bin(/N)
 
+VIRTUALENVWRAPPER_PYTHON=python3
+plugins+=virtualenvwrapper
+
 # MacPorts lives here:
 if [[ -d /opt/local/bin ]]; then
     path=( /opt/local/bin /opt/local/sbin $path )
