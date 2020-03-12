@@ -39,13 +39,19 @@ ZSH_THEME="jreese"
 # much faster.
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
 
+
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 plugins=(git colored-man-pages command-not-found tmux)
 
+path+=~/bin
+
 # bin subdirs (if any) should also be added - useful for script repos
-path=(~/bin ~/bin/*(-/N) ~/.local/bin(-/N) $path)
+# - means accept files, / means accept dirs, N means enable NULL_GLOB
+path+=~/bin/*(-/N)
+path+=~/.local/bin(/N)
+path+=~/.gem/ruby/*/bin(/N)
 
 # MacPorts lives here:
 if [[ -d /opt/local/bin ]]; then
