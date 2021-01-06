@@ -41,7 +41,7 @@ This function should only modify configuration layer settings."
             c-c++-backend 'lsp-ccls)
      ;dap
      (dash :variables
-           helm-dash-docset-newpath
+           dash-docs-docset-newpath
            (expand-file-name "~/.local/share/Zeal/Zeal/docsets"))
      emacs-lisp
      ess
