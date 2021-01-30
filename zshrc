@@ -78,7 +78,10 @@ export EDITOR=emacsclient
 export ALTERNATE_EDITOR=emacs
 alias e='emacsclient'
 
-
+# nix lives here:
+for s in ~/.nix-profile/etc/profile.d/nix.sh ; do
+    [[ -e $s ]] && source $s
+done
 
 # Use ccache if it's available
 # if [[ -x $(which ccache) ]]; then
