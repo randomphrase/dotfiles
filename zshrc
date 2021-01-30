@@ -53,10 +53,11 @@ plugins=(
 path+=~/bin
 
 # bin subdirs (if any) should also be added - useful for script repos
-# - means accept files, / means accept dirs, N means enable NULL_GLOB
-path+=~/bin/*(-/N)
-path+=~/.local/bin(/N)
-path+=~/.gem/ruby/*/bin(/N)
+# / means accept dirs, N means enable NULL_GLOB
+path+=(~/{,.local/}bin/*(/N))
+
+# local ruby gems are installed here
+path+=(~/.gem/ruby/*/bin(/N))
 
 # virtualenvwrapper support
 plugins+=virtualenvwrapper
