@@ -51,6 +51,7 @@ plugins=(
 )
 
 path+=~/bin
+path+=~/.local/bin
 
 # bin subdirs (if any) should also be added - useful for script repos
 # / means accept dirs, N means enable NULL_GLOB
