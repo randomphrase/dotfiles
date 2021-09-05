@@ -68,54 +68,16 @@ path+=~/.cargo/bin
 plugins+=virtualenvwrapper
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 
-# activate vterm plugin if we are inside vterm
-# if [[ ${INSIDE_EMACS:-} == "vterm" ]]; then
-#     plugins+=vterm
-# fi
-
-# # MacPorts lives here:
-# if [[ -d /opt/local/bin ]]; then
-#     path=( /opt/local/bin /opt/local/sbin $path )
-#     manpath=( /opt/local/share/man /usr/share/man /usr/X11/man )
-#     plugins+=(macports)
-# fi
-
-# # Use Emacs.app emacsclient in preference to built-in emacsclient if found:
-# for eapp in /Applications/Emacs.app /Applications/MacPorts/Emacs.app; do
-#     if [[ -d $eapp/Contents/MacOS/bin ]]; then
-#         path=( $eapp/Contents/MacOS/bin $path )
-#         export EMACS=$eapp/Contents/MacOS/Emacs
-#         break
-#     fi
-# done
-
 # Setup emacs as the editor of choice
 export EDITOR=emacsclient
 export ALTERNATE_EDITOR=emacs
 alias e='emacsclient'
-
-# nix lives here:
-for s in ~/.nix-profile/etc/profile.d/nix.sh ; do
-    [[ -e $s ]] && source $s
-done
 
 # Use ccache if it's available
 # if [[ -x $(which ccache) ]]; then
 #     export CC="ccache ${CC-gcc}"
 #     export CXX="ccache ${CXX-g++}"
 # fi
-
-# # pbcopy / pbpaste emulation on linux
-# alias pbcopy="xsel --clipboard"
-# alias pbpaste="xsel --clipboard"
-
-# # Mac-specific stuff:
-# alias plcat="plutil -convert xml1 -o - "
-
-
-# # Use sshrc, enable ssh completion
-# compdef sshrc=ssh
-
 
 # just save everything
 HISTSIZE=100000
