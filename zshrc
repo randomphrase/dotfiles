@@ -81,5 +81,6 @@ alias e='emacsclient'
 
 # just save everything
 HISTSIZE=100000
+SAVEHIST=100000
 
 source $ZSH/oh-my-zsh.sh
