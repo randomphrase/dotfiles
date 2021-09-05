@@ -84,3 +84,8 @@ HISTSIZE=100000
 SAVEHIST=100000
 
 source $ZSH/oh-my-zsh.sh
+
+# vterm plugin will set PROMPT but it gets clobbered by the omz theme - so we need to put it back :(
+if type vterm_prompt_end >/dev/null; then
+    PROMPT=$PROMPT'%{$(vterm_prompt_end)%}'
+fi
