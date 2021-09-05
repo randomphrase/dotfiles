@@ -5,9 +5,9 @@ It's obviously tailored more towards my usage, which is [[http://spacemacs.org/]
 Basic setup is:
 
 #+BEGIN_EXAMPLE
-$ cd
-$ git clone --recursive https://github.com/randomphrase/dotfiles .dotfiles
-$ .dotfiles/bootstrap.sh
+$ sudo apt install ansible
+$ git clone https://github.com/randomphrase/dotfiles .dotfiles
+$ ansible-playbook --ask-become-pass .dotfiles/playbook/homedir.yml
 #+END_EXAMPLE
 
-This will attempt to set up symlinks from ~.dotfiles/foo~ to ~.foo~. If you already have a ~.foo~, move it out of the way (or not!) and re-run ~bootstrap.sh~.
+

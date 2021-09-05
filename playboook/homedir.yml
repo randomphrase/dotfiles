@@ -1,0 +1,113 @@
+---
+- name: Git config
+  hosts: all localhost
+  tasks:
+    - name: install git
+      apt:
+        name: git
+      become: yes
+    - name: set git email
+      git_config:
+        name: user.email
+        value: "alastair@girtby.net"
+        scope: global
+    - name: set git name
+      git_config:
+        name: user.name
+        value: "Alastair Rankine"
+        scope: global
+
+# - name: Dotfiles
+#   hosts: all
+#   tasks:
+#     - name: clone dotfiles
+#       git:
+#         repo: git@github.com:randomphrase/dotfiles.git
+#         dest: ~/.dotfiles
+
+- name: Zsh
+  hosts: all localhost
+  tasks:
+    - name: install zsh
+      apt:
+        name: zsh
+      become: yes
+    - name: chsh zsh
+      when: ansible_user_shell != "/bin/zsh"
+      command: chsh -s /bin/zsh
+    - name: clone oh-my-zsh
+      git:
+        repo: https://github.com/robbyrussell/oh-my-zsh.git
+        dest: ~/.zsh.d/oh-my-zsh
+    - name: clone vterm plugin
+      git:
+        repo: https://github.com/randomphrase/vterm-zsh-plugin.git
+        dest: ~/.zsh.d/oh-my-zsh/custom/plugins/vterm
+    - name: symlinks
+      file:
+        dest: "~/.{{item}}"
+        src: ".dotfiles/{{item}}"
+        state: link
+      loop:
+        - zshrc
+        - zshenv
+
+- name: Tmux
+  hosts: all localhost
+  tasks: 
+    - name: install tmux
+      apt:
+        name: tmux
+      become: yes
+    - name: symlink tmux.conf
+      file:
+        dest: ~/.tmux.conf
+        src: .dotfiles/tmux.conf
+        state: link
+    - name: clone tmux package manager
+      git:
+        repo: https://github.com/tmux-plugins/tpm
+        dest: ~/.tmux/plugins/tpm
+    - name: check tmux plugins installed
+      stat:
+        path: ~/.tmux/plugins/tpm-sensible
+      register: tpmpkg
+    - name: install tmux plugins
+      when: not tpmpkg.stat.exists
+      command:
+        cmd: ~/.tmux/plugins/tpm/bin/install_plugins
+    - name: update tmux plugins
+      when: tpmpkg.stat.exists
+      command:
+        cmd: ~/.tmux/plugins/tpm/bin/update_plugins
+
+- name: Emacs
+  hosts: all localhost
+  tasks:
+    - name: install emacs 27
+      snap:
+        name: emacs
+        channel: beta
+        classic: yes
+      become: yes
+    - name: install ccls
+      snap:
+        name: ccls
+        channel: beta
+        classic: yes
+      become: yes
+    - name: install utilities
+      apt:
+        name: ripgrep,sqlite3
+      become: yes
+    - name: clone spacemacs
+      git:
+        repo: https://github.com/syl20bnr/spacemacs.git
+        version: develop
+        dest: ~/.emacs.d
+    - name: symlink .spacemacs.d
+      file:
+        dest: ~/.spacemacs.d
+        src: .dotfiles/spacemacs.d
+        state: link
+
