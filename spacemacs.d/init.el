@@ -53,7 +53,7 @@ This function should only modify configuration layer settings."
      git
      github
      ;helm
-     ivy
+     (ivy :variables ivy-enable-icons t)
      ipython-notebook
      html
      javascript
