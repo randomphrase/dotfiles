@@ -60,6 +60,9 @@ path+=(~/{,.local/}bin/*(/N))
 # local ruby gems are installed here
 path+=(~/.gem/ruby/*/bin(/N))
 
+# rust lives here
+path+=~/.cargo/bin
+
 # virtualenvwrapper support
 plugins+=virtualenvwrapper
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3

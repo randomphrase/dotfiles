@@ -217,4 +217,7 @@ clone_git_repo ".fonts/source-code-pro" "https://github.com/adobe-fonts/source-c
 clone_git_repo "." "https://github.com/syl20bnr/spacemacs.git" "-b develop"
 clone_git_repo ".tmux/plugins/tpm" "https://github.com/tmux-plugins/tpm"
 
+# TODO: check cargo installed via rustup
+# curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
 rebuild_font_cache ".fonts/source-code-pro/OTF"
