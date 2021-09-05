@@ -213,6 +213,8 @@ symlink_dotfiles
 symlink_bindirs
 
 clone_git_repo ".zsh.d/oh-my-zsh" "https://github.com/robbyrussell/oh-my-zsh.git"
+clone_git_repo ".zsh.d/oh-my-zsh/custom/plugins/vterm" "https://github.com/randomphrase/vterm-zsh-plugin.git"
+
 clone_git_repo ".fonts/source-code-pro" "https://github.com/adobe-fonts/source-code-pro.git" "--depth 1" "-b release"
 clone_git_repo "." "https://github.com/syl20bnr/spacemacs.git" "-b develop"
 clone_git_repo ".tmux/plugins/tpm" "https://github.com/tmux-plugins/tpm"

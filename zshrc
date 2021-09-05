@@ -48,6 +48,7 @@ plugins=(
     command-not-found
     git
     tmux
+    vterm
 )
 
 path+=~/bin
@@ -66,6 +67,11 @@ path+=~/.cargo/bin
 # virtualenvwrapper support
 plugins+=virtualenvwrapper
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+
+# activate vterm plugin if we are inside vterm
+# if [[ ${INSIDE_EMACS:-} == "vterm" ]]; then
+#     plugins+=vterm
+# fi
 
 # # MacPorts lives here:
 # if [[ -d /opt/local/bin ]]; then

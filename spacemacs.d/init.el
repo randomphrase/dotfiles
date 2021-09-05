@@ -63,6 +63,8 @@ This function should only modify configuration layer settings."
      (org :variables
           org-enable-reveal-js-support t)
      python
+     (shell :variables
+            shell-default-shell 'vterm)
      shell-scripts
      sql
      syntax-checking
