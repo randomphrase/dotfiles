@@ -51,6 +51,7 @@
       loop:
         - zshrc
         - zshenv
+        - zprofile
 
 - name: Tmux
   hosts: all localhost

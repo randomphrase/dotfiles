@@ -47,6 +47,7 @@ plugins=(
     colored-man-pages
     command-not-found
     git
+    pyenv
     tmux
     vterm
 )
