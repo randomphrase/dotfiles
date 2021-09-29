@@ -66,8 +66,8 @@ path+=(~/.gem/ruby/*/bin(/N))
 path+=~/.cargo/bin
 
 # virtualenvwrapper support
-plugins+=virtualenvwrapper
-export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+# plugins+=virtualenvwrapper
+# export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 
 # Setup emacs as the editor of choice
 export EDITOR=emacsclient
