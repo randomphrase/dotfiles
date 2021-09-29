@@ -111,3 +111,34 @@
         src: .dotfiles/spacemacs.d
         state: link
 
+- name: pyenv
+  hosts: all localhost
+  tasks:
+    - name: Install pyenv
+      git:
+        repo: https://github.com/yyuu/pyenv.git
+        dest: ~/.pyenv
+    - name: Install pyenv-virtualenv plugin
+      git:
+        repo: https://github.com/yyuu/pyenv-virtualenv.git
+        dest: ~/.pyenv/plugins/pyenv-virtualenv
+    - name: Install python build dependencies
+      apt:
+        name:
+          - build-essential
+          - libssl-dev
+          - zlib1g-dev
+          - libbz2-dev
+          - libreadline-dev
+          - libsqlite3-dev
+          - wget
+          - curl
+          - llvm
+          - libncursesw5-dev
+          - xz-utils
+          - tk-dev
+          - libxml2-dev
+          - libxmlsec1-dev
+          - libffi-dev
+          - liblzma-dev
+      become: yes
