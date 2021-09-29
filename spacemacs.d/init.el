@@ -44,6 +44,7 @@ This function should only modify configuration layer settings."
      csv
      (c-c++ :variables
             c-c++-backend 'lsp-ccls)
+     cmake
      ;dap
      (dash :variables
            dash-docs-docset-newpath
