@@ -60,7 +60,6 @@ This function should only modify configuration layer settings."
      javascript
      lsp
      markdown
-     nixos
      (org :variables
           org-enable-reveal-js-support t)
      python
