@@ -62,7 +62,10 @@ This function should only modify configuration layer settings."
      markdown
      (org :variables
           org-enable-reveal-js-support t)
-     python
+     (python :variables
+             python-pipenv-activate t
+             python-fill-column 100
+             python-shell-interpreter "python3")
      (shell :variables
             shell-default-shell 'vterm
             vterm-buffer-name-string "vterm %s")
