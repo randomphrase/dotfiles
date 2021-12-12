@@ -19,7 +19,7 @@
     - name: set pull.rebase
       git_config:
         name: pull.rebase
-        value: true
+        value: "True"
         scope: global
 
 # - name: Dotfiles
