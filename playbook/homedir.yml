@@ -85,6 +85,10 @@
 - name: Emacs
   hosts: all localhost
   tasks:
+    - name: install snapd
+      apt:
+        name: snapd
+      become: yes
     - name: install emacs 27
       snap:
         name: emacs
