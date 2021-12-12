@@ -16,6 +16,11 @@
         name: user.name
         value: "Alastair Rankine"
         scope: global
+    - name: set pull.rebase
+      git_config:
+        name: pull.rebase
+        value: true
+        scope: global
 
 # - name: Dotfiles
 #   hosts: all
