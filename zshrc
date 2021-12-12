@@ -64,7 +64,7 @@ path+=(~/{,.local/}bin/*(/N))
 path+=(~/.local/share/gem/ruby/*/bin(/N))
 
 # rust lives here
-path+=~/.cargo/bin
+path+=(~/.cargo/bin(N))
 
 # virtualenvwrapper support
 # plugins+=virtualenvwrapper
