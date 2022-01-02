@@ -100,15 +100,9 @@
         channel: beta
         classic: yes
       become: yes
-    - name: install ccls
-      snap:
-        name: ccls
-        channel: beta
-        classic: yes
-      become: yes
     - name: install utilities
       apt:
-        name: ripgrep,sqlite3
+        name: clangd,ripgrep,sqlite3
       become: yes
     - name: clone spacemacs
       git:
