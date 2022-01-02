@@ -114,6 +114,11 @@
         dest: ~/.spacemacs.d
         src: .dotfiles/spacemacs.d
         state: link
+    - name: install cmake
+      snap:
+        name: cmake
+        classic: yes
+      become: yes
 
 - name: pyenv
   hosts: all localhost
