@@ -42,8 +42,7 @@ This function should only modify configuration layer settings."
      better-defaults
      clojure
      csv
-     (c-c++ :variables
-            c-c++-backend 'lsp-ccls)
+     c-c++
      cmake
      ;dap
      (dash :variables
