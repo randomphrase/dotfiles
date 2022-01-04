@@ -631,6 +631,12 @@ before packages are loaded."
   ;; (add-hook 'compilation-filter-hook
   ;;           #'fancy-status-compilation-filter-hook)
 
+  (add-hook 'c-mode-common-hook
+            '(lambda ()
+               ;; o prefix is reserved for user customization
+               ;; FIXME: add to all c-c++-modes? is this variable even available yet?
+               (spacemacs/set-leader-keys-for-major-mode 'c++-mode "oo" 'projectile-find-other-file)
+               (spacemacs/set-leader-keys-for-major-mode 'c++-mode "oO" 'projectile-find-other-file-other-window)))
 
 )
 
