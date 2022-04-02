@@ -51,7 +51,6 @@ This function should only modify configuration layer settings."
      emacs-lisp
      ess
      git
-     github
      ;helm
      (ivy :variables ivy-enable-icons t)
      ipython-notebook
