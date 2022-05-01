@@ -601,6 +601,12 @@ before packages are loaded."
 
   ;; I *hate* getting overwrite mode by accident...
   (global-unset-key [(insert)])
+
+  ;; GNU header files use hard tabs :(
+  (dir-locals-set-class-variables
+   'gnu-vars '((c++-mode . ((tab-width . 8)))))
+  (dolist (gnu-dir '("/usr/include/c++"))
+    (dir-locals-set-directory-class gnu-dir 'gnu-vars))
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
