@@ -162,7 +162,7 @@
       become: yes
 
 - name: bazelisk
-  hosts: all localhost
+  hosts: localhost
   tasks:
     - name: Install golang
       apt:
