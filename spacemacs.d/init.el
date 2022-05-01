@@ -571,52 +571,6 @@ This function is called only while dumping Spacemacs configuration. You can
 dump."
 )
 
-;; (defun extract-percentage-from-progress-string (s)
-;;   (when (string-match "\\[ *\\([0-9]+\\)/\\([0-9]+\\)]" s)
-;;     (round (* 100
-;;               (/ (float (string-to-number (match-string 1 s)))
-;;                  (float (string-to-number (match-string 2 s)))
-;;                  )))))
-
-;; (defun set-mode-line-percent-progress (pct)
-
-;;   ;; (let* ((progress
-;;   ;;         (max 0 (* spacemacs-loading-dots-chunk-size
-;;   ;;                   (floor (/ spacemacs-loading-value
-;;   ;;                             spacemacs-loading-dots-chunk-threshold)))))
-;;   ;;        (remain (max 0 (- spacemacs-loading-dots-count progress))))
-;;   ;;   (setq spacemacs-loading-counter 0)
-;;   ;;   (setq spacemacs-loading-string
-;;   ;;         (concat (make-string progress spacemacs-loading-char)
-;;   ;;                 (make-string remain spacemacs-loading-char-light)))
-;;   ;;   (spacemacs-buffer/set-mode-line spacemacs-loading-string))
-
-
-;;   ;; (spacemacs-buffer/set-mode-line (make-string spacemacs-loading-dots-count
-;;   ;;                                              spacemacs-loading-char-light))
-;;   )
-
-
-;; (defun fancy-progress-update (s)
-;;   ;; (let (pct (extract-percentage-from-progress-string s))
-;;   ;;   (set-mode-line-percent-progress pct))
-;;   (message (ansi-color-apply s))
-;;   )
-
-;; (defun fancy-status-compilation-filter-hook ()
-;;   "Search for \0337...\0338 pairs in the compilation buffer and call `fancy-progress-update' with the contents"
-;;   (let ((inhibit-read-only t))
-;;     (save-excursion
-;;       (goto-char compilation-filter-start)
-;;       (while (re-search-forward "\0337" (point-max) t)
-;;         (setq mb (match-beginning 0))
-;;         (when (re-search-forward "\0338" (point-max) t)
-;;           (fancy-progress-update
-;;            (substring-no-properties
-;;             (delete-and-extract-region mb (point))
-;;             2 -2
-;;             )))))))
-
 (defconst ar-c-style
   '((c-basic-offset . 4)
     (c-offsets-alist . ((inlambda . 0 )
@@ -637,9 +591,6 @@ Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
   (setq c-default-style "ar")
-
-  ;; (add-hook 'compilation-filter-hook
-  ;;           #'fancy-status-compilation-filter-hook)
 
   (add-hook 'c-mode-common-hook
             '(lambda ()
