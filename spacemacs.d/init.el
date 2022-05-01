@@ -52,7 +52,9 @@ This function should only modify configuration layer settings."
      ess
      git
      ;helm
-     (ivy :variables ivy-enable-icons t)
+     (ivy :variables
+          ivy-enable-icons t
+          helm-make-nproc 0)            ; force use of nproc
      ipython-notebook
      html
      javascript
