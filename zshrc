@@ -58,7 +58,8 @@ path+=~/.local/bin
 
 # bin subdirs (if any) should also be added - useful for script repos
 # / means accept dirs, N means enable NULL_GLOB
-path+=(~/{,.local/}bin/*(/N))
+# use [^_] to exclude __pycache__ dir, sigh
+path+=(~/{,.local/}bin/[^_]*(/N))
 
 # local ruby gems are installed here
 path+=(~/.local/share/gem/ruby/*/bin(/N))
