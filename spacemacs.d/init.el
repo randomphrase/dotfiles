@@ -599,6 +599,8 @@ before packages are loaded."
                (spacemacs/set-leader-keys-for-major-mode 'c++-mode "oo" 'projectile-find-other-file)
                (spacemacs/set-leader-keys-for-major-mode 'c++-mode "oO" 'projectile-find-other-file-other-window)))
 
+  ;; I *hate* getting overwrite mode by accident...
+  (global-unset-key [(insert)])
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
