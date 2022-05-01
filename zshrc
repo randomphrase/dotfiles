@@ -67,11 +67,21 @@ path+=(~/.local/share/gem/ruby/*/bin(/N))
 # rust lives here
 path+=(~/.cargo/bin(N))
 
+# go lives here
+path+=(~/go/bin(N))
+
+# bazel support
+if builtin whence -p bazelisk &>/dev/null; then
+    plugins+=(bazel)
+    alias bazel=bazelisk
+fi
+
 # virtualenvwrapper support
 # plugins+=virtualenvwrapper
 # export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 
 # Setup emacs as the editor of choice
+# TODO: use omz emacs plugin instead?
 export EDITOR=emacsclient
 export ALTERNATE_EDITOR=emacs
 alias e='emacsclient'
