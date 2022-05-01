@@ -58,6 +58,15 @@
         - zshenv
         - zprofile
 
+- name: SSH config
+  hosts: localhost
+  tasks:
+    - name: symlink .ssh/config
+      file:
+        dest: ~/.ssh/config
+        src: ../.dotfiles/ssh/config
+        state: link
+
 - name: Tmux
   hosts: all localhost
   tasks: 
