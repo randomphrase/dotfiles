@@ -151,3 +151,15 @@
           - libffi-dev
           - liblzma-dev
       become: yes
+
+- name: bazelisk
+  hosts: all localhost
+  tasks:
+    - name: Install golang
+      apt:
+        name: golang
+      become: yes
+    - name: Install bazelisk
+      command:
+        cmd: go install github.com/bazelbuild/bazelisk@latest
+        creates: ~/go/bin/bazelisk
