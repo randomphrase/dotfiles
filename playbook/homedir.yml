@@ -22,13 +22,13 @@
         value: "True"
         scope: global
 
-# - name: Dotfiles
-#   hosts: all
-#   tasks:
-#     - name: clone dotfiles
-#       git:
-#         repo: git@github.com:randomphrase/dotfiles.git
-#         dest: ~/.dotfiles
+- name: Dotfiles
+  hosts: all
+  tasks:
+    - name: clone dotfiles
+      git:
+        repo: git@github.com:randomphrase/dotfiles.git
+        dest: ~/.dotfiles
 
 - name: Zsh
   hosts: all localhost
