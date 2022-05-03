@@ -1,9 +1,0 @@
-URxvt*font:              xft:Source Code Pro:size=10
-URxvt*letterSpace:       -1
-URxvt.scrollstyle:       plain
-URxvt.scrollBar_right:   true
-URxvt.background:        black
-URxvt.foreground:        white
-URxvt.secondaryScreen:   1
-URxvt.secondaryScroll:   0
-
