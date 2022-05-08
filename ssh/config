@@ -1,3 +1,5 @@
 Host us01
   Hostname us01.girtby.net
   ForwardAgent yes
+Host thinky
+  ForwardAgent yes
