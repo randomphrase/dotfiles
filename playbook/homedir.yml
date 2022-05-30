@@ -37,9 +37,9 @@
       apt:
         name: zsh
       become: yes
-    - name: chsh zsh
-      when: ansible_user_shell != "/usr/bin/zsh"
-      command: chsh -s /usr/bin/zsh
+    #- name: chsh zsh
+    #  when: ansible_user_shell != "/usr/bin/zsh"
+    #  command: chsh -s /usr/bin/zsh
     - name: clone oh-my-zsh
       git:
         repo: https://github.com/robbyrussell/oh-my-zsh.git
