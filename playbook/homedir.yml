@@ -56,7 +56,6 @@
       loop:
         - zshrc
         - zshenv
-        - zprofile
 
 - name: SSH config
   hosts: localhost
@@ -128,46 +127,20 @@
         name: cmake
         classic: yes
       become: yes
-
-- name: pyenv
-  hosts: all localhost
-  tasks:
-    - name: Install pyenv
-      git:
-        repo: https://github.com/yyuu/pyenv.git
-        dest: ~/.pyenv
-    - name: Install pyenv-virtualenv plugin
-      git:
-        repo: https://github.com/yyuu/pyenv-virtualenv.git
-        dest: ~/.pyenv/plugins/pyenv-virtualenv
-    - name: Install python build dependencies
-      apt:
-        name:
-          - build-essential
-          - libssl-dev
-          - zlib1g-dev
-          - libbz2-dev
-          - libreadline-dev
-          - libsqlite3-dev
-          - wget
-          - curl
-          - llvm
-          - libncursesw5-dev
-          - xz-utils
-          - tk-dev
-          - libxml2-dev
-          - libxmlsec1-dev
-          - libffi-dev
-          - liblzma-dev
-      become: yes
+      when: ansible_pkg_mgr == 'apt'
 
 - name: bazelisk
   hosts: localhost
   tasks:
-    - name: Install golang
+    - name: Install golang from apt
       apt:
         name: golang
       become: yes
+      when: ansible_pkg_mgr == 'apt'
+    - name: Install golang from homebrew
+      homebrew:
+        name: go
+      when: ansible_pkg_mgr == 'homebrew'
     - name: Install bazelisk
       command:
         cmd: go install github.com/bazelbuild/bazelisk@latest
