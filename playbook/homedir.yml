@@ -2,10 +2,12 @@
 - name: Git config
   hosts: all localhost
   tasks:
-    - name: install git
+
+    - name: install git from apt
       apt:
         name: git
       become: yes
+      when: ansible_pkg_mgr == 'apt'
     - name: set git email
       git_config:
         name: user.email
@@ -37,6 +39,7 @@
       apt:
         name: zsh
       become: yes
+      when: ansible_pkg_mgr == 'apt'
     #- name: chsh zsh
     #  when: ansible_user_shell != "/usr/bin/zsh"
     #  command: chsh -s /usr/bin/zsh
@@ -68,11 +71,16 @@
 
 - name: Tmux
   hosts: all localhost
-  tasks: 
-    - name: install tmux
+  tasks:
+    - name: install tmux from apt
       apt:
         name: tmux
       become: yes
+      when: ansible_pkg_mgr == 'apt'
+    - name: install tmux from homebrew
+      homebrew:
+        name: tmux
+      when: ansible_pkg_mgr == 'homebrew'
     - name: symlink tmux.conf
       file:
         dest: ~/.tmux.conf
@@ -98,20 +106,31 @@
 - name: Emacs
   hosts: all localhost
   tasks:
-    - name: install snapd
+    - name: install snapd from apt
       apt:
         name: snapd
       become: yes
-    - name: install emacs 27
+      when: ansible_pkg_mgr == 'apt'
+    - name: install emacs from snap
       snap:
         name: emacs
         channel: beta
         classic: yes
       become: yes
-    - name: install utilities
+      when: ansible_pkg_mgr == 'apt'
+    - name: install emacs-plus from homebrew
+      homebrew:
+        name: emacs-plus
+      when: ansible_pkg_mgr == 'homebrew'
+    - name: install utilities from apt
       apt:
         name: clangd,ripgrep,sqlite3
       become: yes
+      when: ansible_pkg_mgr == 'apt'
+    - name: install utilities from homebrew
+      homebrew:
+        name: ripgrep
+      when: ansible_pkg_mgr == 'homebrew'
     - name: clone spacemacs
       git:
         repo: https://github.com/syl20bnr/spacemacs.git
