@@ -60,6 +60,9 @@ path+=~/.local/bin
 # use [^_] to exclude __pycache__ dir, sigh
 path+=(~/{,.local/}bin/[^_]*(/N))
 
+# macOS pip installs binaries here
+path+=(~/Library/Python/*/bin(N))
+
 # local ruby gems are installed here
 path+=(~/.local/share/gem/ruby/*/bin(/N))
 
