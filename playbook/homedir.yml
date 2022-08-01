@@ -28,6 +28,22 @@
         name: pull.rebase
         value: "True"
         scope: global
+    - name: install delta from homebrew
+      homebrew:
+        name: git-delta
+      when: ansible_pkg_mgr == 'homebrew'
+    - name: set git-delta config
+      git_config:
+        name: "{{item.key}}"
+        value: "{{item.value}}"
+        scope: global
+      loop: "{{ git_delta_config | dict2items }}"
+      vars:
+        git_delta_config:
+          core.pager: delta
+          interactive.diffFilter: "delta --color-only"
+          delta.navigate: "true"
+          delta.light: "false"
 
 - name: Dotfiles
   hosts: all

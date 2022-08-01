@@ -50,7 +50,8 @@ This function should only modify configuration layer settings."
            (expand-file-name "~/.local/share/Zeal/Zeal/docsets"))
      emacs-lisp
      ess
-     git
+     (git :variables
+          git-enable-magit-delta-plugin t)
      ;helm
      (ivy :variables
           ivy-enable-icons t
