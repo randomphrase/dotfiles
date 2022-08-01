@@ -1,3 +1,5 @@
+Host *
+  AddKeysToAgent yes
 Host us01
   Hostname us01.girtby.net
   ForwardAgent yes
