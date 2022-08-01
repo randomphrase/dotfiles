@@ -8,26 +8,18 @@
         name: git
       become: yes
       when: ansible_pkg_mgr == 'apt'
-    - name: set git email
+    - name: basic git config
       git_config:
-        name: user.email
-        value: "alastair@girtby.net"
+        name: "{{item.key}}"
+        value: "{{item.value}}"
         scope: global
-    - name: set git name
-      git_config:
-        name: user.name
-        value: "Alastair Rankine"
-        scope: global
-    - name: set github user name
-      git_config:
-        name: github.user
-        value: "randomphrase"
-        scope: global
-    - name: set pull.rebase
-      git_config:
-        name: pull.rebase
-        value: "True"
-        scope: global
+      loop: "{{ git_config | dict2items }}"
+      vars:
+        git_config:
+          user.email: "alastair@girtby.net"
+          user.name: "Alastair Rankine"
+          github.user: "randomphrase"
+          pull.rebase: "true"
     - name: install delta from homebrew
       homebrew:
         name: git-delta
