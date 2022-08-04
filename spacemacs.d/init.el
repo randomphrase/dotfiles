@@ -617,6 +617,9 @@ before packages are loaded."
    'gnu-vars '((c++-mode . ((tab-width . 8)))))
   (dolist (gnu-dir '("/usr/include/c++"))
     (dir-locals-set-directory-class gnu-dir 'gnu-vars))
+
+  ;; Dont indent on yank for c++ mode (see #14488)
+  (push 'c++-mode spacemacs-indent-sensitive-modes)
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
