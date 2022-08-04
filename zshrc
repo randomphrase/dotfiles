@@ -39,6 +39,8 @@ ZSH_THEME="jreese"
 # much faster.
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
 
+# my terminals are all good
+ZSH_TMUX_FIXTERM="false"
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
