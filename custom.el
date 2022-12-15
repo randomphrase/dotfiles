@@ -4,6 +4,12 @@
 ;;;       Put your own configurations in custom-post.el to override default configurations.
 ;;; Code:
 
+(add-to-list
+ 'centaur-package-archives-alist
+ `(local-mirror . (("melpa" . ,(expand-file-name "~/.elpa-mirror/melpa/"))
+                   ("org"   . ,(expand-file-name "~/.elpa-mirror/org/"))
+                   ("gnu"   . ,(expand-file-name "~/.elpa-mirror/gnu/")))))
+
 ;; (setq centaur-logo nil)                        ; Logo file or nil (official logo)
 ;; (setq centaur-full-name "user name")           ; User full name
 ;; (setq centaur-mail-address "user@email.com")   ; Email address
@@ -11,7 +17,9 @@
 ;; (setq centaur-socks-proxy "127.0.0.1:7890")    ; SOCKS proxy
 ;; (setq centaur-server nil)                      ; Enable `server-mode' or not: t or nil
 ;; (setq centaur-icon nil)                        ; Display icons or not: t or nil
-;; (setq centaur-package-archives 'melpa)         ; Package repo: melpa, emacs-cn, bfsu, netease, sjtu, tencent, tuna or ustc
+(when (file-exists-p (expand-file-name "~/.elpa-mirror"))
+  (setq centaur-package-archives 'local-mirror)         ; Package repo: melpa, emacs-cn, netease, ustc, tencent or tuna
+  )
 ;; (setq centaur-theme 'auto)                     ; Color theme: auto, random, system, default, pro, dark, light, warm, cold, day or night
 ;; (setq centaur-completion-style 'minibuffer)    ; Completion display style: minibuffer or childframe
 ;; (setq centaur-dashboard nil)                   ; Display dashboard at startup or not: t or nil
