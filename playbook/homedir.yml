@@ -148,6 +148,11 @@
       git:
         repo: https://github.com/randomphrase/centaur-emacs.git
         dest: ~/.emacs.d
+    - name: symlink custom.el
+      file:
+        dest: ~/.emacs.d/custom.el
+        src: ~/.dotfiles/custom.el
+        state: link
 
 - name: C++ Build Tools
   hosts: all localhost
