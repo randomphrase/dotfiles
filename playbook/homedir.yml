@@ -144,16 +144,10 @@
       homebrew:
         name: ripgrep
       when: ansible_pkg_mgr == 'homebrew'
-    - name: clone spacemacs
+    - name: clone emacs.d
       git:
-        repo: https://github.com/syl20bnr/spacemacs.git
-        version: develop
+        repo: https://github.com/randomphrase/centaur-emacs.git
         dest: ~/.emacs.d
-    - name: symlink .spacemacs.d
-      file:
-        dest: ~/.spacemacs.d
-        src: .dotfiles/spacemacs.d
-        state: link
 
 - name: C++ Build Tools
   hosts: all localhost
