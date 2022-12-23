@@ -33,6 +33,9 @@
 ;; (setq centaur-prettify-symbols-alist nil)      ; Alist of symbol prettifications. Nil to use font supports ligatures.
 ;; (setq centaur-prettify-org-symbols-alist nil)  ; Alist of symbol prettifications for `org-mode'
 
+(assoc-delete-all "&&" centaur-prettify-symbols-alist)
+(assoc-delete-all "||" centaur-prettify-symbols-alist)
+
 (setq compilation-scroll-output 'first-error)
 
 ;; Get rid of overwrite-mode, this one is far more useful
