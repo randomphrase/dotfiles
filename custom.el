@@ -35,6 +35,9 @@
 
 (setq compilation-scroll-output 'first-error)
 
+;; Get rid of overwrite-mode, this one is far more useful
+(global-set-key [rebind overwrite-mode] 'copy-from-above-command)
+
 ;; For Emacs devel
 ;; (setq package-user-dir (locate-user-emacs-file (format "elpa-%s" emacs-major-version)))
 ;; (setq desktop-base-file-name (format ".emacs-%s.desktop" emacs-major-version))
