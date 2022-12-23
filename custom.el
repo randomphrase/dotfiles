@@ -38,6 +38,11 @@
 ;; Get rid of overwrite-mode, this one is far more useful
 (global-set-key [rebind overwrite-mode] 'copy-from-above-command)
 
+(defun my-c-initialization-hook ()
+  ;; this hook runs after init-c bindings
+  )
+(add-hook 'c-initialization-hook 'my-c-initialization-hook)
+
 ;; For Emacs devel
 ;; (setq package-user-dir (locate-user-emacs-file (format "elpa-%s" emacs-major-version)))
 ;; (setq desktop-base-file-name (format ".emacs-%s.desktop" emacs-major-version))
