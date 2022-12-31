@@ -74,6 +74,12 @@ path+=(~/.cargo/bin(N))
 # go lives here
 path+=(~/go/bin(N))
 
+# homebrew support
+if builtin whence -p brew &>/dev/null; then
+    plugins+=(brew)
+    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+fi
+
 # virtualenvwrapper support
 # plugins+=virtualenvwrapper
 # export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
