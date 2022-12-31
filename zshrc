@@ -49,7 +49,6 @@ plugins=(
     colored-man-pages
     command-not-found
     git
-    pipenv
     tmux
     vterm
 )
@@ -76,8 +75,13 @@ path+=(~/go/bin(N))
 
 # homebrew support
 if builtin whence -p brew &>/dev/null; then
-    plugins+=(brew)
+    plugins+=brew
     FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+fi
+
+# pipenv support
+if builtin whence -p pipenv &>/dev/null; then
+    plugins+=pipenv
 fi
 
 # virtualenvwrapper support
