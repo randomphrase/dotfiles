@@ -167,20 +167,3 @@
       homebrew:
         name: cmake,ninja
       when: ansible_pkg_mgr == 'homebrew'
-
-- name: bazelisk
-  hosts: localhost
-  tasks:
-    - name: Install golang from apt
-      apt:
-        name: golang
-      become: yes
-      when: ansible_pkg_mgr == 'apt'
-    - name: Install golang from homebrew
-      homebrew:
-        name: go
-      when: ansible_pkg_mgr == 'homebrew'
-    - name: Install bazelisk
-      command:
-        cmd: go install github.com/bazelbuild/bazelisk@latest
-        creates: ~/go/bin/bazelisk
