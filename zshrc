@@ -87,6 +87,14 @@ fi
 # add zsh-completions
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 
+# HACK: for some reason my debian virtual host is not setting this correctly
+for d in /snap/bin; do
+    if [[ -d $d ]] && [[ ${path[(ie)$d]} -gt ${#path} ]]; then
+        echo "adding $d to path"
+        path+=($d)
+    fi
+done
+
 # virtualenvwrapper support
 # plugins+=virtualenvwrapper
 # export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
