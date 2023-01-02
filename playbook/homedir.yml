@@ -137,12 +137,12 @@
       when: ansible_pkg_mgr == 'homebrew'
     - name: install utilities from apt
       apt:
-        name: clangd,ripgrep,sqlite3
+        name: clangd,ripgrep,sqlite3,npm
       become: yes
       when: ansible_pkg_mgr == 'apt'
     - name: install utilities from homebrew
       homebrew:
-        name: ripgrep
+        name: ripgrep,npm
       when: ansible_pkg_mgr == 'homebrew'
     - name: clone emacs.d
       git:
