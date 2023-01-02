@@ -84,6 +84,9 @@ if builtin whence -p pipenv &>/dev/null; then
     plugins+=pipenv
 fi
 
+# add zsh-completions
+fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
+
 # virtualenvwrapper support
 # plugins+=virtualenvwrapper
 # export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3

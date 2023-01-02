@@ -64,6 +64,10 @@
       git:
         repo: https://github.com/randomphrase/vterm-zsh-plugin.git
         dest: ~/.zsh.d/oh-my-zsh/custom/plugins/vterm
+    - name: clone zsh-completions
+      git:
+        repo: https://github.com/zsh-users/zsh-completions
+        dest: ~/.zsh.d/oh-my-zsh/custom/plugins/zsh-completions
     - name: symlinks
       file:
         dest: "~/.{{item}}"
