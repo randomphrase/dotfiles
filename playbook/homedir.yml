@@ -59,15 +59,15 @@
     - name: clone oh-my-zsh
       git:
         repo: https://github.com/robbyrussell/oh-my-zsh.git
-        dest: ~/.zsh.d/oh-my-zsh
+        dest: ~/.oh-my-zsh
     - name: clone vterm plugin
       git:
         repo: https://github.com/randomphrase/vterm-zsh-plugin.git
-        dest: ~/.zsh.d/oh-my-zsh/custom/plugins/vterm
+        dest: ~/.oh-my-zsh/custom/plugins/vterm
     - name: clone zsh-completions
       git:
         repo: https://github.com/zsh-users/zsh-completions
-        dest: ~/.zsh.d/oh-my-zsh/custom/plugins/zsh-completions
+        dest: ~/.oh-my-zsh/custom/plugins/zsh-completions
     - name: symlinks
       file:
         dest: "~/.{{item}}"
