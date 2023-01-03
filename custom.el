@@ -39,7 +39,7 @@
 (setq compilation-scroll-output 'first-error)
 
 ;; Get rid of overwrite-mode, this one is far more useful
-(global-set-key [rebind overwrite-mode] 'copy-from-above-command)
+(global-set-key [remap overwrite-mode] 'copy-from-above-command)
 
 (defconst ar-c-style
   '((c-basic-offset . 4)
