@@ -74,17 +74,17 @@ path+=(~/.cargo/bin(N))
 path+=(~/go/bin(N))
 
 # homebrew support
-if builtin whence -p brew &>/dev/null; then
+if (( $+commands[brew] )); then
     plugins+=brew
     FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 fi
 
 # pipenv support
-if builtin whence -p pipenv &>/dev/null; then
+if (( $+commands[pipenv] )); then
     plugins+=pipenv
 fi
 
-if builtin whence -p docker &>/dev/null; then
+if (( $+commands[docker] )); then
     plugins+=docker
 fi
 
