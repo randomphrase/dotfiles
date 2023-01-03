@@ -84,6 +84,10 @@ if builtin whence -p pipenv &>/dev/null; then
     plugins+=pipenv
 fi
 
+if builtin whence -p docker &>/dev/null; then
+    plugins+=docker
+fi
+
 # add zsh-completions
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 
