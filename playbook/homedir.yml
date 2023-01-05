@@ -154,9 +154,12 @@
         dest: ~/.emacs.d
     - name: symlink custom.el
       file:
-        dest: ~/.emacs.d/custom.el
-        src: ~/.dotfiles/custom.el
+        dest: ~/.emacs.d/{{item}.el
+        src: ~/.dotfiles/{{item}}.el
         state: link
+      loop:
+        - custom
+        - custom-post
 
 - name: C++ Build Tools
   hosts: all localhost
