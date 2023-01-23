@@ -65,6 +65,9 @@
   )
 (add-hook 'c-initialization-hook 'my-c-initialization-hook)
 
+;; .ipp files are common in boost
+(add-to-list 'auto-mode-alist '("\\.ipp\\'" . c++-mode) t)
+
 ;; For Emacs devel
 ;; (setq package-user-dir (locate-user-emacs-file (format "elpa-%s" emacs-major-version)))
 ;; (setq desktop-base-file-name (format ".emacs-%s.desktop" emacs-major-version))
