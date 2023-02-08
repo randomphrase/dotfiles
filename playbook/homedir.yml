@@ -154,7 +154,7 @@
         dest: ~/.emacs.d
     - name: symlink custom.el
       file:
-        dest: ~/.emacs.d/{{item}.el
+        dest: ~/.emacs.d/{{item}}.el
         src: ~/.dotfiles/{{item}}.el
         state: link
       loop:
