@@ -135,9 +135,14 @@
         classic: yes
       become: yes
       when: ansible_pkg_mgr == 'apt'
+    - name: install tree-sitter from homebrew
+      homebrew:
+        name: tree-sitter
+      when: ansible_pkg_mgr == 'homebrew'
     - name: install emacs-plus from homebrew
       homebrew:
-        name: emacs-plus
+        name: emacs-plus@29
+        install_options: with-native-comp
       when: ansible_pkg_mgr == 'homebrew'
     - name: install utilities from apt
       apt:
