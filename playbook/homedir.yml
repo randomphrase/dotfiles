@@ -166,16 +166,9 @@
         - custom
         - custom-post
 
-- name: C++ Build Tools
+- name: Dev Build Tools
   hosts: all localhost
   tasks:
-    - name: install cmake from apt
-      snap:
-        name: cmake
-        classic: yes
-      become: yes
-      when: ansible_pkg_mgr == 'apt'
-    - name: install cmake,ninja from homebrew
-      homebrew:
-        name: cmake,ninja
-      when: ansible_pkg_mgr == 'homebrew'
+    - name: install pipenv
+      pip:
+        name: pipenv
