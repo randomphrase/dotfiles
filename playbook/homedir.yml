@@ -155,16 +155,8 @@
       when: ansible_pkg_mgr == 'homebrew'
     - name: clone emacs.d
       git:
-        repo: https://github.com/randomphrase/centaur-emacs.git
+        repo: https://github.com/randomphrase/emacs.d.git
         dest: ~/.emacs.d
-    - name: symlink custom.el
-      file:
-        dest: ~/.emacs.d/{{item}}.el
-        src: ~/.dotfiles/{{item}}.el
-        state: link
-      loop:
-        - custom
-        - custom-post
 
 - name: Dev Build Tools
   hosts: all localhost
