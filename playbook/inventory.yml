@@ -4,5 +4,7 @@ all:
       ansible_connection: local
     us01:
     thinky:
+    berry:
+
 
 

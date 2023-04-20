@@ -2,7 +2,6 @@
 - name: Git config
   hosts: all localhost
   tasks:
-
     - name: install git from apt
       apt:
         name: git

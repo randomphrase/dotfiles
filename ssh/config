@@ -5,3 +5,5 @@ Host us01
   ForwardAgent yes
 Host thinky
   ForwardAgent yes
+Host berry
+  ForwardAgent yes
