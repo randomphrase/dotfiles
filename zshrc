@@ -99,21 +99,11 @@ for d in /snap/bin; do
     fi
 done
 
-# virtualenvwrapper support
-# plugins+=virtualenvwrapper
-# export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-
 # Setup emacs as the editor of choice
 # TODO: use omz emacs plugin instead?
 export EDITOR=emacsclient
 export ALTERNATE_EDITOR=emacs
 alias e='emacsclient'
-
-# Use ccache if it's available
-# if [[ -x $(which ccache) ]]; then
-#     export CC="ccache ${CC-gcc}"
-#     export CXX="ccache ${CXX-g++}"
-# fi
 
 # just save everything
 HISTSIZE=100000
