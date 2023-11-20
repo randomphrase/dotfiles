@@ -76,6 +76,7 @@ path+=(~/go/bin(N))
 # fzf support
 if (( $+commands[fzf] )); then
     plugins+=fzf
+    FZF_TMUX_OPTS=-p
 fi
 
 # homebrew support
