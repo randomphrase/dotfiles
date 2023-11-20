@@ -85,6 +85,10 @@
         src: ../.dotfiles/ssh/config
         state: link
 
+# TODO:
+# check homebrew installed on macos
+# add necessary brew taps, eg: `brew tap d12frosted/emacs-plus`
+
 - name: Tmux
   hosts: all localhost
   tasks:
@@ -118,6 +122,15 @@
       when: tpmpkg.stat.exists
       command:
         cmd: ~/.tmux/plugins/tpm/bin/update_plugins
+
+- name: fzf
+  hosts: all localhost
+  tasks:
+    - name: install fzf from homebrew
+      homebrew:
+        name: fzf
+      when: ansible_pgk_mgr == 'homebrew'
+
 
 - name: Emacs
   hosts: all localhost

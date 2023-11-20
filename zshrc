@@ -73,6 +73,11 @@ path+=(~/.cargo/bin(N))
 # go lives here
 path+=(~/go/bin(N))
 
+# fzf support
+if (( $+commands[fzf] )); then
+    plugins+=fzf
+fi
+
 # homebrew support
 if (( $+commands[brew] )); then
     plugins+=brew
