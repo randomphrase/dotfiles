@@ -73,21 +73,18 @@ path+=(~/.cargo/bin(N))
 # go lives here
 path+=(~/go/bin(N))
 
-# fzf support
 if (( $+commands[fzf] )); then
     plugins+=fzf
     FZF_TMUX_OPTS="-p -w 80% -h 80%"
 fi
 
-# homebrew support
 if (( $+commands[brew] )); then
     plugins+=brew
     FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 fi
 
-# pipenv support
-if (( $+commands[pipenv] )); then
-    plugins+=pipenv
+if (( $+commands[direnv] )); then
+    plugins+=direnv
 fi
 
 if (( $+commands[docker] )); then
