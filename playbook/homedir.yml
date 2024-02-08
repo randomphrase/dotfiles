@@ -129,7 +129,12 @@
     - name: install fzf from homebrew
       homebrew:
         name: fzf
-      when: ansible_pgk_mgr == 'homebrew'
+      when: ansible_pkg_mgr == 'homebrew'
+    - name: install fzf from apt
+      apt:
+        name: fzf
+      become: yes
+      when: ansible_pkg_mgr == 'apt'
 
 
 - name: Emacs
