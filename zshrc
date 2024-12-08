@@ -73,6 +73,12 @@ path+=(~/.cargo/bin(N))
 # go lives here
 path+=(~/go/bin(N))
 
+# nix home-manager
+for d in ~/.nix-profile/etc/profile.d/hm-session-vars.sh ; do
+    [[ -e $d ]] || continue
+    source $d
+done
+
 if (( $+commands[fzf] )); then
     plugins+=fzf
     FZF_TMUX_OPTS="-p -w 80% -h 80%"
