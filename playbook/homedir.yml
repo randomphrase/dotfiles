@@ -2,11 +2,6 @@
 - name: Git config
   hosts: all localhost
   tasks:
-    - name: install git from apt
-      apt:
-        name: git
-      become: yes
-      when: ansible_pkg_mgr == 'apt'
     - name: basic git config
       git_config:
         name: "{{item.key}}"
@@ -19,6 +14,7 @@
           user.name: "Alastair Rankine"
           github.user: "randomphrase"
           pull.rebase: "true"
+      when: ansible_pkg_mgr == 'homebrew'
     - name: install delta from homebrew
       homebrew:
         name: git-delta
@@ -35,6 +31,7 @@
           interactive.diffFilter: "delta --color-only"
           delta.navigate: "true"
           delta.light: "false"
+      when: ansible_pkg_mgr == 'homebrew'
 
 - name: Dotfiles
   hosts: all
