@@ -130,28 +130,11 @@
       homebrew:
         name: fzf
       when: ansible_pkg_mgr == 'homebrew'
-    - name: install fzf from apt
-      apt:
-        name: fzf
-      become: yes
-      when: ansible_pkg_mgr == 'apt'
 
 
 - name: Emacs
   hosts: all localhost
   tasks:
-    - name: install snapd from apt
-      apt:
-        name: snapd
-      become: yes
-      when: ansible_pkg_mgr == 'apt'
-    - name: install emacs from snap
-      snap:
-        name: emacs
-        channel: beta
-        classic: yes
-      become: yes
-      when: ansible_pkg_mgr == 'apt'
     - name: install tree-sitter from homebrew
       homebrew:
         name: tree-sitter
