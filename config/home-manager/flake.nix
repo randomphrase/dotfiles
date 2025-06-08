@@ -11,21 +11,21 @@
   };
 
   outputs =
-    { nixpkgs, home-manager, ... }:
-    let
-      system = "aarch64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
-    in
-    {
-      homeConfigurations."alastair" = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
+    { self, nixpkgs, home-manager, ... }: {
+      homeConfigurations = {
+	"alastair@berry" = home-manager.lib.homeManagerConfiguration ({
+	  modules = [ (import ./home.nix) ];
+	  pkgs = import nixpkgs {
+	    system = "x86_64-linux";
+	  };
+	});
 
-        # Specify your home configuration modules here, for example,
-        # the path to your home.nix.
-        modules = [ ./home.nix ];
-
-        # Optionally use extraSpecialArgs
-        # to pass through arguments to home.nix
+	"alastair@Alastairs-MBP" = home-manager.lib.homeManagerConfiguration ({
+	  modules = [ (import ./home.nix) ];
+	  pkgs = import nixpkgs {
+	    system = "aarch64-darwin";
+	  };
+	});
       };
     };
 }
