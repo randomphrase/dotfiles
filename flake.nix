@@ -16,7 +16,7 @@
 	"alastair@berry" = home-manager.lib.homeManagerConfiguration ({
 	  modules = [ (import ./home.nix) ];
 	  pkgs = import nixpkgs {
-	    system = "x86_64-linux";
+	    system = "aarch64-linux";
 	  };
 	});
 
