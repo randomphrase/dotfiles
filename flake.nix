@@ -26,6 +26,13 @@
 	    system = "aarch64-darwin";
 	  };
 	});
+
+	"alastair@us01" = home-manager.lib.homeManagerConfiguration ({
+	  modules = [ (import ./home.nix) ];
+	  pkgs = import nixpkgs {
+	    system = "x86_64-linux";
+	  };
+	});
       };
     };
 }
