@@ -52,6 +52,8 @@ in
     direnv
     bat
     ripgrep
+    tmux
+
   ] ++ lib.optionals isLinux [
     # Add Linux-specific packages here
     emacs-nox
@@ -67,6 +69,9 @@ in
     # # the Nix store. Activating the configuration will then make '~/.screenrc' a
     # # symlink to the Nix store copy.
     # ".screenrc".source = dotfiles/screenrc;
+    ".zshrc".source = ./zshrc;
+    ".zshenv".source = ./zshenv;
+    ".tmux.conf".source = ./tmux.conf;
 
     # # You can also set the file content immediately.
     # ".gradle/gradle.properties".text = ''
@@ -100,7 +105,7 @@ in
     userName = "Alastair Rankine";
     userEmail = "alastair@girby.net";
     delta.enable = true;
-    
+
     extraConfig = {
       github = {
 	user = "randomphrase";
