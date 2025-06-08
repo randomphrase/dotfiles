@@ -72,6 +72,7 @@ in
     ".zshrc".source = ./zshrc;
     ".zshenv".source = ./zshenv;
     ".tmux.conf".source = ./tmux.conf;
+    ".gdbinit".source = ./gdbinit;
 
     # # You can also set the file content immediately.
     # ".gradle/gradle.properties".text = ''
