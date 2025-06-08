@@ -1,10 +1,20 @@
-{ config, pkgs, ... }:
-
+{ config, pkgs, lib, ... }:
+let
+  isLinux = pkgs.stdenv.hostPlatform.isLinux;
+  isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
+  unsupported = builtins.abort "Unsupported platform";
+in
 {
+  imports = [
+    ## Modularize your home.nix by moving statements into other files
+  ];
+
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "alastair";
-  home.homeDirectory = "/home/alastair";
+  home.homeDirectory =
+    if isLinux then "/home/alastair" else
+    if isDarwin then "/Users/alastair" else unsupported;
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -15,9 +25,12 @@
   # release notes.
   home.stateVersion = "24.11"; # Please read the comment before changing.
 
+  # Let Home Manager install and manage itself.
+  programs.home-manager.enable = true;
+
   # The home.packages option allows you to install Nix packages into your
   # environment.
-  home.packages = [
+  home.packages = with pkgs; ([
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
@@ -35,11 +48,17 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
 
-    pkgs.fzf
-    pkgs.tmux
-    pkgs.emacs-nox
-    pkgs.direnv
-  ];
+    fzf
+    direnv
+    bat
+    ripgrep
+  ] ++ lib.optionals isLinux [
+    # Add Linux-specific packages here
+    emacs-nox
+  ] ++ lib.optionals isDarwin [
+    # Add macOS-specific packages here
+    emacs
+  ]);
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
@@ -75,9 +94,6 @@
   home.sessionVariables = {
     # EDITOR = "emacs";
   };
-
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
 
   programs.git = {
     enable = true;
