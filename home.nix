@@ -53,6 +53,7 @@ in
     bat
     ripgrep
     tmux
+    nodejs
 
   ] ++ lib.optionals isLinux [
     # Add Linux-specific packages here
