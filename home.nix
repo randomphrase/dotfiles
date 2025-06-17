@@ -55,6 +55,7 @@ in
     tmux
     nodejs
     gh
+    git-credential-manager
 
   ] ++ lib.optionals isLinux [
     # Add Linux-specific packages here
@@ -115,6 +116,9 @@ in
       };
       pull = {
 	rebase = true;
+      };
+      credential = {
+	helper = "git-credential-manager";
       };
     };
   };
