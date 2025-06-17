@@ -54,6 +54,7 @@ in
     ripgrep
     tmux
     nodejs
+    gh
 
   ] ++ lib.optionals isLinux [
     # Add Linux-specific packages here
