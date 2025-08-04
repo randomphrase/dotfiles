@@ -9,6 +9,8 @@ in
     ## Modularize your home.nix by moving statements into other files
   ];
 
+  nixpkgs.config.allowUnfree = true;
+
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "alastair";
@@ -56,6 +58,7 @@ in
     nodejs
     gh
     git-credential-manager
+    claude-code
 
   ] ++ lib.optionals isLinux [
     # Add Linux-specific packages here
