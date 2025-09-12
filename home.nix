@@ -59,6 +59,7 @@ in
     gh
     git-credential-manager
     claude-code
+    uv
 
   ] ++ lib.optionals isLinux [
     # Add Linux-specific packages here
