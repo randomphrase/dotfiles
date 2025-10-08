@@ -60,6 +60,7 @@ in
     git-credential-manager
     claude-code
     uv
+    clang-tools # for clangd
 
   ] ++ lib.optionals isLinux [
     # Add Linux-specific packages here
