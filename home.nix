@@ -111,11 +111,11 @@ in
 
   programs.git = {
     enable = true;
-    userName = "Alastair Rankine";
-    userEmail = "alastair@girby.net";
-    delta.enable = true;
-
-    extraConfig = {
+    settings = {
+      user = {
+        name = "Alastair Rankine";
+        email = "alastair@girby.net";
+      };
       github = {
 	user = "randomphrase";
       };
@@ -126,5 +126,9 @@ in
 	helper = "git-credential-manager";
       };
     };
+  };
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
   };
 }
