@@ -86,7 +86,6 @@ fi
 
 if (( $+commands[brew] )); then
     plugins+=brew
-    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 fi
 
 if (( $+commands[direnv] )); then
