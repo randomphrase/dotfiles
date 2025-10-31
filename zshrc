@@ -96,6 +96,11 @@ if (( $+commands[docker] )); then
     plugins+=docker
 fi
 
+if (( $+commands[uv] )); then
+    plugins+=uv
+fi
+
+
 # add zsh-completions
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 
