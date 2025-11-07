@@ -54,6 +54,7 @@ in
     direnv
     bat
     ripgrep
+    dust
     tmux
     nodejs
     gh
