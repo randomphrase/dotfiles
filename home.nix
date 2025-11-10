@@ -62,6 +62,7 @@ in
     claude-code
     uv
     clang-tools # for clangd
+    shellcheck
 
   ] ++ lib.optionals isLinux [
     # Add Linux-specific packages here
