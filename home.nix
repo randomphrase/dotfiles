@@ -60,6 +60,7 @@ in
     gh
     git-credential-manager
     claude-code
+    codex
     uv
     clang-tools # for clangd
     shellcheck
