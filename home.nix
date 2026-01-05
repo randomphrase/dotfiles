@@ -62,12 +62,13 @@ in
     claude-code
     codex
     uv
-    clang-tools # for clangd
     shellcheck
 
   ] ++ lib.optionals isLinux [
     # Add Linux-specific packages here
     emacs-nox
+    clang-tools # for clangd
+
   ] ++ lib.optionals isDarwin [
     # Add macOS-specific packages here
     emacs
