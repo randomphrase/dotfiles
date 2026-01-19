@@ -61,6 +61,7 @@ in
     git-credential-manager
     uv
     shellcheck
+    cmake
 
     claude-code
     codex
