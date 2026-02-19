@@ -59,10 +59,12 @@ in
     nodejs
     gh
     git-credential-manager
-    claude-code
-    codex
     uv
     shellcheck
+
+    claude-code
+    codex
+    gemini-cli
 
   ] ++ lib.optionals isLinux [
     # Add Linux-specific packages here
