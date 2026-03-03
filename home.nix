@@ -62,6 +62,8 @@ in
     uv
     shellcheck
     cmake
+    gnupg
+    pinentry-emacs
 
     claude-code
     codex
@@ -122,6 +124,7 @@ in
       user = {
         name = "Alastair Rankine";
         email = "alastair@girby.net";
+        signingKey = "DD583CE0F90A58F0A445EBDA35095B01B376ADF1";
       };
       github = {
 	user = "randomphrase";
@@ -132,10 +135,29 @@ in
       credential = {
 	helper = "git-credential-manager";
       };
+      commit = {
+        gpgSign = true;
+      };
     };
   };
   programs.delta = {
     enable = true;
     enableGitIntegration = true;
+  };
+
+  services.gpg-agent = {
+    enable = true;
+
+    pinentryPackage = pkgs.pinentry-emacs;
+
+    # Extra config to make Emacs/Magit happy on Linux
+    extraConfig = ''
+      allow-emacs-pinentry
+      allow-loopback-pinentry
+    '';
+
+    # Optional: keep the agent alive longer so you don't re-type often
+    defaultCacheTtl = 34560000;
+    maxCacheTtl = 34560000;
   };
 }
