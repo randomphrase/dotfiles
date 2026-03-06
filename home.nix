@@ -123,7 +123,7 @@ in
     settings = {
       user = {
         name = "Alastair Rankine";
-        email = "alastair@girby.net";
+        email = "alastair@girtby.net";
         signingKey = "DD583CE0F90A58F0A445EBDA35095B01B376ADF1";
       };
       github = {
