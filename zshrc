@@ -65,7 +65,7 @@ path+=(~/{,.local/}bin/[^_]*(/N))
 path+=(~/Library/Python/*/bin(NnOn))
 
 # local ruby gems are installed here
-path+=(~/.local/share/gem/ruby/*/bin(/N))
+path+=(~/.{local/share/,}gem/ruby/*/bin(/N))
 
 # rust lives here
 path+=(~/.cargo/bin(N))
