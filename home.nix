@@ -3,8 +3,12 @@ let
   isLinux = pkgs.stdenv.hostPlatform.isLinux;
   isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
   unsupported = builtins.abort "Unsupported platform";
-in
-{
+
+  # Determine the path based on the system type
+  pinentryPath = if isDarwin 
+    then "${pkgs.pinentry_mac}/Applications/pinentry-mac.app/Contents/MacOS/pinentry-mac"
+    else "${pkgs.pinentry-emacs}/bin/pinentry-emacs";
+in {
   imports = [
     ## Modularize your home.nix by moving statements into other files
   ];
@@ -63,7 +67,6 @@ in
     shellcheck
     cmake
     gnupg
-    pinentry-emacs
 
     claude-code
     codex
@@ -73,10 +76,12 @@ in
     # Add Linux-specific packages here
     emacs-nox
     clang-tools # for clangd
+    pinentry-emacs
 
   ] ++ lib.optionals isDarwin [
     # Add macOS-specific packages here
     emacs
+    pinentry_mac
   ]);
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -148,10 +153,15 @@ in
   services.gpg-agent = {
     enable = true;
 
-    pinentryPackage = pkgs.pinentry-emacs;
+    pinentry = {
+      package = if isDarwin then pkgs.pinentry_mac else pkgs.pinentry-emacs;
+    };
 
-    # Extra config to make Emacs/Magit happy on Linux
     extraConfig = ''
+      # Explicitly point to the binary in the Nix store
+      pinentry-program ${pinentryPath}
+      
+      # Allow Emacs to grab the focus if you DO happen to be in Magit
       allow-emacs-pinentry
       allow-loopback-pinentry
     '';
