@@ -144,6 +144,9 @@ in {
         gpgSign = true;
       };
     };
+    signing = {
+      format = null;
+    };
   };
   programs.delta = {
     enable = true;
