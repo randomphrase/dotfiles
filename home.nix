@@ -62,7 +62,6 @@ in {
     tmux
     nodejs
     gh
-    git-credential-manager
     uv
     shellcheck
     cmake
@@ -82,6 +81,7 @@ in {
     # Add macOS-specific packages here
     emacs
     pinentry_mac
+    git-credential-manager
   ]);
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -138,7 +138,7 @@ in {
 	rebase = true;
       };
       credential = {
-	helper = "git-credential-manager";
+	helper = if isLinux then "!gh auth git-credential" else "manager";
       };
       commit = {
         gpgSign = true;
