@@ -5,7 +5,7 @@ let
   unsupported = builtins.abort "Unsupported platform";
 
   # Determine the path based on the system type
-  pinentryPath = if isDarwin 
+  pinentryPath = if isDarwin
     then "${pkgs.pinentry_mac}/Applications/pinentry-mac.app/Contents/MacOS/pinentry-mac"
     else "${pkgs.pinentry-emacs}/bin/pinentry-emacs";
 in {
@@ -66,6 +66,8 @@ in {
     shellcheck
     cmake
     gnupg
+    pandoc
+    go-grip
 
     claude-code
     codex
@@ -163,7 +165,7 @@ in {
     extraConfig = ''
       # Explicitly point to the binary in the Nix store
       pinentry-program ${pinentryPath}
-      
+
       # Allow Emacs to grab the focus if you DO happen to be in Magit
       allow-emacs-pinentry
       allow-loopback-pinentry
