@@ -8,6 +8,14 @@ let
   pinentryPath = if isDarwin
     then "${pkgs.pinentry_mac}/Applications/pinentry-mac.app/Contents/MacOS/pinentry-mac"
     else "${pkgs.pinentry-emacs}/bin/pinentry-emacs";
+
+  pinnedNixpkgs = import (builtins.fetchGit {
+    url = "https://github.com/NixOS/nixpkgs.git";
+    # 1. Provide the explicit branch name so GitHub allows the download handshake
+    ref = "refs/heads/nixos-24.11";
+    # 2. Provide the exact pinned commit hash that bypasses the Quarto option bug
+    rev = "50ab793786d9de88ee30ec4e4c24fb4236fc2674";
+  }) { system = pkgs.stdenv.hostPlatform.system; };
 in {
   imports = [
     ## Modularize your home.nix by moving statements into other files
@@ -68,6 +76,9 @@ in {
     gnupg
     pandoc
     go-grip
+
+    python3 # use a nix-installed python for compatibility
+    pinnedNixpkgs.quarto
 
     claude-code
     codex
