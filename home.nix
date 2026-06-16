@@ -77,7 +77,6 @@ in {
     gh
     uv
     shellcheck
-    cmake
     gnupg
     pandoc
     go-grip
