@@ -66,6 +66,7 @@ in {
     #   echo "Hello, ${config.home.username}!"
     # '')
 
+    oh-my-zsh
     fzf
     direnv
     bat
@@ -112,6 +113,9 @@ in {
     ".zshenv".source = ./zshenv;
     ".tmux.conf".source = ./tmux.conf;
     ".gdbinit".source = ./gdbinit;
+
+    # Symlink the Oh My Zsh framework to ~/.oh-my-zsh
+    ".oh-my-zsh".source = "${pkgs.oh-my-zsh}/share/oh-my-zsh";
 
     # # You can also set the file content immediately.
     # ".gradle/gradle.properties".text = ''

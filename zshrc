@@ -16,8 +16,10 @@ ZSH_THEME="fishy"
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
 
-# Comment this out to disable bi-weekly auto-update checks
-# DISABLE_AUTO_UPDATE="true"
+# If the ZSH directory is read-only (like when managed by Nix), disable auto-updates
+if [[ ! -w "$ZSH" ]]; then
+    DISABLE_AUTO_UPDATE="true"
+fi
 
 # Uncomment to change how often before auto-updates occur? (in days)
 # export UPDATE_ZSH_DAYS=13
