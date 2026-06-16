@@ -52,7 +52,6 @@ plugins=(
     command-not-found
     git
     tmux
-    vterm
 )
 
 path+=~/bin
