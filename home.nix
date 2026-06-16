@@ -25,10 +25,14 @@ in {
 
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
-  home.username = "alastair";
-  home.homeDirectory =
-    if isLinux then "/home/alastair" else
-    if isDarwin then "/Users/alastair" else unsupported;
+
+  # Default to alastair for berry and other standard hosts
+  home.username = lib.mkDefault "alastair";
+
+  # Handle path differences between Linux and macOS
+  home.homeDirectory = if pkgs.stdenv.hostPlatform.isLinux
+    then "/home/${config.home.username}"
+    else "/Users/${config.home.username}";
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
