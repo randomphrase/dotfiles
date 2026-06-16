@@ -117,6 +117,14 @@ in {
     # Symlink the Oh My Zsh framework to ~/.oh-my-zsh
     ".oh-my-zsh".source = "${pkgs.oh-my-zsh}/share/oh-my-zsh";
 
+    # Fetch TPM directly from GitHub and symlink it to the expected directory
+    ".tmux/plugins/tpm".source = pkgs.fetchFromGitHub {
+      owner = "tmux-plugins";
+      repo = "tpm";
+      rev = "master";
+      hash = "sha256-oRKUZNyJYQXlkeQfbEYiltUEBpvdwn2SoEBWHVUNmrA=";
+    };
+
     # # You can also set the file content immediately.
     # ".gradle/gradle.properties".text = ''
     #   org.gradle.console=verbose
