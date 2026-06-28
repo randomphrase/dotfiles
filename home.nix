@@ -85,8 +85,8 @@ in {
     pinnedNixpkgs.quarto
 
     claude-code
-    codex
-    gemini-cli
+    #codex 
+    antigravity-cli
 
   ] ++ lib.optionals isLinux [
     # Add Linux-specific packages here
