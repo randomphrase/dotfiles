@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, withGui ? false, ... }:
 let
   isLinux = pkgs.stdenv.hostPlatform.isLinux;
   isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
@@ -90,7 +90,7 @@ in {
 
   ] ++ lib.optionals isLinux [
     # Add Linux-specific packages here
-    emacs-nox
+    (if withGui then emacs else emacs-nox)
     clang-tools # for clangd
     pinentry-emacs
 
