@@ -8,10 +8,11 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    mac-app-util.url = "github:hraban/mac-app-util";
   };
 
   outputs =
-    { self, nixpkgs, home-manager, ... }: {
+    { self, nixpkgs, home-manager, mac-app-util, ... }: {
       homeConfigurations = {
 	"alastair@berry" = home-manager.lib.homeManagerConfiguration ({
 	  modules = [ (import ./home.nix) ];
@@ -29,7 +30,10 @@
 	});
 
 	"alastair@Alastairs-MBP" = home-manager.lib.homeManagerConfiguration ({
-	  modules = [ (import ./home.nix) ];
+	  modules = [
+	    (import ./home.nix)
+	    mac-app-util.homeManagerModules.default
+	  ];
 	  pkgs = import nixpkgs {
 	    system = "aarch64-darwin";
 	  };
