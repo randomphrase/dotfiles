@@ -1,5 +1,6 @@
-{ config, pkgs, lib, withGui ? false, ... }:
+{ config, pkgs, lib, ... }:
 let
+  withGui = config._module.args.withGui or false;
   isLinux = pkgs.stdenv.hostPlatform.isLinux;
   isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
   unsupported = builtins.abort "Unsupported platform";
