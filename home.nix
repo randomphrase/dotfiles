@@ -132,24 +132,12 @@ in {
     # '';
   };
 
-  # mac-app-util builds its trampolines with osacompile, which leaves the
-  # AppleScript applet's Assets.car and CFBundleIconName in place. On macOS 26+
-  # those take precedence over the copied .icns, so the Dock shows a generic
-  # applet icon. Strip them so the real app icon is used.
-  home.activation = lib.mkIf isDarwin {
-    fixTrampolineIcons = lib.hm.dag.entryAfter [ "trampolineApps" ] ''
-      trampolines="$HOME/Applications/Home Manager Trampolines"
-      if [ -d "$trampolines" ]; then
-        for app in "$trampolines"/*.app; do
-          [ -e "$app/Contents/Resources/Assets.car" ] || continue
-          run rm "$app/Contents/Resources/Assets.car"
-          run /usr/bin/plutil -remove CFBundleIconName "$app/Contents/Info.plist" || true
-          run /usr/bin/codesign --force --sign - "$app"
-          run touch "$app"
-        done
-      fi
-    '';
-  };
+  # Copy .app bundles into ~/Applications/Home Manager Apps as real
+  # directories instead of store symlinks (the default from stateVersion
+  # 25.11). Gives a stable path the Dock and Spotlight can use directly,
+  # avoiding stale Dock pins and duplicate Dock icons.
+  targets.darwin.copyApps.enable = isDarwin;
+  targets.darwin.linkApps.enable = false;
 
   # Home Manager can also manage your environment variables through
   # 'home.sessionVariables'. These will be explicitly sourced when using a
