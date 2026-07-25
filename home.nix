@@ -81,12 +81,13 @@ in {
     gnupg
     pandoc
     go-grip
+    editorconfig-checker
 
     python3 # use a nix-installed python for compatibility
     pinnedNixpkgs.quarto
 
     claude-code
-    #codex 
+    #codex
     antigravity-cli
 
   ] ++ lib.optionals isLinux [
