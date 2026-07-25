@@ -101,6 +101,8 @@ in {
     emacs
     pinentry_mac
     git-credential-manager
+    coreutils-prefixed # for dired in emacs
+
   ]);
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
