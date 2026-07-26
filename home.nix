@@ -120,6 +120,11 @@ in {
     # Symlink the Oh My Zsh framework to ~/.oh-my-zsh
     ".oh-my-zsh".source = "${pkgs.oh-my-zsh}/share/oh-my-zsh";
 
+    # Native zsh completions from zsh-users/zsh-completions (kept current via
+    # flake inputs). Provides _cmake and ~180 others; added to fpath in zshrc.
+    ".zsh/completions".source =
+      "${pkgs.zsh-completions}/share/zsh/site-functions";
+
     # Fetch TPM directly from GitHub and symlink it to the expected directory
     ".tmux/plugins/tpm".source = pkgs.fetchFromGitHub {
       owner = "tmux-plugins";

@@ -102,8 +102,12 @@ if (( $+commands[uv] )); then
 fi
 
 
-# add zsh-completions
-fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
+# zsh-completions (zsh-users/zsh-completions): native completions for cmake and
+# ~180 other tools. Expects the completion functions at ~/.zsh/completions.
+# Under nix this symlink is created by home.nix; on hosts without nix, populate
+# it manually (e.g. clone zsh-completions and point ~/.zsh/completions at its
+# src dir). Must precede compinit, which oh-my-zsh runs below.
+fpath+=~/.zsh/completions
 
 # Setup emacs as the editor of choice
 # TODO: use omz emacs plugin instead?
