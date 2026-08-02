@@ -21,11 +21,10 @@
 	});
 
 	"alastair@thinky" = home-manager.lib.homeManagerConfiguration ({
-	  modules = [ (import ./home.nix) ];
+	  modules = [ (import ./home.nix) { _module.args.withGui = true; } ];
 	  pkgs = import nixpkgs {
 	    system = "x86_64-linux";
 	  };
-	  extraSpecialArgs = { withGui = true; };
 	});
 
 	"alastair@Alastairs-MBP" = home-manager.lib.homeManagerConfiguration ({
