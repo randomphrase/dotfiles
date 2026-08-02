@@ -34,8 +34,9 @@
 	  };
 	});
 
+	# Shared host with a 50GB quota: drop quarto and clang-tools.
 	"alastair@us01" = home-manager.lib.homeManagerConfiguration ({
-	  modules = [ (import ./home.nix) ];
+	  modules = [ (import ./home.nix) { _module.args.slim = true; } ];
 	  pkgs = import nixpkgs {
 	    system = "x86_64-linux";
 	  };

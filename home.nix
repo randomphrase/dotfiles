@@ -1,6 +1,9 @@
 { config, pkgs, lib, ... }:
 let
   withGui = config._module.args.withGui or false;
+  # Disk-constrained hosts: skip the heavyweight toolchains. quarto drags in a
+  # full R + jupyter + texlive (~2.8GB) and clang-tools is ~1.5GB of LLVM.
+  slim = config._module.args.slim or false;
   isLinux = pkgs.stdenv.hostPlatform.isLinux;
   isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
   unsupported = builtins.abort "Unsupported platform";
@@ -10,6 +13,8 @@ let
     then "${pkgs.pinentry_mac}/Applications/pinentry-mac.app/Contents/MacOS/pinentry-mac"
     else "${pkgs.pinentry-emacs}/bin/pinentry-emacs";
 
+  # Lazy: the fetchGit (and its ~3GB clone in ~/.cache/nix/gitv3) only happens
+  # if something below actually references pinnedNixpkgs, i.e. non-slim hosts.
   pinnedNixpkgs = import (builtins.fetchGit {
     url = "https://github.com/NixOS/nixpkgs.git";
     # 1. Provide the explicit branch name so GitHub allows the download handshake
@@ -84,17 +89,21 @@ in {
     editorconfig-checker
 
     python3 # use a nix-installed python for compatibility
-    pinnedNixpkgs.quarto
 
     claude-code
     #codex
     antigravity-cli
 
+  ] ++ lib.optionals (!slim) [
+    pinnedNixpkgs.quarto
+
   ] ++ lib.optionals isLinux [
     # Add Linux-specific packages here
     (if withGui then emacs else emacs-nox)
-    clang-tools # for clangd
     pinentry-emacs
+
+  ] ++ lib.optionals (isLinux && !slim) [
+    clang-tools # for clangd
 
   ] ++ lib.optionals isDarwin [
     # Add macOS-specific packages here
@@ -104,6 +113,14 @@ in {
     coreutils-prefixed # for dired in emacs
 
   ]);
+
+  # Generations accumulate silently and each one pins its whole closure; on
+  # us01 twelve of them had grown /nix/store to 22GB against a 50GB quota.
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 30d";
+  };
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
