@@ -99,7 +99,7 @@ in {
 
   ] ++ lib.optionals isLinux [
     # Add Linux-specific packages here
-    (if withGui then emacs else emacs-nox)
+    (if withGui then emacs31 else emacs31-nox)
     pinentry-emacs
 
   ] ++ lib.optionals (isLinux && !slim) [
@@ -107,7 +107,7 @@ in {
 
   ] ++ lib.optionals isDarwin [
     # Add macOS-specific packages here
-    emacs
+    emacs31
     pinentry_mac
     git-credential-manager
     coreutils-prefixed # for dired in emacs
