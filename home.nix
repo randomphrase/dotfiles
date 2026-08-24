@@ -13,6 +13,18 @@ let
     then "${pkgs.pinentry_mac}/Applications/pinentry-mac.app/Contents/MacOS/pinentry-mac"
     else "${pkgs.pinentry-emacs}/bin/pinentry-emacs";
 
+  # TEMPORARY: tmux 3.7c's configure aborts on darwin unless jemalloc is
+  # explicitly chosen (upstream's workaround for a macOS calloc(3) bug that
+  # fails to zero allocations). Mirrors nixpkgs PR #555604, merged to master
+  # 2026-08-23 but not yet in the nixpkgs-unstable channel. Once a flake update
+  # picks up the fix, drop this and go back to plain `tmux` in home.packages.
+  tmuxPkg = if isDarwin
+    then pkgs.tmux.overrideAttrs (old: {
+      buildInputs = old.buildInputs ++ [ pkgs.jemalloc ];
+      configureFlags = old.configureFlags ++ [ "--enable-jemalloc" ];
+    })
+    else pkgs.tmux;
+
   # Lazy: the fetchGit (and its ~3GB clone in ~/.cache/nix/gitv3) only happens
   # if something below actually references pinnedNixpkgs, i.e. non-slim hosts.
   pinnedNixpkgs = import (builtins.fetchGit {
@@ -78,7 +90,7 @@ in {
     bat
     ripgrep
     dust
-    tmux
+    tmuxPkg
     nodejs
     gh
     uv
