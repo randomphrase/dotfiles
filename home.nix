@@ -134,6 +134,10 @@ in {
     options = "--delete-older-than 30d";
   };
 
+  # Make GUI apps installed via Nix (e.g. emacs.desktop) show up in the
+  # desktop environment's app launcher on non-NixOS Linux distros.
+  targets.genericLinux.enable = isLinux;
+
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {
