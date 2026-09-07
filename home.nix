@@ -103,7 +103,7 @@ in {
     python3 # use a nix-installed python for compatibility
 
     claude-code
-    #codex
+    codex
     antigravity-cli
 
   ] ++ lib.optionals (!slim) [
