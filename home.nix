@@ -124,6 +124,14 @@ in {
     git-credential-manager
     coreutils-prefixed # for dired in emacs
 
+  ] ++ lib.optionals (withGui || isDarwin) [
+    # Fonts for the Emacs GUI. CaskaydiaCove is Cascadia Code patched with the
+    # Nerd Font glyphs; symbols-only provides "Symbols Nerd Font Mono", the
+    # family nerd-icons (and through it doom-modeline) asks for by default.
+    # Both family names are what ~/.emacs.d/lisp/mod-ui.el looks for.
+    nerd-fonts.caskaydia-cove
+    nerd-fonts.symbols-only
+
   ]);
 
   # Generations accumulate silently and each one pins its whole closure; on
@@ -137,6 +145,11 @@ in {
   # Make GUI apps installed via Nix (e.g. emacs.desktop) show up in the
   # desktop environment's app launcher on non-NixOS Linux distros.
   targets.genericLinux.enable = isLinux;
+
+  # Nix-installed fonts are invisible to fontconfig -- and so to Emacs, GTK and
+  # everything else -- on non-NixOS until this writes the matching config into
+  # ~/.config/fontconfig and refreshes the cache on activation.
+  fonts.fontconfig.enable = true;
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
