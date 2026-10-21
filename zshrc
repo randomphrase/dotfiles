@@ -51,7 +51,6 @@ plugins=(
     colored-man-pages
     command-not-found
     git
-    tmux
 )
 
 path+=~/bin
@@ -73,6 +72,10 @@ path+=(~/.cargo/bin(N))
 
 # go lives here
 path+=(~/go/bin(N))
+
+if (( $+commands[tmux] )); then
+    plugins+=tmux
+fi
 
 if (( $+commands[fzf] )); then
     plugins+=fzf
