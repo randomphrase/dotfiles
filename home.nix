@@ -99,6 +99,7 @@ in {
     pandoc
     go-grip
     editorconfig-checker
+    devcontainer
 
     python3 # use a nix-installed python for compatibility
 
