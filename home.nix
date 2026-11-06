@@ -143,6 +143,17 @@ in {
     options = "--delete-older-than 30d";
   };
 
+  # Home Manager passes nix.gc.options as one launchd argument on macOS.
+  # Split the flag and its value so nix-collect-garbage can parse them.
+  # Upstream bug: https://github.com/nix-community/home-manager/issues/7211
+  launchd.agents = lib.mkIf isDarwin {
+    nix-gc.config.ProgramArguments = lib.mkForce [
+      "${pkgs.nix}/bin/nix-collect-garbage"
+      "--delete-older-than"
+      "30d"
+    ];
+  };
+
   # Make GUI apps installed via Nix (e.g. emacs.desktop) show up in the
   # desktop environment's app launcher on non-NixOS Linux distros.
   targets.genericLinux.enable = isLinux;
