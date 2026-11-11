@@ -1,0 +1,39 @@
+---
+- name: Check the credentials and signing files are encrypted
+  ansible.builtin.command:
+    argv:
+      - "{{ ansible_playbook_python }}"
+      - -c
+      - "import pathlib, sys; sys.exit(0 if pathlib.Path(sys.argv[1]).read_bytes().startswith(b'$ANSIBLE_VAULT;') else 1)"
+      - "{{ item }}"
+    expand_argument_vars: false
+  loop: "{{ [bootstrap_vault_file, bootstrap_signing_vault_file | default(bootstrap_vault_file)] | unique }}"
+  delegate_to: localhost
+  changed_when: false
+
+- name: Load this host's credentials
+  ansible.builtin.include_vars:
+    file: "{{ bootstrap_vault_file }}"
+    name: bootstrap_vault
+  no_log: true
+
+- name: Load the signing subkey separately from the host credentials
+  ansible.builtin.include_vars:
+    # Retain support for existing inventories with one combined Vault per host.
+    file: "{{ bootstrap_signing_vault_file | default(bootstrap_vault_file) }}"
+    name: bootstrap_signing_vault
+  no_log: true
+
+- name: Use the sudo password from this host's Vault when supplied
+  when: bootstrap_vault.ansible_become_password is defined
+  no_log: true
+  block:
+    - name: Require a nonempty sudo password
+      ansible.builtin.assert:
+        that:
+          - bootstrap_vault.ansible_become_password is string
+          - bootstrap_vault.ansible_become_password | length > 0
+
+    - name: Supply the password to Ansible's sudo plugin
+      ansible.builtin.set_fact:
+        ansible_become_password: "{{ bootstrap_vault.ansible_become_password }}"

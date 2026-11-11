@@ -1,7 +1,7 @@
 # Bootstrap a Linux account
 
 `bootstrap.yml` installs upstream Nix, builds an existing Home Manager profile,
-checks out the Emacs configuration, imports a dedicated GPG signing subkey,
+checks out the Emacs configuration, imports a GPG signing subkey,
 activates the profile and sets the account's login shell in one run. Run Ansible
 on your controller (for example, your Mac); the target needs SSH access, Python 3
 and sudo. The supported targets are x86-64 Debian/Ubuntu hosts running systemd.
@@ -49,8 +49,9 @@ example, one host can select a different `bootstrap_revision` for a staged updat
 | `bootstrap_revision` | Optional branch, tag or commit to check out; defaults to `HEAD` | Shared, with overrides for staged updates |
 | `bootstrap_profile` | Exact key under the flake's `homeConfigurations` | Per host |
 | `bootstrap_primary_fingerprint` | Full fingerprint of the primary GPG key | Shared |
-| `bootstrap_subkey_fingerprint` | Full fingerprint of this host's dedicated signing subkey | Per host |
-| `bootstrap_vault_file` | Encrypted bundle's path on the controller | Shared template, separate file per host |
+| `bootstrap_subkey_fingerprint` | Full fingerprint of the signing subkey | Shared, or per host |
+| `bootstrap_signing_vault_file` | Encrypted signing-only bundle's path on the controller | Shared, or per host |
+| `bootstrap_vault_file` | Encrypted account/sudo credentials bundle's path on the controller | Shared template, separate file per host |
 
 Leave `ansible_user` unset to use OpenSSH's normal login selection: `User` from
 the matching SSH configuration, or your local username if none is configured.
@@ -72,8 +73,15 @@ means that label, so the shared Vault path template resolves to
 `playbook/private/server_a.vault.yml` and `playbook/private/server_b.vault.yml`.
 Renaming a label therefore changes the expected Vault filename. Fingerprints in
 the inventory use uppercase hexadecimal without spaces or a trailing `!`.
-Use a separate signing subkey and Vault bundle for each host so a single host's
-subkey can be revoked independently. The primary fingerprint can remain shared.
+The example shares one signing subkey and `private/signing.vault.yml` across
+both hosts. Each host still has its own account/sudo credentials Vault. To use
+independently revocable signing subkeys, override both
+`bootstrap_subkey_fingerprint` and `bootstrap_signing_vault_file` per host.
+Revoking a shared subkey affects every host using it.
+
+Existing inventories without `bootstrap_signing_vault_file` continue to load
+the signing key from `bootstrap_vault_file`, supporting the original combined
+bundle layout while you migrate.
 
 Both repository URLs must be readable before the signing key is installed; HTTPS
 works for public repositories. SSH authentication and GPG commit signing are
@@ -99,20 +107,20 @@ the old inventory.
 
 The profile must already exist in the selected revision, match the remote username
 and home directory, and have `nix.gc.automatic = false`. Its
-`programs.git.settings.user.signingKey` should be the dedicated signing subkey's
+`programs.git.settings.user.signingKey` should be the intended signing subkey's
 full fingerprint followed by `!`, which forces Git to select that subkey.
 The primary fingerprint is also accepted for existing configurations, but then
 GPG selects an available signing subkey. Keep `commit.gpgSign = true` and use
 OpenPGP signing. The profile should not manage `~/.config/nix/nix.conf`, which
 contains this bootstrap's per-user flake and build-concurrency settings.
 
-## Prepare a signing subkey and Vault bundle
+## Prepare a signing subkey and separate Vault bundles
 
 Do this on the machine that holds your primary key. No key generation or export
 is performed automatically by the playbook.
 
-Create a dedicated signing subkey once per host. Skip this command if you have
-already created that host's subkey:
+Create a signing subkey once for the host or group of hosts that will share it.
+Skip this command if you already have the intended subkey:
 
 ```sh
 gpg --quick-add-key PRIMARY_FINGERPRINT ed25519 sign 1y
@@ -169,18 +177,19 @@ Preserve the blank line separating the armor header from the encoded key data:
 without it, GPG can import the key but still return an `invalid armor header`
 error, causing Ansible to stop.
 
-Now create the encrypted bundle, using the filename matching your inventory
-label (`server_a` in this example):
+Now create the encrypted signing-only bundle referenced by
+`bootstrap_signing_vault_file`:
 
 ```sh
-ansible-vault create --vault-id signing@prompt playbook/private/server_a.vault.yml
+ansible-vault create --vault-id signing@prompt playbook/private/signing.vault.yml
 ```
 
 `--vault-id` takes `label@password-source`. Here, `signing` is an arbitrary label
 for the Vault encryption password, recorded in the encrypted file's header;
 `prompt` asks for that password interactively. The label does not identify the
-host or GPG key, and can be shared across the hosts' Vault files. By default,
-Ansible uses labels as hints when selecting which supplied password to try.
+host or GPG key, and can be shared across the signing and credentials Vault
+files. By default, Ansible uses labels as hints when selecting which supplied
+password to try.
 
 Choose and confirm a Vault password when prompted. This encrypts the bundle;
 it is separate from your existing GPG key passphrase. Ansible opens your editor.
@@ -193,27 +202,46 @@ secret_subkey: |
 
   PASTE_THE_EXPORTED_CONTENT_HERE
   -----END PGP PRIVATE KEY BLOCK-----
-# Optional when sudo requires a password:
-ansible_become_password: 'YOUR_REMOTE_SUDO_PASSWORD'
 ```
 
 The GPG passphrase is not needed for import and does not belong in this bundle.
-An existing `passphrase` field is ignored and can be removed. If the sudo password
-contains a single quote, double that quote inside the YAML single-quoted string.
-Save and finish the editor session; Ansible encrypts the file. To reopen an
-existing bundle, use `ansible-vault edit` with the same `--vault-id` and filename.
+An existing `passphrase` field is ignored and can be removed. Save and finish the
+editor session; Ansible encrypts the file. To reopen an existing bundle, use
+`ansible-vault edit` with the same `--vault-id` and filename.
+
+Create a separate credentials bundle for each inventory label:
+
+```sh
+ansible-vault create --vault-id signing@prompt playbook/private/server_a.vault.yml
+ansible-vault create --vault-id signing@prompt playbook/private/server_b.vault.yml
+```
+
+Each file contains only that host's credentials, for example:
+
+```yaml
+ansible_become_password: 'THIS_HOSTS_SUDO_PASSWORD'
+```
+
+If the sudo password contains a single quote, double that quote inside the YAML
+single-quoted string. For passwordless sudo or `--ask-become-pass`, use an empty
+mapping (`{}`) when the file has no other credentials.
 
 `ansible_become_password` is the remote login account's sudo password. It is
 separate from the GPG passphrase and from the Vault password that encrypts this
-file. The playbook decrypts the host's bundle on the controller before its first
-sudo task. It supplies the sudo password to Ansible with sensitive output
-suppressed. Only `secret_subkey` is sent to GPG's standard input.
-Omit `ansible_become_password` for passwordless sudo, or supply it interactively
-with `--ask-become-pass` instead.
+file. The playbook decrypts both bundles into separate variables on the controller
+before its first sudo task. It takes the sudo password only from the host's
+credentials bundle, with sensitive output suppressed. Only `secret_subkey` from
+the signing bundle is sent to GPG's standard input.
+
+All these files can use the same Vault encryption password even though the
+remote sudo passwords differ. If you choose different Vault passwords, supply
+each one using a separate `--vault-id LABEL@prompt` argument when running the
+playbook.
 
 Do not use `--export-secret-keys` or export the entire keyring. Use a private
-editor session without backups or swap files. The decrypted bundle's template
-is also in `bootstrap.vault.example.yml`.
+editor session without backups or swap files. The decrypted templates are
+`bootstrap.signing.vault.example.yml` for the signing key and
+`bootstrap.vault.example.yml` for per-host credentials.
 
 Ansible imports the export directly on the host with `gpg --batch --no-tty
 --homedir ~/.gnupg --import`, passing the key through standard input. It creates
@@ -228,6 +256,27 @@ Import preserves the key's existing passphrase protection. When you first sign
 on the host, unlock the key through GPG's pinentry prompt (Emacs in this profile).
 Signing works with the controller disconnected. Your GPG agent's normal cache
 policy determines when another prompt is needed.
+
+## Split an existing combined Vault
+
+Use `ansible-vault edit --vault-id signing@prompt` to open the existing host's
+Vault. Copy its complete `secret_subkey: |` field, preserving indentation and
+blank lines, into a new `private/signing.vault.yml` created with
+`ansible-vault create --vault-id signing@prompt`. The new signing Vault should
+contain only `secret_subkey`.
+
+Once the signing Vault is saved, remove `secret_subkey` from the original host's
+Vault, keeping its existing `ansible_become_password`. Create a separate
+`private/NEW_HOST.vault.yml` containing the new host's own sudo password. Use
+`{}` for a host without stored credentials.
+
+Set these shared inventory variables, along with the shared primary and subkey
+fingerprints:
+
+```yaml
+bootstrap_signing_vault_file: "{{ playbook_dir }}/private/signing.vault.yml"
+bootstrap_vault_file: "{{ playbook_dir }}/private/{{ inventory_hostname }}.vault.yml"
+```
 
 ## Validate without connecting
 

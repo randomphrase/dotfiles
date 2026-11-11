@@ -1,0 +1,9 @@
+---
+# Shape of the DECRYPTED signing Vault. These are placeholders, not credentials.
+# Create private/signing.vault.yml with ansible-vault create.
+# Several hosts can reference this file; keep sudo passwords in their own Vaults.
+secret_subkey: |
+  -----BEGIN PGP PRIVATE KEY BLOCK-----
+
+  PASTE_THE_ARMORED_EXPORT_OF_ONE_SIGNING_SUBKEY_HERE
+  -----END PGP PRIVATE KEY BLOCK-----

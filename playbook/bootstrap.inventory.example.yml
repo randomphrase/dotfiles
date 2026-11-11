@@ -12,6 +12,9 @@ bootstrap:
     # Optional branch, tag or commit; defaults to HEAD.
     # bootstrap_revision: HEAD
     bootstrap_primary_fingerprint: REPLACE_WITH_PRIMARY_FINGERPRINT
+    # Both hosts use the same signing subkey and encrypted signing-only bundle.
+    bootstrap_subkey_fingerprint: REPLACE_WITH_SIGNING_SUBKEY_FINGERPRINT
+    bootstrap_signing_vault_file: "{{ playbook_dir }}/private/signing.vault.yml"
     # Resolved on the controller, using the inventory label below.
     bootstrap_vault_file: "{{ playbook_dir }}/private/{{ inventory_hostname }}.vault.yml"
 
@@ -19,11 +22,12 @@ bootstrap:
     server_a:
       ansible_host: YOUR_FIRST_SSH_ALIAS
       bootstrap_profile: YOUR_USERNAME@FIRST_PROFILE
-      bootstrap_subkey_fingerprint: REPLACE_WITH_FIRST_SIGNING_SUBKEY_FINGERPRINT
 
     server_b:
       ansible_host: YOUR_SECOND_SSH_ALIAS
       # Optional override if this differs from the login selected by SSH.
       # ansible_user: YOUR_OTHER_USERNAME
       bootstrap_profile: YOUR_OTHER_USERNAME@SECOND_PROFILE
-      bootstrap_subkey_fingerprint: REPLACE_WITH_SECOND_SIGNING_SUBKEY_FINGERPRINT
+      # To use a different signing subkey, override both settings here:
+      # bootstrap_subkey_fingerprint: REPLACE_WITH_SECOND_SIGNING_SUBKEY_FINGERPRINT
+      # bootstrap_signing_vault_file: "{{ playbook_dir }}/private/server_b-signing.vault.yml"

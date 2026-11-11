@@ -36,36 +36,8 @@
           Use --syntax-check for offline validation; --check cannot model the
           Nix builds and GPG imports.
 
-    - name: Check the host credentials file is encrypted
-      ansible.builtin.command:
-        argv:
-          - "{{ ansible_playbook_python }}"
-          - -c
-          - "import pathlib, sys; sys.exit(0 if pathlib.Path(sys.argv[1]).read_bytes().startswith(b'$ANSIBLE_VAULT;') else 1)"
-          - "{{ bootstrap_vault_file }}"
-        expand_argument_vars: false
-      delegate_to: localhost
-      changed_when: false
-
-    - name: Load the host's credentials before any sudo tasks
-      ansible.builtin.include_vars:
-        file: "{{ bootstrap_vault_file }}"
-        name: bootstrap_vault
-      no_log: true
-
-    - name: Use the sudo password from the host's Vault when supplied
-      when: bootstrap_vault.ansible_become_password is defined
-      no_log: true
-      block:
-        - name: Require a nonempty sudo password
-          ansible.builtin.assert:
-            that:
-              - bootstrap_vault.ansible_become_password is string
-              - bootstrap_vault.ansible_become_password | length > 0
-
-        - name: Supply the password to Ansible's sudo plugin
-          ansible.builtin.set_fact:
-            ansible_become_password: "{{ bootstrap_vault.ansible_become_password }}"
+    - name: Load signing material and the host's credentials before any sudo tasks
+      ansible.builtin.import_tasks: bootstrap/vault.yml
 
   tasks:
     - name: Set up upstream Nix
@@ -81,7 +53,7 @@
         update: false
         force: false
 
-    - name: Import the dedicated signing subkey
+    - name: Import the signing subkey
       ansible.builtin.import_tasks: bootstrap/signing.yml
 
     - name: Read the active Home Manager generation
