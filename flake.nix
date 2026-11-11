@@ -54,7 +54,7 @@
         #   ];
         # };
 
-        "alastair@andromeda" = home-manager.lib.homeManagerConfiguration ({
+        "alastair@ttbox" = home-manager.lib.homeManagerConfiguration ({
 	  modules = [
             (import ./home.nix)
             {
