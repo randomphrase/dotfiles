@@ -1,0 +1,60 @@
+---
+- name: Require the signing subkey export in the Vault bundle
+  ansible.builtin.assert:
+    that:
+      - bootstrap_vault.secret_subkey is defined
+      - bootstrap_vault.secret_subkey is string
+      - bootstrap_vault.secret_subkey | length > 0
+    fail_msg: >-
+      The decrypted Vault bundle needs a top-level secret_subkey field containing
+      the complete armored export, indented beneath secret_subkey: |.
+
+- name: Create the user's private GPG directory
+  ansible.builtin.file:
+    path: "{{ bootstrap_home }}/.gnupg"
+    state: directory
+    mode: "0700"
+
+- name: Import the signing subkey
+  block:
+    - name: Import the armored export directly with GPG
+      ansible.builtin.command:
+        argv:
+          - /usr/bin/gpg
+          - --batch
+          - --no-tty
+          - --homedir
+          - "{{ bootstrap_home }}/.gnupg"
+          - --import
+        stdin: "{{ bootstrap_vault.secret_subkey }}"
+        stdin_add_newline: false
+        expand_argument_vars: false
+      environment:
+        HOME: "{{ bootstrap_home }}"
+        LC_ALL: C
+      register: bootstrap_signing_import
+      no_log: true
+      diff: false
+
+  rescue:
+    - name: Report import failure without exposing the key
+      ansible.builtin.fail:
+        msg: >-
+          GPG reported an import error.
+          {% if 'invalid armor header' in (bootstrap_signing_import.stderr | default('')) %}
+          Invalid armor header: preserve the blank line between the armor header
+          and the encoded key data. GPG may have imported the key despite this error.
+          {% elif 'CRC error' in (bootstrap_signing_import.stderr | default('')) %}
+          The armored export's checksum does not match. Copy the complete export again.
+          {% else %}
+          Check that secret_subkey contains the complete armored export, including
+          its header, footer and blank lines.
+          {% endif %}
+          Raw GPG output was suppressed.
+
+  always:
+    - name: Discard the decrypted Ansible variable
+      ansible.builtin.set_fact:
+        bootstrap_vault: {}
+        bootstrap_signing_import: {}
+      no_log: true

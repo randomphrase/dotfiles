@@ -1,0 +1,109 @@
+---
+# Run from the controller. Only the explicitly marked tasks use sudo.
+- name: Bootstrap a personal Home Manager environment
+  hosts: bootstrap
+  become: false
+  gather_facts: true
+  serial: 1
+  vars:
+    # Stream module arguments over SSH instead of staging secret-bearing modules.
+    ansible_pipelining: true
+    bootstrap_nix_version: "2.35.6"
+    bootstrap_nix_sha256: b12ab64a291e41846b9da37b7f56eafa7683deaa267bafb2ed43440ab2f45f13
+    bootstrap_nix: /nix/var/nix/profiles/default/bin/nix
+    bootstrap_home: "{{ ansible_facts.user_dir }}"
+    bootstrap_checkout: "{{ bootstrap_home }}/.config/home-manager"
+
+  pre_tasks:
+    - name: Check the target and required settings before making changes
+      ansible.builtin.assert:
+        that:
+          - not ansible_check_mode
+          - ansible_facts.system == 'Linux'
+          - ansible_facts.architecture == 'x86_64'
+          - ansible_facts.os_family == 'Debian'
+          - ansible_facts.service_mgr == 'systemd'
+          - ansible_facts.user_id != 'root'
+          - bootstrap_repo is defined
+          - bootstrap_emacs_repo is defined
+          - bootstrap_profile | default('') is match('^[A-Za-z0-9_@.-]+$')
+          - bootstrap_primary_fingerprint | default('') is match('^([A-F0-9]{40}|[A-F0-9]{64})$')
+          - bootstrap_subkey_fingerprint | default('') is match('^([A-F0-9]{40}|[A-F0-9]{64})$')
+          - bootstrap_primary_fingerprint != bootstrap_subkey_fingerprint
+        fail_msg: >-
+          Use a non-root login on x86-64 Debian/Ubuntu with systemd and fill in
+          the private inventory.
+          Use --syntax-check for offline validation; --check cannot model the
+          Nix builds and GPG imports.
+
+    - name: Check the host credentials file is encrypted
+      ansible.builtin.command:
+        argv:
+          - "{{ ansible_playbook_python }}"
+          - -c
+          - "import pathlib, sys; sys.exit(0 if pathlib.Path(sys.argv[1]).read_bytes().startswith(b'$ANSIBLE_VAULT;') else 1)"
+          - "{{ bootstrap_vault_file }}"
+        expand_argument_vars: false
+      delegate_to: localhost
+      changed_when: false
+
+    - name: Load the host's credentials before any sudo tasks
+      ansible.builtin.include_vars:
+        file: "{{ bootstrap_vault_file }}"
+        name: bootstrap_vault
+      no_log: true
+
+    - name: Use the sudo password from the host's Vault when supplied
+      when: bootstrap_vault.ansible_become_password is defined
+      no_log: true
+      block:
+        - name: Require a nonempty sudo password
+          ansible.builtin.assert:
+            that:
+              - bootstrap_vault.ansible_become_password is string
+              - bootstrap_vault.ansible_become_password | length > 0
+
+        - name: Supply the password to Ansible's sudo plugin
+          ansible.builtin.set_fact:
+            ansible_become_password: "{{ bootstrap_vault.ansible_become_password }}"
+
+  tasks:
+    - name: Set up upstream Nix
+      ansible.builtin.import_tasks: bootstrap/nix.yml
+
+    - name: Build Home Manager and report its size
+      ansible.builtin.import_tasks: bootstrap/home-manager.yml
+
+    - name: Check out Emacs configuration if missing
+      ansible.builtin.git:
+        repo: "{{ bootstrap_emacs_repo }}"
+        dest: "{{ bootstrap_home }}/.emacs.d"
+        update: false
+        force: false
+
+    - name: Import the dedicated signing subkey
+      ansible.builtin.import_tasks: bootstrap/signing.yml
+
+    - name: Read the active Home Manager generation
+      ansible.builtin.command:
+        argv: [readlink, -f, "{{ bootstrap_home }}/.local/state/nix/profiles/home-manager"]
+      register: bootstrap_active
+      changed_when: false
+      failed_when: bootstrap_active.rc not in [0, 1]
+
+    - name: Activate the built profile as the login user
+      ansible.builtin.command:
+        argv: ["{{ bootstrap_build.stdout | trim }}/activate"]
+      environment:
+        HOME: "{{ bootstrap_home }}"
+        USER: "{{ ansible_facts.user_id }}"
+        PATH: "/nix/var/nix/profiles/default/bin:/usr/local/bin:/usr/bin:/bin"
+      changed_when: true
+      when: bootstrap_active.stdout | default('') != bootstrap_build.stdout | trim
+
+    - name: Set the account's login shell after activation
+      ansible.builtin.user:
+        name: "{{ ansible_facts.user_id }}"
+        shell: /bin/zsh
+        create_home: false
+      become: true

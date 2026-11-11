@@ -1,3 +1,5 @@
 /spacemacs.d/.spacemacs.env
 **/.DS_Store
 /result
+/playbook/private/
+__pycache__/

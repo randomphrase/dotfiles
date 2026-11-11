@@ -1,0 +1,95 @@
+---
+- name: Create the user's configuration directory
+  ansible.builtin.file:
+    path: "{{ bootstrap_home }}/.config"
+    state: directory
+    mode: "0700"
+
+- name: Check out the requested dotfiles revision
+  ansible.builtin.git:
+    repo: "{{ bootstrap_repo }}"
+    dest: "{{ bootstrap_checkout }}"
+    version: "{{ bootstrap_revision | default('HEAD') }}"
+    force: false
+  register: bootstrap_git
+
+- name: Enable flakes for this account
+  ansible.builtin.file:
+    path: "{{ bootstrap_home }}/.config/nix"
+    state: directory
+    mode: "0700"
+
+- name: Add bootstrap settings without replacing existing Nix settings
+  ansible.builtin.blockinfile:
+    path: "{{ bootstrap_home }}/.config/nix/nix.conf"
+    create: true
+    mode: "0600"
+    marker: "# {mark} DOTFILES BOOTSTRAP"
+    block: |
+      extra-experimental-features = nix-command flakes
+      max-jobs = 1
+      cores = 2
+
+- name: Inspect the profile's account and Git signing identity
+  ansible.builtin.command:
+    argv:
+      - "{{ bootstrap_nix }}"
+      - eval
+      - --json
+      - --no-write-lock-file
+      - --no-update-lock-file
+      - '{{ bootstrap_checkout }}#homeConfigurations."{{ bootstrap_profile }}".config'
+      - --apply
+      - 'c: { user = c.home.username; home = c.home.homeDirectory; signingKey = c.programs.git.settings.user.signingKey or ""; autoGc = c.nix.gc.automatic; }'
+    expand_argument_vars: false
+  environment:
+    HOME: "{{ bootstrap_home }}"
+  register: bootstrap_profile_info
+  changed_when: false
+
+- name: Require a matching account, signing identity and manual cleanup
+  ansible.builtin.assert:
+    that:
+      - (bootstrap_profile_info.stdout | from_json).user == ansible_facts.user_id
+      - (bootstrap_profile_info.stdout | from_json).home == bootstrap_home
+      - >-
+        (bootstrap_profile_info.stdout | from_json).signingKey in
+        [bootstrap_primary_fingerprint, bootstrap_subkey_fingerprint,
+         bootstrap_subkey_fingerprint + '!']
+      - not (bootstrap_profile_info.stdout | from_json).autoGc
+    fail_msg: >-
+      The profile must match this login and its signing key. Prefer the exact
+      subkey fingerprint followed by !. Disable nix.gc.automatic so cleanup
+      cannot start during a timed calculation.
+
+- name: Build the locked Home Manager profile
+  ansible.builtin.command:
+    argv:
+      - "{{ bootstrap_nix }}"
+      - build
+      - --no-write-lock-file
+      - --no-update-lock-file
+      - --out-link
+      - "{{ bootstrap_checkout }}/result"
+      - --print-out-paths
+      - '{{ bootstrap_checkout }}#homeConfigurations."{{ bootstrap_profile }}".activationPackage'
+    expand_argument_vars: false
+  environment:
+    HOME: "{{ bootstrap_home }}"
+  register: bootstrap_build
+  changed_when: false
+
+- name: Measure the complete runtime closure
+  ansible.builtin.command:
+    argv: ["{{ bootstrap_nix }}", path-info, --closure-size, --human-readable, "{{ bootstrap_build.stdout | trim }}"]
+  environment:
+    HOME: "{{ bootstrap_home }}"
+  register: bootstrap_size
+  changed_when: false
+
+- name: Report profile size
+  ansible.builtin.debug:
+    msg:
+      - "Dotfiles commit: {{ bootstrap_git.after }}"
+      - "Runtime closure: {{ bootstrap_size.stdout }}"
+      - "This excludes source caches, temporary build files and older generations."

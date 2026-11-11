@@ -1,0 +1,29 @@
+---
+# Copy into private/inventory.yml and fill in your own values.
+# No real hosts, usernames or fingerprints belong in this example.
+bootstrap:
+  # Shared by every host in this group; host entries can override these values.
+  vars:
+    # Normally SSH config selects the user; set this only to override it.
+    # ansible_user: YOUR_REMOTE_USERNAME
+    ansible_python_interpreter: /usr/bin/python3
+    bootstrap_repo: https://github.com/YOUR_ACCOUNT/YOUR_DOTFILES.git
+    bootstrap_emacs_repo: https://github.com/YOUR_ACCOUNT/YOUR_EMACS_CONFIG.git
+    # Optional branch, tag or commit; defaults to HEAD.
+    # bootstrap_revision: HEAD
+    bootstrap_primary_fingerprint: REPLACE_WITH_PRIMARY_FINGERPRINT
+    # Resolved on the controller, using the inventory label below.
+    bootstrap_vault_file: "{{ playbook_dir }}/private/{{ inventory_hostname }}.vault.yml"
+
+  hosts:
+    server_a:
+      ansible_host: YOUR_FIRST_SSH_ALIAS
+      bootstrap_profile: YOUR_USERNAME@FIRST_PROFILE
+      bootstrap_subkey_fingerprint: REPLACE_WITH_FIRST_SIGNING_SUBKEY_FINGERPRINT
+
+    server_b:
+      ansible_host: YOUR_SECOND_SSH_ALIAS
+      # Optional override if this differs from the login selected by SSH.
+      # ansible_user: YOUR_OTHER_USERNAME
+      bootstrap_profile: YOUR_OTHER_USERNAME@SECOND_PROFILE
+      bootstrap_subkey_fingerprint: REPLACE_WITH_SECOND_SIGNING_SUBKEY_FINGERPRINT

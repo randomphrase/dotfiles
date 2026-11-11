@@ -1,0 +1,88 @@
+---
+- name: Install bootstrap prerequisites
+  ansible.builtin.apt:
+    name: [ca-certificates, curl, xz-utils, git, gnupg, python3, zsh]
+    state: present
+    update_cache: true
+    cache_valid_time: 86400
+  become: true
+
+- name: Inspect the existing Nix installation
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop:
+    - "{{ bootstrap_nix }}"
+    - /nix
+    - /etc/determinate
+  register: bootstrap_nix_paths
+
+- name: Refuse to overwrite another or incomplete installation
+  ansible.builtin.assert:
+    that:
+      - not bootstrap_nix_paths.results[2].stat.exists
+      - bootstrap_nix_paths.results[0].stat.exists or not bootstrap_nix_paths.results[1].stat.exists
+    fail_msg: >-
+      Found Determinate or an existing /nix without the expected multi-user
+      executable. Inspect that installation separately; this playbook will not replace it.
+
+- name: Install the pinned upstream release when Nix is absent
+  become: true
+  when: not bootstrap_nix_paths.results[0].stat.exists
+  block:
+    - name: Create a temporary installer directory
+      ansible.builtin.tempfile:
+        state: directory
+        prefix: dotfiles-nix-
+      register: bootstrap_nix_temp
+
+    - name: Download and verify the Linux archive
+      ansible.builtin.get_url:
+        url: "https://releases.nixos.org/nix/nix-{{ bootstrap_nix_version }}/nix-{{ bootstrap_nix_version }}-x86_64-linux.tar.xz"
+        dest: "{{ bootstrap_nix_temp.path }}/nix.tar.xz"
+        checksum: "sha256:{{ bootstrap_nix_sha256 }}"
+        mode: "0600"
+
+    - name: Unpack the verified installer
+      ansible.builtin.unarchive:
+        src: "{{ bootstrap_nix_temp.path }}/nix.tar.xz"
+        dest: "{{ bootstrap_nix_temp.path }}"
+        remote_src: true
+
+    - name: Install Nix without an extra Nixpkgs channel
+      ansible.builtin.command:
+        argv:
+          - /bin/sh
+          - "{{ bootstrap_nix_temp.path }}/nix-{{ bootstrap_nix_version }}-x86_64-linux/install"
+          - --daemon
+          - --no-channel-add
+          - --yes
+        creates: "{{ bootstrap_nix }}"
+      environment:
+        HOME: /root
+
+  always:
+    - name: Remove the downloaded installer and unpacked files
+      ansible.builtin.file:
+        path: "{{ bootstrap_nix_temp.path }}"
+        state: absent
+      when: bootstrap_nix_temp.path is defined
+
+- name: Start the multi-user Nix socket
+  ansible.builtin.systemd_service:
+    name: nix-daemon.socket
+    enabled: true
+    state: started
+    daemon_reload: true
+  become: true
+
+- name: Verify the existing or newly installed Nix
+  ansible.builtin.command:
+    argv: ["{{ bootstrap_nix }}", --version]
+  register: bootstrap_nix_version_result
+  changed_when: false
+
+- name: Require upstream Nix
+  ansible.builtin.assert:
+    that:
+      - bootstrap_nix_version_result.stdout is match('^nix \(Nix\) ')
+    fail_msg: "This bootstrap expects upstream Nix and does not migrate other distributions."

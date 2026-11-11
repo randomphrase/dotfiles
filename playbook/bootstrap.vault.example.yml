@@ -1,0 +1,11 @@
+---
+# Shape of the DECRYPTED Vault bundle. These are placeholders, not credentials.
+# Create the real file with ansible-vault create, inside playbook/private/.
+secret_subkey: |
+  -----BEGIN PGP PRIVATE KEY BLOCK-----
+
+  PASTE_THE_ARMORED_EXPORT_OF_ONE_SIGNING_SUBKEY_HERE
+  -----END PGP PRIVATE KEY BLOCK-----
+# Optional: the remote account's sudo password.
+# Omit for passwordless sudo, or use --ask-become-pass instead.
+# ansible_become_password: "YOUR_REMOTE_SUDO_PASSWORD"

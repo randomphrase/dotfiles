@@ -2,12 +2,15 @@ Here are my dotfiles. Feel free to fork and/or use and/or ignore.
 
 It's obviously tailored more towards my usage, which is [[https://www.gnu.org/software/emacs/][emacs]], [[https://github.com/tmux/tmux][tmux]] and [[http://www.zsh.org/][zsh]] with [[https://github.com/robbyrussell/oh-my-zsh][oh-my-zsh]].
 
-Basic setup is:
+For new Linux accounts, see [[file:playbook/BOOTSTRAP.md][the Nix and Home Manager bootstrap]].
+It uses a private inventory and Ansible Vault for a dedicated signing subkey.
+
+The older setup, which manages dotfiles directly without Home Manager, is:
 
 #+BEGIN_EXAMPLE
 $ sudo apt install ansible
 $ git clone https://github.com/randomphrase/dotfiles .dotfiles
-$ ansible-playbook --ask-become-pass .dotfiles/playbook/homedir.yml
+$ ansible-playbook -i .dotfiles/playbook/private/inventory.yml --ask-become-pass .dotfiles/playbook/homedir.yml
 #+END_EXAMPLE
 
 
