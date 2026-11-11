@@ -42,17 +42,32 @@
 	  };
 	});
 
-        "SenorAl@tt-quietbox" = home-manager.lib.homeManagerConfiguration {
-          pkgs = import nixpkgs {
-            system = "x86_64-linux";
-          };
-          modules = [
-            ./home.nix
+        # "SenorAl@tt-quietbox" = home-manager.lib.homeManagerConfiguration {
+        #   pkgs = import nixpkgs {
+        #     system = "x86_64-linux";
+        #   };
+        #   modules = [
+        #     ./home.nix
+        #     {
+        #       home.username = nixpkgs.lib.mkForce "SenorAl";
+        #     }
+        #   ];
+        # };
+
+        "alastair@andromeda" = home-manager.lib.homeManagerConfiguration ({
+	  modules = [
+            (import ./home.nix)
             {
-              home.username = nixpkgs.lib.mkForce "SenorAl";
+              _module.args.slim = true;
+              # Run garbage collection manually between timed calculations.
+              nix.gc.automatic = nixpkgs.lib.mkForce false;
             }
           ];
-        };
+	  pkgs = import nixpkgs {
+	    system = "x86_64-linux";
+	  };
+	});
+
       };
     };
 }
