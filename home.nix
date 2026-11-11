@@ -105,7 +105,6 @@ in {
 
     claude-code
     codex
-    antigravity-cli
 
   ] ++ lib.optionals (!slim) [
     pinnedNixpkgs.quarto
