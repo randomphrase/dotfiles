@@ -302,9 +302,10 @@ The command prompts for the Vault password; the sudo password is read from
 `ansible_become_password` in that host's encrypted bundle when present.
 It installs prerequisites/Nix, checks out the selected dotfiles revision, builds
 and reports the profile's size, checks out Emacs configuration, imports the
-signing subkey, activates Home Manager and sets zsh as the login shell. The
-`result` symlink retains the built generation. The reported runtime closure
-excludes source caches, old generations and temporary build space.
+signing subkey, activates Home Manager, sets zsh as the login shell and checks
+GitHub CLI authentication. The `result` symlink retains the built generation.
+The reported runtime closure excludes source caches, old generations and
+temporary build space.
 
 ```sh
 ansible-playbook -i playbook/private/inventory.yml playbook/bootstrap.yml \
@@ -330,6 +331,41 @@ or Determinate installations require separate handling. Fresh installs use
 minimum-free-space check. Run builds and activation between timed calculations,
 and prune old generations during maintenance.
 
+## GitHub authentication
+
+After provisioning, Ansible runs `gh auth status --active --hostname github.com`
+as the remote login user, using the GitHub CLI in the activated Nix profile.
+The hostname flag restricts this automated check to GitHub.com; without it,
+`gh auth status` checks all configured hosts. The check reports whether the
+active account works. Missing or invalid credentials
+and connectivity failures produce an `ACTION REQUIRED` message with follow-up
+commands; they do not undo or fail provisioning. An inability to execute the
+check itself is an error. Raw authentication output is suppressed.
+
+For a new host, run this in its interactive SSH session:
+
+```sh
+gh auth login
+```
+
+Choose GitHub.com, HTTPS and browser login when prompted, then approve the
+displayed device code in a browser on your workstation. Ansible
+does not start the interactive login: its command output is buffered, so you
+would not see the device code in time. Git and Magit on Linux already use `gh`
+as their HTTPS credential helper.
+
+Current GitHub CLI versions automatically refresh stored credentials that
+support refreshing during the status check. To request refreshable credentials
+where supported, use `gh auth refresh --expiring` once
+in an interactive session. A revoked login can still require browser approval.
+
+To repeat only the check, without provisioning or decrypting the Vaults:
+
+```sh
+ansible-playbook -i playbook/private/inventory.yml playbook/bootstrap.yml \
+  --limit server_a --tags github-auth
+```
+
 References: [upstream Nix installation](https://nix.dev/install-nix),
 [Ansible inventory variables](https://docs.ansible.com/projects/ansible/latest/inventory_guide/intro_inventory.html#adding-variables-to-inventory),
 [Ansible variable precedence](https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_variables.html#understanding-variable-precedence),
@@ -338,5 +374,7 @@ References: [upstream Nix installation](https://nix.dev/install-nix),
 [Ansible Git revisions](https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/git_module.html#parameter-version),
 [Ansible sudo passwords](https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_privilege_escalation.html#become-connection-variables),
 [Ansible Vault](https://docs.ansible.com/projects/ansible/latest/vault_guide/vault.html),
+[GitHub CLI authentication status](https://cli.github.com/manual/gh_auth_status),
+[GitHub CLI login](https://cli.github.com/manual/gh_auth_login),
 [GnuPG fingerprint display options](https://gnupg.org/documentation/manuals/gnupg/GPG-Input-and-Output.html),
 [GnuPG export commands](https://gnupg.org/documentation/manuals/gnupg/Operational-GPG-Commands.html).

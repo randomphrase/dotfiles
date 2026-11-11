@@ -1,0 +1,41 @@
+---
+- name: Check the login user's active GitHub credentials
+  ansible.builtin.command:
+    argv:
+      - "{{ bootstrap_home }}/.nix-profile/bin/gh"
+      - auth
+      - status
+      - --active
+      - --hostname
+      - github.com
+    expand_argument_vars: false
+  environment:
+    HOME: "{{ bootstrap_home }}"
+    GH_PROMPT_DISABLED: "1"
+  register: bootstrap_github_auth
+  changed_when: false
+  failed_when: false
+  no_log: true
+
+- name: Require the GitHub authentication check to run
+  ansible.builtin.assert:
+    that:
+      - bootstrap_github_auth.rc | default(-1) in [0, 1]
+    fail_msg: >-
+      Could not run the GitHub authentication check. Verify that
+      {{ bootstrap_home }}/.nix-profile/bin/gh is installed and run
+      gh auth status on this host for details.
+
+- name: Report working GitHub authentication
+  ansible.builtin.debug:
+    msg: "GitHub authentication is ready for {{ ansible_facts.user_id }} on {{ inventory_hostname }}."
+  when: bootstrap_github_auth.rc == 0
+
+- name: Report GitHub authentication that needs attention
+  ansible.builtin.debug:
+    msg:
+      - "ACTION REQUIRED: GitHub authentication could not be verified for {{ ansible_facts.user_id }} on {{ inventory_hostname }}."
+      - "On that host, run: gh auth status"
+      - "If credentials are missing or invalid, run: gh auth login"
+      - "Complete the device-code approval in your browser. If the status check reports a network error, resolve connectivity and check again instead."
+  when: bootstrap_github_auth.rc == 1

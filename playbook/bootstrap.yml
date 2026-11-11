@@ -79,3 +79,7 @@
         shell: /bin/zsh
         create_home: false
       become: true
+
+    - name: Check GitHub authentication after provisioning
+      ansible.builtin.import_tasks: bootstrap/github.yml
+      tags: [github-auth]
